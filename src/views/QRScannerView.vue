@@ -6,6 +6,7 @@ import Notification from '../components/Notification.vue'
 
 const camera = ref('front')
 const QRCodeValue = ref('')
+const showNotification = ref(false)
 
 const paintOutline = (detectedCodes, ctx) => {
   for (const detectedCode of detectedCodes) {
@@ -30,7 +31,14 @@ const selected = {
   value: paintOutline
 }
 
-const showNotification = ref(false)
+const validQRCode = ref(true)
+
+const decode = () => {
+  // check if QRCodeValue is valid and conforms to what is needed over here
+
+  showNotification.value = true
+  console.log(QRCodeValue)
+}
 
 const updateShowNotification = (value) => {
   showNotification.value = value
@@ -44,15 +52,6 @@ const fireFunction = () => {
 const logErrors = (promise) => {
   promise.catch(console.error)
 }
-
-const validQRCode = ref(true)
-
-const decode = () => {
-      // check if QRCodeValue is valid and conforms to what is needed over here
-
-  showNotification.value = true
-  console.log(QRCodeValue)
-}
 </script>
 
 <template>
@@ -64,14 +63,14 @@ const decode = () => {
       @fire-function="fireFunction"
     />
     <div class="w-full md:h-full items-center flex justify-center">
-        <qrcode-stream
+      <qrcode-stream
         class="w-full aspect-square p-4 sm:!w-3/4 sm:!p-0 md:!h-2/3 md:!w-auto"
         :track="selected.value"
         @init="logErrors"
         :camera="camera"
         @decode="decode"
-        >
-        </qrcode-stream>
+      >
+      </qrcode-stream>
     </div>
   </div>
 </template>
