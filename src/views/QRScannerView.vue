@@ -87,7 +87,7 @@ async function logErrors(promise) {
         :camera="camera"
         @decode="decode"
       >
-      <button type="button" class="rounded m-3 bg-indigo-600 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" @click="switchCamera">
+      <button type="button" class="rounded fixed m-8 sm:m-4 bg-indigo-600 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" @click="switchCamera">
           Switch Camera
         </button>
       </qrcode-stream>
