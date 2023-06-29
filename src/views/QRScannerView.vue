@@ -5,6 +5,8 @@ import { ref } from 'vue'
 import Notification from '../components/Notification.vue'
 
 const camera = ref('front')
+const noFrontCamera = ref(false)
+const noRearCamera = ref(false)
 const QRCodeValue = ref('')
 const showNotification = ref(false)
 
@@ -35,9 +37,20 @@ const validQRCode = ref(true)
 
 const decode = () => {
   // check if QRCodeValue is valid and conforms to what is needed over here
-
   showNotification.value = true
   console.log(QRCodeValue)
+}
+
+const switchCamera = () => {
+  switch (camera.value) {
+    case 'front':
+      camera.value = 'auto'
+      break
+    case 'rear':
+      camera.value = 'front'
+      break
+  }
+  console.log(camera.value)
 }
 
 const updateShowNotification = (value) => {
@@ -49,8 +62,25 @@ const fireFunction = () => {
   console.log('Printing...')
 }
 
-const logErrors = (promise) => {
-  promise.catch(console.error)
+async function logErrors(promise) {
+  try {
+    await promise
+  } catch (error) {
+    const triedFrontCamera = camera.value === 'front'
+    const triedRearCamera = camera.value === 'rear'
+
+    const cameraMissingError = error.name === 'OverconstrainedError'
+
+    if (triedRearCamera && cameraMissingError) {
+      noRearCamera.value = true
+    }
+
+    if (triedFrontCamera && cameraMissingError) {
+      noFrontCamera.value = true
+    }
+
+    console.error(error)
+  }
 }
 </script>
 
@@ -70,6 +100,7 @@ const logErrors = (promise) => {
         :camera="camera"
         @decode="decode"
       >
+        <button @click="switchCamera">Switch Cameras</button>
       </qrcode-stream>
     </div>
   </div>
