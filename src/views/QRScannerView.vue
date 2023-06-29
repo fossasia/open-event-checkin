@@ -59,6 +59,10 @@ const switchCamera = () => {
   console.log(camera.value)
 }
 
+const refreshComponent = () => {
+  componentKey.value += 1
+}
+
 const updateShowNotification = (value) => {
   showNotification.value = value
 }
@@ -110,7 +114,7 @@ async function logErrors(promise) {
         :camera="camera"
         @decode="decode"
       >
-        <select v-model="camera" class="absolute top-0 right-0 m-4">
+        <select v-model="camera" @change="refreshComponent" class="absolute top-0 right-0 m-4">
           <option value="front">Front</option>
           <option value="rear">Rear</option>
         </select>
