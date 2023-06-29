@@ -2,7 +2,7 @@
 import { QrcodeStream } from 'vue-qrcode-reader'
 import { ref } from 'vue'
 
-import Notification from '../components/Notification.vue'
+import NotificationView from '../components/NotificationView.vue'
 
 const camera = ref('front')
 const QRCodeValue = ref('')
@@ -71,7 +71,7 @@ async function logErrors(promise) {
 
 <template>
   <div class="flex h-screen justify-center items-center">
-    <Notification
+    <notification-view
       :showNotification="showNotification"
       :validQRCode="validQRCode"
       @update:show-modal="updateShowNotification"
