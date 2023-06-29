@@ -56,6 +56,11 @@ const fireFunction = () => {
   console.log('Printing...')
 }
 
+const switchCamera = () => {
+  camera.value = camera.value === 'front' ? 'rear' : 'front'
+  refreshComponent()
+}
+
 async function logErrors(promise) {
   // try {
   //   await promise
@@ -77,6 +82,7 @@ async function logErrors(promise) {
     await promise
   } catch (error) {
     if (error.name === 'OverconstrainedError') {
+      console.log("error, had to flip to auto")
       errorText.value = error.name
       camera.value = "auto"
     }
@@ -102,10 +108,9 @@ async function logErrors(promise) {
         :camera="camera"
         @decode="decode"
       >
-        <select v-model="camera" @change="refreshComponent" class="absolute top-0 right-0 m-4">
-          <option value="front">Front</option>
-          <option value="rear">Rear</option>
-        </select>
+        <button @click="switchCamera">
+          Switch Camera
+        </button>
       </qrcode-stream>
     </div>
   </div>
