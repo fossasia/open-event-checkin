@@ -7,6 +7,7 @@ import Notification from '../components/Notification.vue'
 const camera = ref('rear')
 const noFrontCamera = ref(false)
 const noRearCamera = ref(false)
+const errorText = ref('')
 const QRCodeValue = ref('')
 const showNotification = ref(false)
 const componentKey = ref(0)
@@ -42,7 +43,7 @@ const decode = () => {
   console.log(QRCodeValue)
 }
 
-const switchCamera = (error) => {
+const switchCamera = () => {
   // check result type, if return type error, catch
 
   switch (camera.value) {
@@ -84,23 +85,22 @@ async function logErrors(promise) {
       noFrontCamera.value = true
     }
 
-    if (noFrontCamera.value && noRearCamera.value && noRearCamera.value) {
+    if (error.name === 'OverconstrainedError') {
       camera.value = "auto"
-    } else {
-      switchCamera()
     }
   }
 }
 </script>
 
 <template>
-  <div class="flex h-screen justify-center items-center">
+  <div class="flex flex-col h-screen justify-center items-center">
     <Notification
       :showNotification="showNotification"
       :validQRCode="validQRCode"
       @update:show-modal="updateShowNotification"
       @fire-function="fireFunction"
     />
+    <p>Error log: {{ errorText }}</p>
     <div class="w-full md:h-full items-center flex justify-center">
       <qrcode-stream
       :key="componentKey"
