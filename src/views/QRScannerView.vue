@@ -110,7 +110,10 @@ async function logErrors(promise) {
         :camera="camera"
         @decode="decode"
       >
-        <button @click="switchCamera">Switch Cameras</button>
+        <select v-model="camera" class="absolute top-0 right-0 m-4">
+          <option value="front">Front</option>
+          <option value="rear">Rear</option>
+        </select>
       </qrcode-stream>
     </div>
   </div>
