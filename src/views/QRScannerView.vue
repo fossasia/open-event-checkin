@@ -84,10 +84,8 @@ async function logErrors(promise) {
       noFrontCamera.value = true
     }
 
-    if (noFrontCamera.value && noRearCamera.value) {
-      camera.value = "auto"
-    } else {
-      switchCamera()
+    if (cameraMissingError) {
+      camera.value = 'auto'
     }
   }
 }
