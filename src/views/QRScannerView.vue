@@ -43,22 +43,6 @@ const decode = () => {
   console.log(QRCodeValue)
 }
 
-const switchCamera = () => {
-  // check result type, if return type error, catch
-
-  switch (camera.value) {
-    case 'front':
-      camera.value = 'rear'
-      componentKey.value += 1
-      break
-    case 'rear':
-      camera.value = 'front'
-      componentKey.value += 1
-      break
-  }
-  console.log(camera.value)
-}
-
 const refreshComponent = () => {
   componentKey.value += 1
 }
@@ -73,23 +57,27 @@ const fireFunction = () => {
 }
 
 async function logErrors(promise) {
+  // try {
+  //   await promise
+  // } catch (error) {
+  //   const triedFrontCamera = camera.value === 'front'
+  //   const triedRearCamera = camera.value === 'rear'
+
+  //   const cameraMissingError = error.name === 'OverconstrainedError'
+
+  //   if (triedRearCamera && cameraMissingError) {
+  //     noRearCamera.value = true
+  //   }
+
+  //   if (triedFrontCamera && cameraMissingError) {
+  //     noFrontCamera.value = true
+  //   }
+  // }
   try {
     await promise
   } catch (error) {
-    const triedFrontCamera = camera.value === 'front'
-    const triedRearCamera = camera.value === 'rear'
-
-    const cameraMissingError = error.name === 'OverconstrainedError'
-
-    if (triedRearCamera && cameraMissingError) {
-      noRearCamera.value = true
-    }
-
-    if (triedFrontCamera && cameraMissingError) {
-      noFrontCamera.value = true
-    }
-
     if (error.name === 'OverconstrainedError') {
+      errorText.value = error.name
       camera.value = "auto"
     }
   }
