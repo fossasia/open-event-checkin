@@ -42,7 +42,9 @@ const decode = () => {
   console.log(QRCodeValue)
 }
 
-const switchCamera = () => {
+const switchCamera = (error) => {
+  // check result type, if return type error, catch
+
   switch (camera.value) {
     case 'front':
       camera.value = 'rear'
@@ -82,7 +84,11 @@ async function logErrors(promise) {
       noFrontCamera.value = true
     }
 
-    console.error(error)
+    if (noFrontCamera.value && noRearCamera.value) {
+      camera.value = "auto"
+    } else {
+      switchCamera()
+    }
   }
 }
 </script>
