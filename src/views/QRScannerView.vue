@@ -53,7 +53,7 @@ const switchCamera = () => {
       componentKey.value += 1
       break
     case 'auto':
-      camera.value = 'front'
+      camera.value = 'rear'
       componentKey.value += 1
       break
   }
