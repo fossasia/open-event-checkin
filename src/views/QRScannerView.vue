@@ -46,7 +46,7 @@ const switchCamera = () => {
     case 'front':
       camera.value = 'auto'
       break
-    case 'rear':
+    case 'auto':
       camera.value = 'front'
       break
   }
