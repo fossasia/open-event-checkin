@@ -9,6 +9,7 @@ const noFrontCamera = ref(false)
 const noRearCamera = ref(false)
 const QRCodeValue = ref('')
 const showNotification = ref(false)
+const componentKey = ref(0)
 
 const paintOutline = (detectedCodes, ctx) => {
   for (const detectedCode of detectedCodes) {
@@ -45,9 +46,11 @@ const switchCamera = () => {
   switch (camera.value) {
     case 'front':
       camera.value = 'auto'
+      componentKey.value += 1
       break
     case 'auto':
       camera.value = 'front'
+      componentKey.value += 1
       break
   }
   console.log(camera.value)
@@ -94,6 +97,7 @@ async function logErrors(promise) {
     />
     <div class="w-full md:h-full items-center flex justify-center">
       <qrcode-stream
+      :key="componentKey"
         class="w-full aspect-square p-4 sm:!w-3/4 sm:!p-0 md:!h-2/3 md:!w-auto"
         :track="selected.value"
         @init="logErrors"
