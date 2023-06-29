@@ -2,7 +2,7 @@
 import { QrcodeStream } from 'vue-qrcode-reader'
 import { ref } from 'vue'
 
-import NotificationView from '../components/NotificationView.vue'
+import NotificationView from '@/components/NotificationView.vue'
 
 const camera = ref('front')
 const QRCodeValue = ref('')
