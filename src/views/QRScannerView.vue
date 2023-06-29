@@ -45,11 +45,11 @@ const decode = () => {
 const switchCamera = () => {
   switch (camera.value) {
     case 'front':
-      camera.value = 'rear'
+      camera.value = 'auto'
       componentKey.value += 1
       break
     case 'rear':
-      camera.value = 'auto'
+      camera.value = 'front'
       componentKey.value += 1
       break
     case 'auto':
