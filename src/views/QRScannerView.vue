@@ -4,7 +4,7 @@ import { ref } from 'vue'
 
 import Notification from '../components/Notification.vue'
 
-const camera = ref('front')
+const camera = ref('rear')
 const noFrontCamera = ref(false)
 const noRearCamera = ref(false)
 const QRCodeValue = ref('')
