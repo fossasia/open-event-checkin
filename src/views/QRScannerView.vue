@@ -70,7 +70,7 @@ async function logErrors(promise) {
 </script>
 
 <template>
-  <div class="flex flex-col h-screen justify-center items-center">
+  <div class="flex h-screen justify-center items-center">
     <Notification
       :showNotification="showNotification"
       :validQRCode="validQRCode"
