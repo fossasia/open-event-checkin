@@ -1,0 +1,96 @@
+<script setup>
+import { QrcodeStream } from 'vue-qrcode-reader'
+import { ref } from 'vue'
+
+import NotificationView from '@/components/NotificationView.vue'
+
+const camera = ref('front')
+const QRCodeValue = ref('')
+const showNotification = ref(false)
+const componentKey = ref(0)
+
+const paintOutline = (detectedCodes, ctx) => {
+  for (const detectedCode of detectedCodes) {
+    QRCodeValue.value = detectedCode.rawValue
+    const [firstPoint, ...otherPoints] = detectedCode.cornerPoints
+    ctx.strokeStyle = 'red'
+    ctx.strokeWidth = 5
+
+    ctx.beginPath()
+    ctx.moveTo(firstPoint.x, firstPoint.y)
+    for (const { x, y } of otherPoints) {
+      ctx.lineTo(x, y)
+    }
+    ctx.lineTo(firstPoint.x, firstPoint.y)
+    ctx.closePath()
+    ctx.stroke()
+  }
+}
+
+const selected = {
+  text: 'outline',
+  value: paintOutline
+}
+
+const validQRCode = ref(true)
+
+const decode = () => {
+  // check if QRCodeValue is valid and conforms to what is needed over here
+  showNotification.value = true
+  console.log(QRCodeValue)
+}
+
+const refreshComponent = () => {
+  componentKey.value += 1
+}
+
+const updateShowNotification = (value) => {
+  showNotification.value = value
+}
+
+const fireFunction = () => {
+  // print user pass here
+  console.log('Printing...')
+}
+
+const switchCamera = () => {
+  camera.value = camera.value === 'front' ? 'rear' : 'front'
+  refreshComponent()
+}
+
+async function logErrors(promise) {
+  try {
+    await promise
+  } catch (error) {
+    if (error.name === 'OverconstrainedError') {
+      camera.value = "auto"
+    }
+  }
+}
+</script>
+
+<template>
+  <div class="flex h-screen justify-center items-center">
+    <notification-view
+      :showNotification="showNotification"
+      :validQRCode="validQRCode"
+      @update:show-modal="updateShowNotification"
+      @fire-function="fireFunction"
+    />
+    <div class="w-full md:h-full items-center flex justify-center">
+      
+      <qrcode-stream
+      :key="componentKey"
+        class="w-full aspect-square p-4 sm:!w-3/4 sm:!p-0 md:!h-2/3 md:!w-auto"
+        :track="selected.value"
+        @init="logErrors"
+        :camera="camera"
+        @decode="decode"
+      >
+      <button type="button" class="rounded fixed m-8 sm:m-4 bg-indigo-600 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" @click="switchCamera">
+          Switch Camera
+        </button>
+      </qrcode-stream>
+    </div>
+  </div>
+</template>
