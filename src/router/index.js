@@ -20,7 +20,7 @@ const router = createRouter({
       path: '/scanner',
       name: 'QR Code Scanner',
       component: QRScannerView
-    },
+    }
   ]
 })
 

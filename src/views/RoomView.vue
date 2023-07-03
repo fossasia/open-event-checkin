@@ -1,7 +1,7 @@
-<template>
-  <Room />
-</template>
-
 <script setup>
-import Room from '@/components/Room.vue'
+import TypeSelector from '@/components/TypeSelector.vue'
 </script>
+
+<template>
+  <TypeSelector />
+</template>

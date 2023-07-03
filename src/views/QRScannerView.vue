@@ -63,7 +63,7 @@ async function logErrors(promise) {
     await promise
   } catch (error) {
     if (error.name === 'OverconstrainedError') {
-      camera.value = "auto"
+      camera.value = 'auto'
     }
   }
 }
@@ -78,16 +78,19 @@ async function logErrors(promise) {
       @fire-function="fireFunction"
     />
     <div class="w-full md:h-full items-center flex justify-center">
-      
       <qrcode-stream
-      :key="componentKey"
+        :key="componentKey"
         class="w-full aspect-square p-4 sm:!w-3/4 sm:!p-0 md:!h-2/3 md:!w-auto"
         :track="selected.value"
         @init="logErrors"
         :camera="camera"
         @decode="decode"
       >
-      <button type="button" class="rounded fixed m-8 sm:m-4 bg-indigo-600 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" @click="switchCamera">
+        <button
+          type="button"
+          class="rounded fixed m-8 sm:m-4 bg-indigo-600 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          @click="switchCamera"
+        >
           Switch Camera
         </button>
       </qrcode-stream>
