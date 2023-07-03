@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import QRScannerView from '@/views/QRScannerView.vue'
-import HomeView from '../views/HomeView.vue'
-import RegistrationView from '../views/RegistrationView.vue'
+import HomeView from '@/views/HomeView.vue'
 import RoomView from '@/views/RoomView.vue'
 
 const router = createRouter({
@@ -11,11 +10,6 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView
-    },
-    {
-      path: '/registration',
-      name: 'registration',
-      component: RegistrationView
     },
     {
       path: '/room',
