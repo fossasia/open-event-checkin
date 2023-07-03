@@ -41,11 +41,10 @@ const availableBooth = [
   { id: 'none', name: 'Create New' },
   { id: '1', name: 'Booth 1' },
   { id: '2', name: 'Booth ABC' },
-  { id: '3', name: 'Door 1' },
+  { id: '3', name: 'Door 1' }
 ]
 
 const selectedBooth = ref(availableBooth[1])
-
 </script>
 
 <template>
@@ -180,9 +179,10 @@ const selectedBooth = ref(availableBooth[1])
                     'relative cursor-default select-none py-2 pl-3 pr-9'
                   ]"
                 >
-                  <span :class="[availableBooth ? 'font-semibold' : 'font-normal', 'block truncate']">{{
-                    booth.name
-                  }}</span>
+                  <span
+                    :class="[availableBooth ? 'font-semibold' : 'font-normal', 'block truncate']"
+                    >{{ booth.name }}</span
+                  >
 
                   <span
                     v-if="availableBooth"

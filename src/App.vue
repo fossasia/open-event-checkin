@@ -1,27 +1,35 @@
 <script setup>
 import { RouterView } from 'vue-router'
 import { ref } from 'vue'
-import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
-import { Bars3Icon, XMarkIcon, HomeIcon, ChartBarIcon, ArrowsRightLeftIcon } from '@heroicons/vue/24/outline'
+import {
+  Disclosure,
+  DisclosureButton,
+  DisclosurePanel,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuItems
+} from '@headlessui/vue'
+import {
+  Bars3Icon,
+  XMarkIcon,
+  HomeIcon,
+  ChartBarIcon,
+  ArrowsRightLeftIcon
+} from '@heroicons/vue/24/outline'
 
 const user = {
-
-
   name: 'Tom Cook',
   email: 'tom@example.com',
   imageUrl:
-    'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
 }
 const navigation = [
-
-
-  { name: 'Main', href: '#', current: true, icon: HomeIcon},
-  { name: 'Statistics', href: '#', current: false, icon: ChartBarIcon},
-  { name: 'Switch Type', href: '#', current: false, icon: ArrowsRightLeftIcon},
+  { name: 'Main', href: '#', current: true, icon: HomeIcon },
+  { name: 'Statistics', href: '#', current: false, icon: ChartBarIcon },
+  { name: 'Switch Type', href: '#', current: false, icon: ArrowsRightLeftIcon }
 ]
-const userNavigation = [
-  { name: 'Sign out', href: '#' },
-]
+const userNavigation = [{ name: 'Sign out', href: '#' }]
 
 const eventName = ref('test event')
 </script>
@@ -31,16 +39,18 @@ const eventName = ref('test event')
     <div class="mx-auto max-w-7xl px-2 sm:px-4 lg:divide-y lg:divide-gray-200 lg:px-8">
       <div class="relative flex h-16 justify-between space-x-5">
         <div class="relative z-10 flex pl-2">
-          <div class="flex flex-shrink-0 items-center">
-            Eventyay
-          </div>
+          <div class="flex flex-shrink-0 items-center">Eventyay</div>
         </div>
-        <div class="z-0 flex flex-1 items-center justify-center max-w-xs sm:max-w-sm md:max-w-xl lg:max-w-3xl">
-              <p class="truncate">{{ eventName }}</p>
-          </div>
+        <div
+          class="z-0 flex flex-1 items-center justify-center max-w-xs sm:max-w-sm md:max-w-xl lg:max-w-3xl"
+        >
+          <p class="truncate">{{ eventName }}</p>
+        </div>
         <div class="relative z-10 flex items-center lg:hidden">
           <!-- Mobile menu button -->
-          <DisclosureButton class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
+          <DisclosureButton
+            class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+          >
             <span class="sr-only">Open menu</span>
             <Bars3Icon v-if="!open" class="block h-6 w-6" aria-hidden="true" />
             <XMarkIcon v-else class="block h-6 w-6" aria-hidden="true" />
@@ -50,16 +60,34 @@ const eventName = ref('test event')
           <!-- Profile dropdown -->
           <Menu as="div" class="relative ml-4 flex-shrink-0">
             <div>
-              <MenuButton class="flex rounded-full bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+              <MenuButton
+                class="flex rounded-full bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              >
                 <span class="sr-only">Open user menu</span>
                 <img class="h-8 w-8 rounded-full" :src="user.imageUrl" alt="" />
               </MenuButton>
             </div>
-            <transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
-              <MenuItems class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+            <transition
+              enter-active-class="transition ease-out duration-100"
+              enter-from-class="transform opacity-0 scale-95"
+              enter-to-class="transform opacity-100 scale-100"
+              leave-active-class="transition ease-in duration-75"
+              leave-from-class="transform opacity-100 scale-100"
+              leave-to-class="transform opacity-0 scale-95"
+            >
+              <MenuItems
+                class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+              >
                 <MenuItem v-for="item in userNavigation" :key="item.name" v-slot="{ active }">
-                  <a :href="item.href" :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']">
-                    <component :is="item.icon" class="h-6 w-6 flex-none text-gray-400 mr-2" aria-hidden="true" />
+                  <a
+                    :href="item.href"
+                    :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']"
+                  >
+                    <component
+                      :is="item.icon"
+                      class="h-6 w-6 flex-none text-gray-400 mr-2"
+                      aria-hidden="true"
+                    />
                     {{ item.name }}
                   </a>
                 </MenuItem>
@@ -69,8 +97,23 @@ const eventName = ref('test event')
         </div>
       </div>
       <nav class="hidden lg:flex lg:space-x-8 lg:py-2" aria-label="Global">
-        <a v-for="item in navigation" :key="item.name" :href="item.href" :class="[item.current ? 'bg-gray-100 text-gray-900' : 'text-gray-900 hover:bg-gray-50 hover:text-gray-900', 'inline-flex items-center rounded-md py-2 px-3 text-sm font-medium']" :aria-current="item.current ? 'page' : undefined">
-          <component :is="item.icon" class="h-6 w-6 flex-none text-gray-400 mr-2" aria-hidden="true" />
+        <a
+          v-for="item in navigation"
+          :key="item.name"
+          :href="item.href"
+          :class="[
+            item.current
+              ? 'bg-gray-100 text-gray-900'
+              : 'text-gray-900 hover:bg-gray-50 hover:text-gray-900',
+            'inline-flex items-center rounded-md py-2 px-3 text-sm font-medium'
+          ]"
+          :aria-current="item.current ? 'page' : undefined"
+        >
+          <component
+            :is="item.icon"
+            class="h-6 w-6 flex-none text-gray-400 mr-2"
+            aria-hidden="true"
+          />
           {{ item.name }}
         </a>
       </nav>
@@ -78,7 +121,20 @@ const eventName = ref('test event')
 
     <DisclosurePanel as="nav" class="lg:hidden" aria-label="Global">
       <div class="space-y-1 px-2 pb-3 pt-2">
-        <DisclosureButton v-for="item in navigation" :key="item.name" as="a" :href="item.href" :class="[item.current ? 'bg-gray-100 text-gray-900' : 'text-gray-900 hover:bg-gray-50 hover:text-gray-900', 'block rounded-md py-2 px-3 text-base font-medium']" :aria-current="item.current ? 'page' : undefined">{{ item.name }}</DisclosureButton>
+        <DisclosureButton
+          v-for="item in navigation"
+          :key="item.name"
+          as="a"
+          :href="item.href"
+          :class="[
+            item.current
+              ? 'bg-gray-100 text-gray-900'
+              : 'text-gray-900 hover:bg-gray-50 hover:text-gray-900',
+            'block rounded-md py-2 px-3 text-base font-medium'
+          ]"
+          :aria-current="item.current ? 'page' : undefined"
+          >{{ item.name }}</DisclosureButton
+        >
       </div>
       <div class="border-t border-gray-200 pb-3 pt-4">
         <div class="flex items-center px-4">
@@ -91,7 +147,14 @@ const eventName = ref('test event')
           </div>
         </div>
         <div class="mt-3 space-y-1 px-2">
-          <DisclosureButton v-for="item in userNavigation" :key="item.name" as="a" :href="item.href" class="block rounded-md px-3 py-2 text-base font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-900">{{ item.name }}</DisclosureButton>
+          <DisclosureButton
+            v-for="item in userNavigation"
+            :key="item.name"
+            as="a"
+            :href="item.href"
+            class="block rounded-md px-3 py-2 text-base font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+            >{{ item.name }}</DisclosureButton
+          >
         </div>
       </div>
     </DisclosurePanel>
