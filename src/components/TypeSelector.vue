@@ -30,21 +30,24 @@ const filteredEvents = computed(() =>
       })
 )
 
-const boothType = [
-  { id: 'registration', name: 'Registration' },
-  { id: 'checkin', name: 'Check In' }
+const stationType = [
+  { id: 'registration-scan', name: 'Registration (via scan)' },
+  { id: 'registration-search', name: 'Registration (via search)' },
+  { id: 'registration-hybrid', name: 'Registration (hybrid) '},
+  { id: 'checkin', name: 'Check In' },
+  { id: 'checkout', name: 'Check Out' }
 ]
 
-const selectedType = ref(boothType[1])
+const selectedType = ref(stationType[1])
 
-const availableBooth = [
+const availableStations = [
   { id: 'none', name: 'Create New' },
   { id: '1', name: 'Booth 1' },
   { id: '2', name: 'Booth ABC' },
   { id: '3', name: 'Door 1' }
 ]
 
-const selectedBooth = ref(availableBooth[1])
+const selectedStation = ref(availableStations[1])
 </script>
 
 <template>
@@ -118,10 +121,10 @@ const selectedBooth = ref(availableBooth[1])
             >
               <ListboxOption
                 as="template"
-                v-for="type in boothType"
+                v-for="type in stationType"
                 :key="type.id"
                 :value="type"
-                v-slot="{ active, boothType }"
+                v-slot="{ active, stationType }"
               >
                 <li
                   :class="[
@@ -129,12 +132,12 @@ const selectedBooth = ref(availableBooth[1])
                     'relative cursor-default select-none py-2 pl-3 pr-9'
                   ]"
                 >
-                  <span :class="[boothType ? 'font-semibold' : 'font-normal', 'block truncate']">{{
+                  <span :class="[stationType ? 'font-semibold' : 'font-normal', 'block truncate']">{{
                     type.name
                   }}</span>
 
                   <span
-                    v-if="boothType"
+                    v-if="stationType"
                     :class="[
                       active ? 'text-white' : 'text-blue-600',
                       'absolute inset-y-0 right-0 flex items-center pr-4'
@@ -150,15 +153,15 @@ const selectedBooth = ref(availableBooth[1])
 
         <!-- allow user to select booth or give a new field to store booth -->
 
-        <Listbox as="div" v-model="selectedBooth">
+        <Listbox as="div" v-model="selectedStation">
           <ListboxLabel class="block text-sm font-medium leading-6 text-gray-900"
-            >Selected Booth</ListboxLabel
+            >Selected Station</ListboxLabel
           >
           <div class="relative mt-2">
             <ListboxButton
               class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600 sm:text-sm sm:leading-6"
             >
-              <span class="block truncate">{{ selectedBooth.name }}</span>
+              <span class="block truncate">{{ selectedStation.name }}</span>
               <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                 <ChevronUpDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
               </span>
@@ -168,10 +171,10 @@ const selectedBooth = ref(availableBooth[1])
             >
               <ListboxOption
                 as="template"
-                v-for="booth in availableBooth"
-                :key="booth.id"
-                :value="booth"
-                v-slot="{ active, availableBooth }"
+                v-for="station in availableStations"
+                :key="station.id"
+                :value="station"
+                v-slot="{ active, availableStations }"
               >
                 <li
                   :class="[
@@ -180,12 +183,12 @@ const selectedBooth = ref(availableBooth[1])
                   ]"
                 >
                   <span
-                    :class="[availableBooth ? 'font-semibold' : 'font-normal', 'block truncate']"
-                    >{{ booth.name }}</span
+                    :class="[availableStations ? 'font-semibold' : 'font-normal', 'block truncate']"
+                    >{{ station.name }}</span
                   >
 
                   <span
-                    v-if="availableBooth"
+                    v-if="availableStations"
                     :class="[
                       active ? 'text-white' : 'text-blue-600',
                       'absolute inset-y-0 right-0 flex items-center pr-4'
@@ -201,13 +204,13 @@ const selectedBooth = ref(availableBooth[1])
 
         <!-- display if create new booth is selected -->
         <div>
-          <label for="booth_name" class="block text-sm font-medium leading-6 text-gray-900"
-            >Booth Name</label
+          <label for="station" class="block text-sm font-medium leading-6 text-gray-900"
+            >Station Name</label
           >
           <div class="mt-2">
             <input
-              id="booth_name"
-              name="booth_name"
+              id="station"
+              name="station"
               type="text"
               required="true"
               class="block pl-2 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-blue-600 sm:text-sm sm:leading-6"

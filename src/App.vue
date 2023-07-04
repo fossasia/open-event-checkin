@@ -15,19 +15,21 @@ import {
   XMarkIcon,
   HomeIcon,
   ChartBarIcon,
-  ArrowsRightLeftIcon
+  UserCircleIcon,
+  ChevronDownIcon
 } from '@heroicons/vue/24/outline'
 
 const user = {
   name: 'Tom Cook',
-  email: 'tom@example.com',
-  imageUrl:
-    'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+  icon: UserCircleIcon
 }
+
+const showNavigation = ref(false)
+
 const navigation = [
   { name: 'Main', href: '#', current: true, icon: HomeIcon },
   { name: 'Statistics', href: '#', current: false, icon: ChartBarIcon },
-  { name: 'Switch Type', href: '#', current: false, icon: ArrowsRightLeftIcon }
+  { name: 'Close', href: '#', current: false, icon: XMarkIcon }
 ]
 const userNavigation = [{ name: 'Sign out', href: '#' }]
 
@@ -61,10 +63,11 @@ const eventName = ref('test event')
           <Menu as="div" class="relative ml-4 flex-shrink-0">
             <div>
               <MenuButton
-                class="flex rounded-full bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                class="flex items-center rounded-full bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
               >
                 <span class="sr-only">Open user menu</span>
-                <img class="h-8 w-8 rounded-full" :src="user.imageUrl" alt="" />
+                <component :is="user.icon" class="h-8 w-8 text-gray-400" aria-hidden="true" />
+                <ChevronDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
               </MenuButton>
             </div>
             <transition
@@ -96,7 +99,7 @@ const eventName = ref('test event')
           </Menu>
         </div>
       </div>
-      <nav class="hidden lg:flex lg:space-x-8 lg:py-2" aria-label="Global">
+      <nav v-if="showNavigation" class="hidden lg:flex lg:space-x-8 lg:py-2" aria-label="Global">
         <a
           v-for="item in navigation"
           :key="item.name"
@@ -120,7 +123,7 @@ const eventName = ref('test event')
     </div>
 
     <DisclosurePanel as="nav" class="lg:hidden" aria-label="Global">
-      <div class="space-y-1 px-2 pb-3 pt-2">
+      <div v-if="showNavigation" class="space-y-1 px-2 pb-3 pt-2">
         <DisclosureButton
           v-for="item in navigation"
           :key="item.name"
@@ -139,11 +142,10 @@ const eventName = ref('test event')
       <div class="border-t border-gray-200 pb-3 pt-4">
         <div class="flex items-center px-4">
           <div class="flex-shrink-0">
-            <img class="h-10 w-10 rounded-full" :src="user.imageUrl" alt="" />
+            <component :is="user.icon" class="h-10 w-10 text-gray-400 mr-2" aria-hidden="true" />
           </div>
           <div class="ml-3">
             <div class="text-base font-medium text-gray-800">{{ user.name }}</div>
-            <div class="text-sm font-medium text-gray-500">{{ user.email }}</div>
           </div>
         </div>
         <div class="mt-3 space-y-1 px-2">

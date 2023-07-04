@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import QRScannerView from '@/views/QRScannerView.vue'
 import HomeView from '@/views/HomeView.vue'
-import RoomView from '@/views/RoomView.vue'
+import StationSelectorView from '@/views/StationSelectorView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -12,13 +12,13 @@ const router = createRouter({
       component: HomeView
     },
     {
-      path: '/room',
-      name: 'room',
-      component: RoomView
+      path: '/type',
+      name: 'stationSelector',
+      component: StationSelectorView
     },
     {
       path: '/scanner',
-      name: 'QR Code Scanner',
+      name: 'qrCodeScanner',
       component: QRScannerView
     }
   ]
