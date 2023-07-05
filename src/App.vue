@@ -46,7 +46,7 @@ const eventName = ref('test event')
         <div
           class="z-0 flex flex-1 items-center justify-center max-w-xs sm:max-w-sm md:max-w-xl lg:max-w-3xl"
         >
-          <p class="truncate">{{ eventName }}</p>
+          <p class="font-bold text-xl truncate">{{ eventName }}</p>
         </div>
         <div class="relative z-10 flex items-center lg:hidden">
           <!-- Mobile menu button -->
@@ -161,5 +161,7 @@ const eventName = ref('test event')
       </div>
     </DisclosurePanel>
   </Disclosure>
-  <RouterView />
+  <div class="mx-3">
+    <RouterView />
+  </div>
 </template>

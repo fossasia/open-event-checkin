@@ -30,15 +30,15 @@ const filteredEvents = computed(() =>
       })
 )
 
-const stationType = [
+const stationTypes = [
   { id: 'registration-scan', name: 'Registration (via scan)' },
   { id: 'registration-search', name: 'Registration (via search)' },
-  { id: 'registration-hybrid', name: 'Registration (hybrid) '},
-  { id: 'checkin', name: 'Check In' },
-  { id: 'checkout', name: 'Check Out' }
+  { id: 'registration-hybrid', name: 'Registration (hybrid) ' },
+  { id: 'check-in', name: 'Check-In' },
+  { id: 'checkout', name: 'Checkout' }
 ]
 
-const selectedType = ref(stationType[1])
+const selectedType = ref(stationTypes[1])
 
 const availableStations = [
   { id: 'none', name: 'Create New' },
@@ -121,10 +121,10 @@ const selectedStation = ref(availableStations[1])
             >
               <ListboxOption
                 as="template"
-                v-for="type in stationType"
-                :key="type.id"
-                :value="type"
-                v-slot="{ active, stationType }"
+                v-for="stationType in stationTypes"
+                :key="stationType.id"
+                :value="stationType"
+                v-slot="{ active, stationTypes }"
               >
                 <li
                   :class="[
@@ -132,12 +132,13 @@ const selectedStation = ref(availableStations[1])
                     'relative cursor-default select-none py-2 pl-3 pr-9'
                   ]"
                 >
-                  <span :class="[stationType ? 'font-semibold' : 'font-normal', 'block truncate']">{{
-                    type.name
-                  }}</span>
+                  <span
+                    :class="[stationTypes ? 'font-semibold' : 'font-normal', 'block truncate']"
+                    >{{ stationType.name }}</span
+                  >
 
                   <span
-                    v-if="stationType"
+                    v-if="stationTypes"
                     :class="[
                       active ? 'text-white' : 'text-blue-600',
                       'absolute inset-y-0 right-0 flex items-center pr-4'
@@ -219,7 +220,7 @@ const selectedStation = ref(availableStations[1])
         </div>
 
         <div>
-          <RouterLink to="/room">
+          <RouterLink :to="{ name: 'scanner', params: { scannerType: 'check-in' } }">
             <button
               type="submit"
               class="flex w-full justify-center rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"

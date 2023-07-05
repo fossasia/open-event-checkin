@@ -1,5 +1,9 @@
 <script setup>
 import { RouterLink } from 'vue-router'
+
+function submitForm() {
+  console.log('submitting form')
+}
 </script>
 
 <template>
@@ -8,7 +12,7 @@ import { RouterLink } from 'vue-router'
       <h2 class="mt-0 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
         Sign in to your account
       </h2>
-      <form class="space-y-6 mt-10" action="#" method="POST">
+      <form class="space-y-6 mt-10" @submit.prevent="submitForm">
         <div>
           <label for="email" class="block text-sm font-medium leading-6 text-gray-900"
             >Email address</label
@@ -42,7 +46,7 @@ import { RouterLink } from 'vue-router'
         </div>
 
         <div>
-          <RouterLink to="/room">
+          <RouterLink :to="{ name: 'scanner', params: { scannerType: 'checkin' } }">
             <button
               type="submit"
               class="flex w-full justify-center rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
