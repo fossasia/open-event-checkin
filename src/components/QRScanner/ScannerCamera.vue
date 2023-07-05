@@ -89,7 +89,7 @@ async function logErrors(promise) {
     <div class="w-full items-center flex justify-center">
       <qrcode-stream
         :key="componentKey"
-        class="w-full aspect-square p-4 sm:!w-3/4 sm:!p-0 md:!h-2/3 md:!w-auto"
+        class="w-full aspect-square sm:!w-3/4 sm:!p-0 md:!h-2/3 md:!w-auto"
         :track="selected.value"
         @init="logErrors"
         :camera="camera"
@@ -97,7 +97,7 @@ async function logErrors(promise) {
       >
         <button
           type="button"
-          class="rounded fixed m-8 sm:m-4 bg-indigo-600 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          class="rounded fixed m-4 bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           @click="switchCamera"
         >
           Switch Camera
