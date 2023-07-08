@@ -76,13 +76,13 @@ async function logErrors(promise) {
 </script>
 
 <template>
-  <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+  <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 grow">
     <div
-      class="mx-auto flex max-w-2xl flex-col gap-16 bg-white/5 px-6 py-16 ring-1 ring-white/10 sm:rounded-3xl sm:p-8 lg:mx-0 lg:max-w-none lg:flex-row lg:items-center lg:py-20 xl:gap-x-20 xl:px-20"
+      class="mx-auto flex h-full max-w-2xl flex-col gap-16 bg-white/5 px-6 py-16 ring-1 ring-white/10 sm:rounded-3xl sm:p-8 lg:mx-0 lg:max-w-none lg:flex-row lg:items-center lg:py-20 xl:gap-x-20 xl:px-20"
     >
       <qrcode-stream
         :key="componentKey"
-        class="h-96 w-full flex-none rounded-2xl shadow-xl aspect-square lg:h-auto lg:max-w-sm"
+        class="w-full aspect-square sm:!w-3/4 sm:!p-0 md:!h-2/3 md:!w-auto"
         :track="selected.value"
         @init="logErrors"
         :camera="camera"

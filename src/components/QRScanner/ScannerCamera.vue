@@ -72,7 +72,7 @@ async function logErrors(promise) {
 </script>
 
 <template>
-  <div>
+  <div class="grow">
     <div class="py-2 space-y-3">
       <h2 class="text-center text-xl font-bold capitalize">{{ scannerType }} Scan</h2>
       <p class="text-center text-lg font-medium">Scan QR on badge</p>

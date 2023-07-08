@@ -46,15 +46,33 @@ const items = [
     email: 'wtc@email.com',
     organisation: 'SUSS AI-IG',
     checkedIn: ref(false)
+  },
+  {
+    id: 3,
+    name: 'Don Chia',
+    position: 'Chairperson',
+    role: 'Organiser',
+    email: 'wtc@email.com',
+    organisation: 'SUSS AI-IG',
+    checkedIn: ref(false)
+  },
+  {
+    id: 3,
+    name: 'Don Chia',
+    position: 'Chairperson',
+    role: 'Organiser',
+    email: 'wtc@email.com',
+    organisation: 'SUSS AI-IG',
+    checkedIn: ref(false)
   }
 ]
 </script>
 
 <template>
-  <div class="mx-auto max-w-2xl sm:px-6 lg:px-8">
+  <div class="mx-auto max-w-2xl sm:px-6 lg:px-8 ">
     <label
       for="search"
-      class="block flex items-center justify-center text-lg font-medium leading-10 text-gray-900"
+      class="flex items-center justify-center text-lg font-medium leading-10 text-gray-900"
     >
       <MagnifyingGlassIcon class="h-6 mr-2" aria-hidden="true" />
       <span>Enter my information</span>
@@ -80,11 +98,11 @@ const items = [
   </div>
 
   <div class="mx-auto max-w-2xl sm:px-6 lg:px-8 overflow-visible mt-6">
-    <ul role="list" class="space-y-3">
+    <ul role="list" class="space-y-3 h-96 overflow-scroll">
       <li
         v-for="item in items"
         :key="item.id"
-        class="overflow-hidden rounded-2xl bg-white px-6 py-4 shadow border border-gray-300 space-y-2"
+        class="rounded-2xl bg-white px-6 py-4 shadow border border-gray-300 space-y-2"
       >
         <div class="flex items-center justify-between gap-2">
           <div class="flex flex-col gap-2">
