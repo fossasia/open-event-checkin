@@ -15,7 +15,7 @@ const overallStats = [
 </script>
 
 <template>
-  <div>
+  <div class="grow">
     <div class="py-2">
       <h2 class="text-center text-xl font-bold capitalize">Stats</h2>
     </div>
