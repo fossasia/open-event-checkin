@@ -38,8 +38,11 @@ const fireFunction = () => {
     notificationContent.value.messageText = 'Please wait while we print your pass.'
     disableButton.value = true
     console.log('printing...')
+
+    setTimeout(() => {
+      window.location.reload()
+    }, 3000)
   } else {
-    // refresh page
     window.location.reload()
     console.log('refreshing page...')
   }
