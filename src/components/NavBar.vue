@@ -17,7 +17,7 @@ import {
   UserCircleIcon,
   ChevronDownIcon
 } from '@heroicons/vue/24/outline'
-import PasswordNotificationModal from '@/components/PasswordNotificationModal.vue'
+import PasswordNotificationModal from '@/components/Modals/PasswordNotificationModal.vue'
 
 const user = {
   name: 'Tom Cook',
