@@ -3,7 +3,8 @@ import { QrcodeStream } from 'vue-qrcode-reader'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 
-import NotificationModal from '@/components/NotificationModal.vue'
+import PrintNotificationModal from '@/components/Modals/PrintNotificationModal.vue'
+import SearchAttendee from '@/components/Registration/Manual/SearchAttendee.vue'
 
 // get scanner type from vue router params
 const route = useRoute()
@@ -95,11 +96,8 @@ async function logErrors(promise) {
           Switch Camera
         </button>
       </qrcode-stream>
-      <div class="w-full flex-auto text-center">
-        <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-          Scan QR on Ticket
-        </h2>
-        <p class="mt-6 text-lg leading-8 text-gray-500">Kindly wait for your badge to print</p>
+      <div class="w-full flex-auto overflow-visible">
+        <SearchAttendee />
       </div>
     </div>
   </div>
