@@ -69,7 +69,7 @@ const items = [
 </script>
 
 <template>
-  <div class="mx-auto max-w-2xl sm:px-6 lg:px-8 ">
+  <div class="mx-auto max-w-2xl sm:px-6 lg:px-8">
     <label
       for="search"
       class="flex items-center justify-center text-lg font-medium leading-10 text-gray-900"
@@ -98,7 +98,6 @@ const items = [
   </div>
 
   <div class="mx-auto max-w-2xl sm:px-6 lg:px-8 overflow-visible mt-6">
-
     <ul role="list" class="space-y-3 h-96 overflow-scroll">
       <li
         v-for="item in items"
