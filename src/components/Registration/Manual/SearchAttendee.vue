@@ -98,6 +98,7 @@ const items = [
   </div>
 
   <div class="mx-auto max-w-2xl sm:px-6 lg:px-8 overflow-visible mt-6">
+
     <ul role="list" class="space-y-3 h-96 overflow-scroll">
       <li
         v-for="item in items"
