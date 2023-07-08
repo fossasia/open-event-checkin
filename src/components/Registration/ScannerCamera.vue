@@ -3,7 +3,7 @@ import { QrcodeStream } from 'vue-qrcode-reader'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 
-import NotificationModal from '@/components/NotificationModal.vue'
+import PrintNotificationModal from '@/components/Modals/PrintNotificationModal.vue'
 
 // get scanner type from vue router params
 const route = useRoute()
@@ -45,9 +45,9 @@ const decode = () => {
   console.log(QRCodeValue)
 }
 
-const refreshComponent = () => {
-  componentKey.value += 1
-}
+// const refreshComponent = () => {
+//   componentKey.value += 1
+// }
 
 const updateShowNotification = (value) => {
   showNotification.value = value
@@ -56,11 +56,12 @@ const updateShowNotification = (value) => {
 const fireFunction = () => {
   // print user pass here
   console.log('Printing...')
+  // refreshComponent()
 }
 
 const switchCamera = () => {
   camera.value = camera.value === 'front' ? 'rear' : 'front'
-  refreshComponent()
+  // refreshComponent()
 }
 
 async function logErrors(promise) {
@@ -75,13 +76,19 @@ async function logErrors(promise) {
 </script>
 
 <template>
-  <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+  <div class="h-full mx-auto max-w-7xl flex">
+    <print-notification-modal
+      :showNotification="showNotification"
+      :validQRCode="validQRCode"
+      @update:show-modal="updateShowNotification"
+      @fire-function="fireFunction"
+    />
     <div
-      class="mx-auto flex max-w-2xl flex-col gap-16 bg-white/5 px-6 py-16 ring-1 ring-white/10 sm:rounded-3xl sm:p-8 lg:mx-0 lg:max-w-none lg:flex-row lg:items-center lg:py-20 xl:gap-x-20 xl:px-20"
+      class="grid grid-cols-1 lg:grid-cols-2 w-full align-middle justify-center items-center place-items-center"
     >
       <qrcode-stream
         :key="componentKey"
-        class="h-96 w-full flex-none rounded-2xl shadow-xl aspect-square lg:h-auto lg:max-w-sm"
+        class="!aspect-square !h-auto max-w-lg grid-cols-1 align-middle justify-center items-center"
         :track="selected.value"
         @init="logErrors"
         :camera="camera"
@@ -95,7 +102,7 @@ async function logErrors(promise) {
           Switch Camera
         </button>
       </qrcode-stream>
-      <div class="w-full flex-auto text-center">
+      <div class="w-full flex-auto text-center grid-cols-1">
         <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
           Scan QR on Ticket
         </h2>

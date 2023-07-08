@@ -3,8 +3,6 @@ import { QrcodeStream } from 'vue-qrcode-reader'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 
-import NotificationModal from '@/components/NotificationModal.vue'
-
 // get scanner type from vue router params
 const route = useRoute()
 const scannerType = route.params.scannerType
@@ -41,7 +39,6 @@ const validQRCode = ref(true)
 
 const decode = () => {
   // check if QRCodeValue is valid and conforms to what is needed over here
-  showNotification.value = true
   console.log(QRCodeValue)
 }
 
@@ -75,13 +72,7 @@ async function logErrors(promise) {
 </script>
 
 <template>
-  <div>
-    <notification-modal
-      :showNotification="showNotification"
-      :validQRCode="validQRCode"
-      @update:show-modal="updateShowNotification"
-      @fire-function="fireFunction"
-    />
+  <div class="grow">
     <div class="py-2 space-y-3">
       <h2 class="text-center text-xl font-bold capitalize">{{ scannerType }} Scan</h2>
       <p class="text-center text-lg font-medium">Scan QR on badge</p>
@@ -103,6 +94,9 @@ async function logErrors(promise) {
           Switch Camera
         </button>
       </qrcode-stream>
+    </div>
+    <div class="text-green-500 font-bold mt-5 text-lg text-center" v-if="QRCodeValue != ''">
+      { user name } has been checked into { room name }
     </div>
   </div>
 </template>

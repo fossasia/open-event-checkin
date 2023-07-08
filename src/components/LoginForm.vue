@@ -60,9 +60,9 @@ function submitForm() {
       </form>
 
       <p class="mt-10 text-center text-sm text-gray-500">
-        <span class="font-semibold text-blue-500">Forgot password?</span>
+        <span class="font-semibold">Forgot password?</span>
         {{ ' ' }}
-        <a href="https://eventyay.com/reset-password" class="font-semibold leading-6"
+        <a href="https://eventyay.com/reset-password" class="font-semibold leading-6 text-blue-500"
           >Click here to reset password</a
         >
       </p>
