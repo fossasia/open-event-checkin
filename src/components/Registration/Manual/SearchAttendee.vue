@@ -4,7 +4,7 @@ import { XCircleIcon, MagnifyingGlassIcon, PrinterIcon } from '@heroicons/vue/20
 
 const query = ref('')
 const typing = ref(false)
-const searchbar = ref(null)
+const searchBar = ref(null)
 
 const erase = () => {
   query.value = ''
@@ -64,8 +64,8 @@ const items = [
     </div>
   </div>
 
-  <div class="mx-auto max-w-2xl sm:px-6 lg:px-8">
-    <ul role="list" class="space-y-3 mt-6">
+  <div class="mx-auto max-w-2xl sm:px-6 lg:px-8 overflow-visible mt-6">
+    <ul role="list" class="space-y-3">
       <li v-for="item in items" :key="item.id" class="overflow-hidden rounded-2xl bg-white px-6 py-4 shadow border border-gray-300 space-y-2">
 
         <div class="flex items-center justify-between gap-2">
