@@ -34,6 +34,7 @@ const checkPassword = (value) => {
   if (value === '1234') {
     validPassword.value = true
     showPasswordNotification.value = false
+    // sign out
   } else {
     validPassword.value = false
   }
@@ -45,16 +46,6 @@ watch(
     checkPassword(value)
   }
 )
-
-const checkSignOut = () => {
-  if (validPassword.value) {
-    // sign out
-    console.log('signing out...')
-  } else {
-    // show password notification
-    showPasswordNotification.value = true
-  }
-}
 
 const navigation = [
   { name: 'Main', href: '#', current: true, icon: HomeIcon },
@@ -117,7 +108,7 @@ const eventName = ref('test event')
               <MenuItems
                 class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
               >
-                <MenuItem v-for="item in userNavigation" :key="item.name" v-slot="{ active }">
+                <MenuItem v-for="item in userNavigation" :key="item.name">
                   <button
                     @click="item.action"
                     class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
