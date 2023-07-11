@@ -105,8 +105,8 @@ const items = [
         class="rounded-2xl bg-white px-6 py-4 shadow border border-gray-300 space-y-2"
       >
         <div class="flex items-center justify-between gap-2">
-          <div class="flex flex-col gap-2">
-            <div class="flex flex-col sm:flex-row sm:items-baseline gap-2">
+          <div class="flex flex-col gap-3">
+            <div class="flex flex-col gap-1">
               <span class="text-gray-900 font-bold">{{ item.name }}</span>
               <span class="text-gray-400 font-bold text-sm">{{ item.email }}</span>
             </div>

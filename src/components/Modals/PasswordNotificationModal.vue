@@ -5,21 +5,10 @@ import { EllipsisHorizontalIcon } from '@heroicons/vue/24/outline'
 
 const props = defineProps({
   showNotification: Boolean,
-  validPassword: Boolean
+  target: String
 })
 
 const open = ref(false)
-const passwordField = ref('')
-const emit = defineEmits(['update:show-modal', 'emit-password'])
-const updateLocalShowNotification = (value) => {
-  open.value = value
-  emit('update:show-modal', value)
-}
-
-const emitPassword = (value) => {
-  console.log('emitting password')
-  emit('emit-password', value)
-}
 
 watch(
   () => props.showNotification,
@@ -27,6 +16,33 @@ watch(
     open.value = value
   }
 )
+
+const passwordField = ref('')
+const validPassword = ref(null)
+
+const checkPassword = (value) => {
+  // check password here
+  if (value === '1234') {
+    validPassword.value = true
+    updateLocalShowNotification(false)
+    passwordField.value = ''
+    emitTarget(props.target)
+    // sign out
+  } else {
+    validPassword.value = false
+    passwordField.value = ''
+  }
+}
+
+const emit = defineEmits(['update:show-modal', 'emitTarget'])
+
+const updateLocalShowNotification = (value) => {
+  emit('update:show-modal', value)
+}
+
+const emitTarget = (value) => {
+  emit('emitTarget', value)
+}
 </script>
 
 <template>
@@ -93,7 +109,7 @@ watch(
                 <button
                   type="button"
                   class="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                  @click="emitPassword(passwordField)"
+                  @click="checkPassword(passwordField)"
                 >
                   Sign Out
                 </button>
