@@ -1,4 +1,5 @@
 <script setup>
+import { RouterLink, useRoute } from 'vue-router'
 import { ref, watch } from 'vue'
 import {
   Disclosure,
@@ -19,50 +20,45 @@ import {
 } from '@heroicons/vue/24/outline'
 import PasswordNotificationModal from '@/components/Modals/PasswordNotificationModal.vue'
 
+const route = useRoute()
+const eventId = route.params.eventId
+
 const user = {
   name: 'Tom Cook',
   icon: UserCircleIcon
 }
-
-const showNavigation = ref(false)
-const showPasswordNotification = ref(false)
-const validPassword = ref(null)
-const passwordField = ref('')
-
-const checkPassword = (value) => {
-  // check password here
-  if (value === '1234') {
-    validPassword.value = true
-    showPasswordNotification.value = false
-    // sign out
-  } else {
-    validPassword.value = false
-  }
-}
-
-watch(
-  () => passwordField.value,
-  (value) => {
-    checkPassword(value)
-  }
-)
-
 const navigation = [
   { name: 'Main', href: '#', current: true, icon: HomeIcon },
   { name: 'Statistics', href: '#', current: false, icon: ChartBarIcon },
   { name: 'Close', href: '#', current: false, icon: XMarkIcon }
 ]
-const userNavigation = [{ name: 'Sign out', action: () => (showPasswordNotification.value = true) }]
-
+const userNavigation = [
+  {
+    name: 'Sign out',
+    action: () => {
+      ;(showPasswordNotification.value = true), (targetPage.value = 'Sign out')
+    }
+  },
+  {
+    name: 'Stats',
+    action: () => {
+      ;(showPasswordNotification.value = true), (targetPage.value = 'Stats')
+    }
+  }
+]
+const showNavigation = ref(false)
 const eventName = ref('test event')
+
+const showPasswordNotification = ref(false)
+const targetPage = ref('')
 </script>
 
 <template>
   <password-notification-modal
     :showNotification="showPasswordNotification"
-    :validPassword="validPassword"
     @update:show-modal="showPasswordNotification = $event"
-    @emit-password="passwordField = $event"
+    :target="targetPage"
+    @emit-target="console.log($event)"
   />
   <Disclosure as="header" class="bg-white shadow sticky top-0" v-slot="{ open }">
     <div class="mx-auto max-w-7xl px-2 sm:px-4 lg:divide-y lg:divide-gray-200 lg:px-8">
@@ -182,8 +178,9 @@ const eventName = ref('test event')
             as="a"
             :href="item.href"
             class="block rounded-md px-3 py-2 text-base font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-900"
-            >{{ item.name }}</DisclosureButton
           >
+            {{ item.name }}
+          </DisclosureButton>
         </div>
       </div>
     </DisclosurePanel>
