@@ -1,7 +1,7 @@
 <script setup>
-import { RouterView, useRoute } from 'vue-router'
-import { CameraIcon, ChartBarIcon, RocketLaunchIcon } from '@heroicons/vue/24/outline'
-
+import { RouterView } from 'vue-router'
+//import { CameraIcon, ChartBarIcon, RocketLaunchIcon } from '@heroicons/vue/24/outline'
+/*
 const route = useRoute()
 const eventId = route.params.eventId
 
@@ -16,6 +16,7 @@ const tabs = [
   { name: 'Hybrid', href: 'registerHybrid', icon: RocketLaunchIcon, current: true },
   { name: 'Stats', href: 'registerStats', icon: ChartBarIcon, current: false }
 ]
+*/
 </script>
 <template>
   <RouterView />

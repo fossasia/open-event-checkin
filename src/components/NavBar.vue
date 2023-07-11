@@ -1,5 +1,4 @@
 <script setup>
-import { RouterLink, useRoute } from 'vue-router'
 import { ref, watch } from 'vue'
 import {
   Disclosure,
@@ -19,9 +18,6 @@ import {
   ChevronDownIcon
 } from '@heroicons/vue/24/outline'
 import PasswordNotificationModal from '@/components/Modals/PasswordNotificationModal.vue'
-
-const route = useRoute()
-const eventId = route.params.eventId
 
 const user = {
   name: 'Tom Cook',
