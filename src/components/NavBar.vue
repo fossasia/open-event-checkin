@@ -50,7 +50,7 @@ const targetPage = ref('')
 </script>
 
 <template>
-  <password-notification-modal
+  <PasswordModal
     :showNotification="showPasswordNotification"
     @update:show-modal="showPasswordNotification = $event"
     :target="targetPage"

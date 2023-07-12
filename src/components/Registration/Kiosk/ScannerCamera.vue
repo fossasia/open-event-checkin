@@ -77,7 +77,7 @@ async function logErrors(promise) {
 
 <template>
   <div class="h-full mx-auto max-w-7xl flex">
-    <print-notification-modal
+    <PrintModal
       :showNotification="showNotification"
       :validQRCode="validQRCode"
       @update:show-modal="updateShowNotification"
