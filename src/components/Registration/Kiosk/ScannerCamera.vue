@@ -3,7 +3,7 @@ import { QrcodeStream } from 'vue-qrcode-reader'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 
-import PrintNotificationModal from '@/components/Modals/PrintNotificationModal.vue'
+import PrintModal from '@/components/Modals/PrintModal.vue'
 
 // get scanner type from vue router params
 const route = useRoute()

@@ -17,7 +17,7 @@ import {
   UserCircleIcon,
   ChevronDownIcon
 } from '@heroicons/vue/24/outline'
-import PasswordNotificationModal from '@/components/Modals/PasswordNotificationModal.vue'
+import PasswordModal from '@/components/Modals/PasswordModal.vue'
 
 const user = {
   name: 'Tom Cook',
@@ -30,15 +30,15 @@ const navigation = [
 ]
 const userNavigation = [
   {
-    name: 'Sign out',
-    action: () => {
-      ;(showPasswordNotification.value = true), (targetPage.value = 'Sign out')
-    }
-  },
-  {
     name: 'Stats',
     action: () => {
       ;(showPasswordNotification.value = true), (targetPage.value = 'Stats')
+    }
+  },
+  {
+    name: 'Sign out',
+    action: () => {
+      ;(showPasswordNotification.value = true), (targetPage.value = 'Sign out')
     }
   }
 ]
@@ -103,7 +103,12 @@ const targetPage = ref('')
                 <MenuItem v-for="item in userNavigation" :key="item.name">
                   <button
                     @click="item.action"
-                    class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    :class="[
+                      item.name == 'Sign out'
+                        ? 'text-red-600 hover:bg-red-100 font-semibold'
+                        : 'text-gray-700 hover:bg-gray-100',
+                      'w-full text-left px-4 py-2 text-sm'
+                    ]"
                   >
                     <component
                       :is="item.icon"
