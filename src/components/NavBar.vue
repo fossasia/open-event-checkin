@@ -30,15 +30,15 @@ const navigation = [
 ]
 const userNavigation = [
   {
-    name: 'Sign out',
-    action: () => {
-      ;(showPasswordNotification.value = true), (targetPage.value = 'Sign out')
-    }
-  },
-  {
     name: 'Stats',
     action: () => {
       ;(showPasswordNotification.value = true), (targetPage.value = 'Stats')
+    }
+  },
+  {
+    name: 'Sign out',
+    action: () => {
+      ;(showPasswordNotification.value = true), (targetPage.value = 'Sign out')
     }
   }
 ]
