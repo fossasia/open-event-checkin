@@ -36,7 +36,7 @@ const checkPassword = (value) => {
 </script>
 
 <template>
-  <TransitionRoot as="template" :show="open">
+  <TransitionRoot as="template" :show="open" @click="$emit('update:show-modal', false)">
     <Dialog as="div" class="relative z-10">
       <TransitionChild
         as="template"

@@ -9,52 +9,11 @@ const props = defineProps({
   showNotification: Boolean,
   validQRCode: Boolean
 })
-const emit = defineEmits(['update:show-modal', 'fire-function'])
+const emit = defineEmits(['update:show-modal', 'print'])
 const updateLocalShowNotification = (value) => {
   open.value = value
   emit('update:show-modal', value)
 }
-
-const notificationContent = ref({
-  titleText: '',
-  messageText: '',
-  buttonText: ''
-})
-if (props.validQRCode) {
-  notificationContent.value.titleText = 'Select items to print'
-  notificationContent.value.messageText = ''
-  notificationContent.value.buttonText = 'Print'
-} else {
-  notificationContent.value.titleText = 'Error!'
-  notificationContent.value.messageText = 'Please scan a valid QR code.'
-  notificationContent.value.buttonText = 'Try Again'
-}
-const disableButton = ref(false)
-const open = ref(false)
-
-const fireFunction = () => {
-  if (props.validQRCode) {
-    emit('fire-function')
-    notificationContent.value.titleText = 'Printing...'
-    notificationContent.value.messageText = 'Please wait while we print your pass.'
-    disableButton.value = true
-    console.log('printing...')
-
-    setTimeout(() => {
-      window.location.reload()
-    }, 3000)
-  } else {
-    window.location.reload()
-    console.log('refreshing page...')
-  }
-}
-
-const printOptions = [
-  { id: 'name', name: 'Name', label: 'Name' },
-  { id: 'email', name: 'Email', label: 'Email' },
-  { id: 'org', name: 'Organisation', label: 'Organisation' },
-  { id: 'role', name: 'Role', label: 'Role' }
-]
 
 // INITIALISE TEMPLATE REFS
 const selectAll = ref(null)
@@ -70,6 +29,46 @@ function setRef(index) {
     refs.value[index] = el
   }
 }
+
+const notificationContent = ref({
+  titleText: '',
+  messageText: '',
+  buttonText: ''
+})
+
+if (props.validQRCode) {
+  notificationContent.value.titleText = 'Select items to print'
+  notificationContent.value.messageText = ''
+  notificationContent.value.buttonText = 'Print'
+} else {
+  notificationContent.value.titleText = 'Error!'
+  notificationContent.value.messageText = 'Please scan a valid QR code.'
+  notificationContent.value.buttonText = 'Try Again'
+}
+
+const disableButton = ref(false)
+const open = ref(false)
+
+const print = () => {
+  if (props.validQRCode) {
+    emit('print')
+    notificationContent.value.titleText = 'Printing...'
+    notificationContent.value.messageText = 'Please wait while we print your pass.'
+    disableButton.value = true
+    console.log(selectedOptions.value)
+    setTimeout(() => updateLocalShowNotification(false), 3000)
+  } else {
+    updateLocalShowNotification(false)
+    console.log('Rescan')
+  }
+}
+
+const printOptions = [
+  { id: 'name', name: 'Name', label: 'Name' },
+  { id: 'email', name: 'Email', label: 'Email' },
+  { id: 'org', name: 'Organisation', label: 'Organisation' },
+  { id: 'role', name: 'Role', label: 'Role' }
+]
 
 const selectedOptions = ref([])
 const showIntermediate = ref(false)
@@ -256,7 +255,7 @@ watch(
                     </div>
                   </fieldset>
                   <div
-                    class="mt-6"
+                    class="mt-3"
                     v-if="notificationContent.messageText == 'Please scan a valid QR code.'"
                   >
                     <p class="text-sm text-gray-500">
@@ -271,7 +270,7 @@ watch(
                   :disabled="disableButton"
                   :class="disableButton ? 'cursor-not-allowed opacity-20' : ''"
                   class="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-                  @click="fireFunction"
+                  @click="print"
                 >
                   {{ notificationContent.buttonText }}
                 </button>

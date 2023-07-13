@@ -29,14 +29,8 @@ const navigation = [
   { name: 'Close', href: '#', current: false, icon: XMarkIcon }
 ]
 const userNavigation = [
-  {
-    name: 'Stats',
-    action: () => (showPasswordNotification.value = false)
-  },
-  {
-    name: 'Sign out',
-    action: () => (showPasswordNotification.value = true)
-  }
+  { name: 'Stats' },
+  { name: 'Sign out', action: () => (showPasswordNotification.value = true) }
 ]
 const showNavigation = ref(false)
 const eventName = ref('test event')

@@ -53,7 +53,7 @@ const updateShowNotification = (value) => {
   showNotification.value = value
 }
 
-const fireFunction = () => {
+const printFunction = () => {
   // print user pass here
   console.log('Printing...')
   // refreshComponent()
@@ -81,7 +81,7 @@ async function logErrors(promise) {
       :showNotification="showNotification"
       :validQRCode="validQRCode"
       @update:show-modal="updateShowNotification"
-      @fire-function="fireFunction"
+      @print="printFunction"
     />
     <div
       class="grid grid-cols-1 lg:grid-cols-2 w-full align-middle justify-center items-center place-items-center"
