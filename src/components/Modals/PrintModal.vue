@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { MinusSmallIcon } from '@heroicons/vue/20/solid'
 import { PrinterIcon } from '@heroicons/vue/24/outline'
@@ -9,6 +9,11 @@ const props = defineProps({
   showNotification: Boolean,
   validQRCode: Boolean
 })
+const emit = defineEmits(['update:show-modal', 'fire-function'])
+const updateLocalShowNotification = (value) => {
+  open.value = value
+  emit('update:show-modal', value)
+}
 
 const notificationContent = ref({
   titleText: '',
@@ -26,11 +31,6 @@ if (props.validQRCode) {
 }
 const disableButton = ref(false)
 const open = ref(false)
-const emit = defineEmits(['update:show-modal', 'fire-function'])
-const updateLocalShowNotification = (value) => {
-  open.value = value
-  emit('update:show-modal', value)
-}
 
 const fireFunction = () => {
   if (props.validQRCode) {
@@ -50,39 +50,32 @@ const fireFunction = () => {
 }
 
 const printOptions = [
-  {
-    id: 'name',
-    name: 'Name',
-    label: 'Name',
-    description: 'Print your full name'
-  },
-  {
-    id: 'email',
-    name: 'Email',
-    label: 'Email',
-    description: 'Print your email'
-  },
-  {
-    id: 'org',
-    name: 'Orgnaisation',
-    label: 'Orgnaisation',
-    description: 'Print your organisation'
-  },
-  {
-    id: 'role',
-    name: 'Role',
-    label: 'Role',
-    description: 'Print your role'
-  }
+  { id: 'name', name: 'Name', label: 'Name' },
+  { id: 'email', name: 'Email', label: 'Email' },
+  { id: 'org', name: 'Organisation', label: 'Organisation' },
+  { id: 'role', name: 'Role', label: 'Role' },
 ]
+
+// INITIALISE TEMPLATE REFS
+const selectAll = ref(null)
+const intermediate = ref(null)
+const refs = ref([])
+onMounted(() => {
+  refs.value = Array(printOptions.length).fill(null).map(() => ref(null))
+})
+function setRef(index) {
+  return (el) => {
+    refs.value[index] = el
+  }
+}
 
 const selectedOptions = ref([])
 const showIntermediate = ref(false)
 const allSelected = ref(false)
 
+
 watch(selectedOptions, () => {
   var showIntVal, allSelVal
-  console.log(selectedOptions.value)
   if (selectedOptions.value.length == 0) {
     showIntVal = false
     allSelVal = false
@@ -95,22 +88,22 @@ watch(selectedOptions, () => {
   }
   showIntermediate.value = showIntVal
   allSelected.value = allSelVal
-  document.getElementById('select-all').checked = allSelVal
+  selectAll.value.checked = allSelVal
 })
 
-const selectAll = () => {
-  if (document.getElementById('select-all').checked == true) {
-    printOptions.forEach((element) => {
-      document.getElementById(element.id).checked = true
+const selectOrDeselectAll = () => {
+  if (selectAll.value.checked == true) {
+    printOptions.forEach((element, index) => {
+      refs.value[index].checked = true
       selectedOptions.value.push(element.id)
     })
   } else {
-    printOptions.forEach((element) => {
-      document.getElementById(element.id).checked = false
+    printOptions.forEach((element, index) => {
+      refs.value[index].checked = false
       selectedOptions.value.pop(element.id)
     })
   }
-  allSelected.value = document.getElementById('select-all').checked
+  allSelected.value = selectAll.value.checked
   console.log(selectedOptions.value)
 }
 
@@ -125,11 +118,11 @@ watch(
   (value) => {
     open.value = value
     setTimeout(() => {
-      printOptions.forEach((element) => {
-        document.getElementById(element.id).checked = true
+      printOptions.forEach((element, index) => {
+        refs.value[index].checked = true
         selectedOptions.value.push(element.id)
       })
-      document.getElementById('select-all').checked = true
+      selectAll.value.checked = true
     }, 0)
   }
 )
@@ -183,12 +176,13 @@ watch(
                   <fieldset v-if="props.validQRCode">
                     <div class="space-y-5 mt-6 sm:mt-5">
                       <div
-                        v-for="printOption in printOptions"
-                        :key="printOption.id"
+                        v-for="(printOption, index) in printOptions"
+                        :key="index"
                         class="relative flex items-start px-12 sm:px-6"
                       >
                         <div class="flex h-6 items-center">
                           <input
+                            :ref="setRef(index)"
                             :id="printOption.id"
                             :name="printOption.name"
                             :value="printOption.id"
@@ -214,15 +208,17 @@ watch(
                       <div class="pt-4 relative flex items-start px-12 sm:px-6">
                         <div class="flex h-6 items-center">
                           <input
-                            v-if="!showIntermediate"
+                            v-show="!showIntermediate"
+                            ref="selectAll"
                             id="select-all"
                             name="Select-all"
                             type="checkbox"
                             class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
-                            @click="selectAll"
+                            @click="selectOrDeselectAll"
                           />
                           <input
                             v-if="showIntermediate"
+                            ref="intermediate"
                             id="intermediate"
                             name="intermediate"
                             type="checkbox"
