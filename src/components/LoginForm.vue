@@ -17,7 +17,6 @@ const authStore = useAuthStore()
 
 // router
 const router = useRouter()
-const route = useRoute()
 
 async function submitLogin() {
   loadingStore.show = true
