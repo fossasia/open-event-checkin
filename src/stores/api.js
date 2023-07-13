@@ -1,4 +1,3 @@
-import { ref, computed } from 'vue'
 import { mande, defaults } from 'mande'
 import { defineStore } from 'pinia'
 

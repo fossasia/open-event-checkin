@@ -5,15 +5,14 @@ export const useAuthStore = defineStore('auth', () => {
   // clear tokens
   function logoutClear() {
     localStorage.clear()
-    getActivePinia()._s.forEach((store) => store.$reset())
     useApi().clearToken()
   }
 
-  async function logout() {
+  async function logout(route) {
     try {
       await useApi()
         .post(true, route)
-        .then((res) => {
+        .then(() => {
           logoutClear()
           return true
         })
