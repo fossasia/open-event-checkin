@@ -31,30 +31,22 @@ const navigation = [
 const userNavigation = [
   {
     name: 'Stats',
-    action: () => {
-      ;(showPasswordNotification.value = true), (targetPage.value = 'Stats')
-    }
+    action: () => (showPasswordNotification.value = false)
   },
   {
     name: 'Sign out',
-    action: () => {
-      ;(showPasswordNotification.value = true), (targetPage.value = 'Sign out')
-    }
+    action: () => (showPasswordNotification.value = true)
   }
 ]
 const showNavigation = ref(false)
 const eventName = ref('test event')
-
 const showPasswordNotification = ref(false)
-const targetPage = ref('')
 </script>
 
 <template>
   <PasswordModal
     :showNotification="showPasswordNotification"
     @update:show-modal="showPasswordNotification = $event"
-    :target="targetPage"
-    @emit-target="console.log($event)"
   />
   <Disclosure as="header" class="bg-white shadow sticky top-0" v-slot="{ open }">
     <div class="mx-auto max-w-7xl px-2 sm:px-4 lg:divide-y lg:divide-gray-200 lg:px-8">

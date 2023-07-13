@@ -4,9 +4,10 @@ import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } fro
 import { EllipsisHorizontalIcon } from '@heroicons/vue/24/outline'
 
 const props = defineProps({
-  showNotification: Boolean,
-  target: String
+  showNotification: Boolean
 })
+
+const emit = defineEmits(['update:show-modal'])
 
 const open = ref(false)
 
@@ -24,32 +25,20 @@ const checkPassword = (value) => {
   // check password here
   if (value === '1234') {
     validPassword.value = true
-    updateLocalShowNotification(false)
+    emit('update:show-modal', false)
     passwordField.value = ''
-    emitTarget(props.target)
     // sign out
   } else {
     validPassword.value = false
     passwordField.value = ''
   }
 }
-
-const emit = defineEmits(['update:show-modal', 'emitTarget'])
-
-const updateLocalShowNotification = (value) => {
-  emit('update:show-modal', value)
-}
-
-const emitTarget = (value) => {
-  emit('emitTarget', value)
-}
 </script>
 
 <template>
   <TransitionRoot as="template" :show="open">
-    <Dialog as="div" class="relative z-10" @close="updateLocalShowNotification">
+    <Dialog as="div" class="relative z-10">
       <TransitionChild
-        @click="updateLocalShowNotification(false)"
         as="template"
         enter="ease-out duration-300"
         enter-from="opacity-0"
@@ -111,8 +100,7 @@ const emitTarget = (value) => {
                   class="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
                   @click="checkPassword(passwordField)"
                 >
-                  <span v-if="props.target === 'Sign out'">Sign Out</span>
-                  <span v-if="props.target === 'Stats'">Enter</span>
+                  Sign Out
                 </button>
               </div>
             </DialogPanel>
