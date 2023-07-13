@@ -17,7 +17,7 @@ import {
   UserCircleIcon,
   ChevronDownIcon
 } from '@heroicons/vue/24/outline'
-import PasswordNotificationModal from '@/components/Modals/PasswordNotificationModal.vue'
+import PasswordModal from '@/components/Modals/PasswordModal.vue'
 
 const user = {
   name: 'Tom Cook',
@@ -29,32 +29,18 @@ const navigation = [
   { name: 'Close', href: '#', current: false, icon: XMarkIcon }
 ]
 const userNavigation = [
-  {
-    name: 'Stats',
-    action: () => {
-      ;(showPasswordNotification.value = true), (targetPage.value = 'Stats')
-    }
-  },
-  {
-    name: 'Sign out',
-    action: () => {
-      ;(showPasswordNotification.value = true), (targetPage.value = 'Sign out')
-    }
-  }
+  { name: 'Stats' },
+  { name: 'Sign out', action: () => (showPasswordNotification.value = true) }
 ]
 const showNavigation = ref(false)
 const eventName = ref('test event')
-
 const showPasswordNotification = ref(false)
-const targetPage = ref('')
 </script>
 
 <template>
-  <password-notification-modal
+  <PasswordModal
     :showNotification="showPasswordNotification"
     @update:show-modal="showPasswordNotification = $event"
-    :target="targetPage"
-    @emit-target="console.log($event)"
   />
   <Disclosure as="header" class="bg-white shadow sticky top-0" v-slot="{ open }">
     <div class="mx-auto max-w-7xl px-2 sm:px-4 lg:divide-y lg:divide-gray-200 lg:px-8">
@@ -103,7 +89,12 @@ const targetPage = ref('')
                 <MenuItem v-for="item in userNavigation" :key="item.name">
                   <button
                     @click="item.action"
-                    class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    :class="[
+                      item.name == 'Sign out'
+                        ? 'text-red-600 hover:bg-red-100 font-semibold'
+                        : 'text-gray-700 hover:bg-gray-100',
+                      'w-full text-left px-4 py-2 text-sm'
+                    ]"
                   >
                     <component
                       :is="item.icon"
