@@ -53,7 +53,7 @@ const printOptions = [
   { id: 'name', name: 'Name', label: 'Name' },
   { id: 'email', name: 'Email', label: 'Email' },
   { id: 'org', name: 'Organisation', label: 'Organisation' },
-  { id: 'role', name: 'Role', label: 'Role' },
+  { id: 'role', name: 'Role', label: 'Role' }
 ]
 
 // INITIALISE TEMPLATE REFS
@@ -61,7 +61,9 @@ const selectAll = ref(null)
 const intermediate = ref(null)
 const refs = ref([])
 onMounted(() => {
-  refs.value = Array(printOptions.length).fill(null).map(() => ref(null))
+  refs.value = Array(printOptions.length)
+    .fill(null)
+    .map(() => ref(null))
 })
 function setRef(index) {
   return (el) => {
@@ -72,7 +74,6 @@ function setRef(index) {
 const selectedOptions = ref([])
 const showIntermediate = ref(false)
 const allSelected = ref(false)
-
 
 watch(selectedOptions, () => {
   var showIntVal, allSelVal
