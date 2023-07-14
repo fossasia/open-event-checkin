@@ -4,7 +4,7 @@ import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { ArrowsRightLeftIcon } from '@heroicons/vue/24/outline'
 
-import PrintNotificationModal from '@/components/Modals/PrintNotificationModal.vue'
+import PrintModal from '@/components/Modals/PrintModal.vue'
 
 // get scanner type from vue router params
 const route = useRoute()
@@ -54,7 +54,7 @@ const updateShowNotification = (value) => {
   showNotification.value = value
 }
 
-const fireFunction = () => {
+const printFunction = () => {
   // print user pass here
   console.log('Printing...')
   // refreshComponent()
@@ -78,11 +78,11 @@ async function logErrors(promise) {
 
 <template>
   <div class="h-full mx-auto max-w-7xl flex">
-    <print-notification-modal
+    <PrintModal
       :showNotification="showNotification"
       :validQRCode="validQRCode"
       @update:show-modal="updateShowNotification"
-      @fire-function="fireFunction"
+      @print="printFunction"
     />
     <div
       class="grid grid-cols-1 lg:grid-cols-2 w-full align-middle justify-center items-center place-items-center"
