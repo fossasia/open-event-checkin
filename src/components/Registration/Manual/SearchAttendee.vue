@@ -1,6 +1,5 @@
 <script setup>
 import { ref, watch, onMounted } from 'vue'
-import { TransitionRoot } from '@headlessui/vue'
 import { XCircleIcon, PrinterIcon } from '@heroicons/vue/20/solid'
 import { FunnelIcon } from '@heroicons/vue/24/outline'
 
