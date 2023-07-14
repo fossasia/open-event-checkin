@@ -4,9 +4,10 @@ import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } fro
 import { EllipsisHorizontalIcon } from '@heroicons/vue/24/outline'
 
 const props = defineProps({
-  showNotification: Boolean,
-  target: String
+  showNotification: Boolean
 })
+
+const emit = defineEmits(['updateShowModal'])
 
 const open = ref(false)
 
@@ -24,32 +25,20 @@ const checkPassword = (value) => {
   // check password here
   if (value === '1234') {
     validPassword.value = true
-    updateLocalShowNotification(false)
+    emit('updateShowModal', false)
     passwordField.value = ''
-    emitTarget(props.target)
     // sign out
   } else {
     validPassword.value = false
     passwordField.value = ''
   }
 }
-
-const emit = defineEmits(['update:show-modal', 'emitTarget'])
-
-const updateLocalShowNotification = (value) => {
-  emit('update:show-modal', value)
-}
-
-const emitTarget = (value) => {
-  emit('emitTarget', value)
-}
 </script>
 
 <template>
-  <TransitionRoot as="template" :show="open">
-    <Dialog as="div" class="relative z-10" @close="updateLocalShowNotification">
+  <TransitionRoot as="template" :show="open" @click="$emit('updateShowModal', false)">
+    <Dialog as="div" class="relative z-10">
       <TransitionChild
-        @click="updateLocalShowNotification(false)"
         as="template"
         enter="ease-out duration-300"
         enter-from="opacity-0"
@@ -94,7 +83,7 @@ const emitTarget = (value) => {
                       name="password"
                       id="password"
                       autocomplete="password"
-                      class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                     />
                   </div>
                   <p
@@ -108,7 +97,7 @@ const emitTarget = (value) => {
               <div class="mt-5 sm:mt-6">
                 <button
                   type="button"
-                  class="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  class="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
                   @click="checkPassword(passwordField)"
                 >
                   Sign Out
