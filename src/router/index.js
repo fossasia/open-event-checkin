@@ -8,6 +8,7 @@ import RegistrationKiosk from '@/components/Registration/Kiosk/ScannerCamera.vue
 //import RegistrationStats from '@/components/Registration/Manual/RegistrationStats.vue'
 import RegistrationManual from '@/components/Registration/Manual/ScanSearch.vue'
 import NotFound from '@/views/NotFound.vue'
+import AuthTemplate from '@/AuthTemplate.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -18,33 +19,39 @@ const router = createRouter({
       component: UserAuth
     },
     {
-      path: '/station-selector',
-      name: 'stationSelector',
-      component: StationSelector
-    },
-    {
-      path: '/:eventId/registration/:registrationType',
-      name: 'registration',
-      redirect: { name: 'registerKiosk' },
-      component: Registration,
+      path: '/auth',
+      name: 'auth',
+      component: AuthTemplate,
       children: [
         {
-          path: 'kiosk',
-          name: 'registerKiosk',
-          component: RegistrationKiosk
+          path: 'station-selector',
+          name: 'stationSelector',
+          component: StationSelector
         },
-        // out of kiosk mode
         {
-          path: 'manual',
-          name: 'registerHybrid',
-          component: RegistrationManual
-        }
+          path: ':eventId/registration/:registrationType',
+          name: 'registration',
+          redirect: { name: 'registerKiosk' },
+          component: Registration,
+          children: [
+            {
+              path: 'kiosk',
+              name: 'registerKiosk',
+              component: RegistrationKiosk
+            },
+            {
+              path: 'manual',
+              name: 'registerHybrid',
+              component: RegistrationManual
+            }
+          ]
+        },
+        {
+          path: ':eventId/scanner/:scannerType',
+          name: 'scanner',
+          component: QRScannerCamera
+        },
       ]
-    },
-    {
-      path: '/:eventId/scanner/:scannerType',
-      name: 'scanner',
-      component: QRScannerCamera
     },
     { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFound }
   ]
