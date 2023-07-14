@@ -42,7 +42,7 @@ const showPasswordNotification = ref(false)
     :showNotification="showPasswordNotification"
     @update-show-modal="showPasswordNotification = $event"
   />
-  <Disclosure as="header" class="bg-white shadow sticky top-0" v-slot="{ open }">
+  <Disclosure as="header" class="bg-white shadow sticky top-0 z-[100]" v-slot="{ open }">
     <div class="mx-auto max-w-7xl px-2 sm:px-4 lg:divide-y lg:divide-gray-200 lg:px-8">
       <div class="relative flex h-16 justify-between space-x-5">
         <div class="relative z-10 flex pl-2">

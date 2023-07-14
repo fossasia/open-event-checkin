@@ -77,33 +77,34 @@ async function logErrors(promise) {
 </script>
 
 <template>
-  <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 grow">
+  <div class="mx-auto w-full sm:px-6 lg:px-8 grow">
     <div
-      class="mx-auto flex h-full max-w-2xl flex-col gap-16 bg-white/5 px-6 py-16 ring-1 ring-white/10 sm:rounded-3xl sm:p-8 lg:mx-0 lg:max-w-none lg:flex-row lg:items-center lg:py-20 xl:gap-x-20 xl:px-20"
+      class="mx-auto flex h-full w-3/4 flex-col gap-16 bg-white/5 py-16 ring-1 ring-white/10 sm:rounded-3xl lg:max-w-none xl:flex-row lg:items-center lg:py-20 xl:gap-x-8"
     >
-      <div>
-        <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-2xl">
-          Scan QR on Ticket
-        </h2>
+      <div class="h-[430px]">
+        <div class="flex justify-center">
+          <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-2xl">
+            Scan QR on Ticket
+          </h2>
+        </div>
         <qrcode-stream
           :key="componentKey"
-          class="!aspect-square !h-auto max-w-lg grid-cols-1 align-middle justify-center items-center"
+          class="!aspect-square !h-auto max-w-lg grid-cols-1 align-middle justify-center items-center mt-2"
           :track="selected.value"
           @init="logErrors"
           :camera="camera"
           @decode="decode"
-        >
-        </qrcode-stream>
+        />
         <button
           type="button"
-          class="mt-4 inline-flex items-center gap-x-2 rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          class="mt-4 inline-flex items-center gap-x-2 rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
           @click="switchCamera"
         >
           <ArrowsRightLeftIcon class="-ml-0.5 h-5 w-5" aria-hidden="true" />
           Switch Camera
         </button>
       </div>
-      <div class="w-full flex-auto overflow-visible">
+      <div class="w-full flex-auto overflow-visible max-h-[430px]">
         <SearchAttendee />
       </div>
     </div>
