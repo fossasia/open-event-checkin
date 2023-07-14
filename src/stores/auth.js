@@ -1,16 +1,16 @@
 import { defineStore } from 'pinia'
-import { useApi } from '@/stores/api'
+import { useApiStore } from '@/stores/api'
 
 export const useAuthStore = defineStore('auth', () => {
   // clear tokens
   function logoutClear() {
     localStorage.clear()
-    useApi().clearToken()
+    useApiStore().clearToken()
   }
 
   async function logout(route) {
     try {
-      await useApi()
+      await useApiStore()
         .post(true, route)
         .then(() => {
           logoutClear()
@@ -23,7 +23,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function login(payload, route) {
     try {
-      const res = await useApi().post(true, route, payload, false)
+      const res = await useApiStore().post(true, route, payload, false)
       return Object(res)
     } catch (error) {
       return error

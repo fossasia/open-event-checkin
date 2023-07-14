@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useLoadingStore } from '@/stores/loading'
 import { useAuthStore } from '@/stores/auth'
 

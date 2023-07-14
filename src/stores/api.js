@@ -1,7 +1,7 @@
 import { mande, defaults } from 'mande'
 import { defineStore } from 'pinia'
 
-export const useApi = defineStore('api', () => {
+export const useApiStore = defineStore('api', () => {
   let instance = mande('https://test-api.eventyay.com/v1/')
 
   function setToken() {
