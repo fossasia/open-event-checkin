@@ -20,7 +20,7 @@ function setRef(index) {
 
 const menuOpen = ref(false)
 
-const toggleMenu = () => menuOpen.value = !menuOpen.value
+const toggleMenu = () => (menuOpen.value = !menuOpen.value)
 
 const query = ref('')
 const typing = ref(false)
@@ -39,7 +39,7 @@ const items = [
     info: {
       role: 'Chairperson',
       memberType: 'Organiser',
-      organisation: 'SUSS AI-IG',
+      organisation: 'SUSS AI-IG'
     }
   },
   {
@@ -50,7 +50,7 @@ const items = [
     info: {
       role: 'Chairperson',
       memberType: 'Organiser',
-      organisation: 'SUSS AI-IG',
+      organisation: 'SUSS AI-IG'
     }
   },
   {
@@ -61,7 +61,7 @@ const items = [
     info: {
       role: 'Chairperson',
       memberType: 'Organiser',
-      organisation: 'SUSS AI-IG',
+      organisation: 'SUSS AI-IG'
     }
   },
   {
@@ -72,7 +72,7 @@ const items = [
     info: {
       role: 'Chairperson',
       memberType: 'Organiser',
-      organisation: 'SUSS AI-IG',
+      organisation: 'SUSS AI-IG'
     }
   },
   {
@@ -83,9 +83,9 @@ const items = [
     info: {
       role: 'Chairperson',
       memberType: 'Organiser',
-      organisation: 'SUSS AI-IG',
+      organisation: 'SUSS AI-IG'
     }
-  },
+  }
 ]
 
 const showInfo = [
@@ -93,7 +93,7 @@ const showInfo = [
     id: 'info1',
     name: 'Role',
     show: ref(true),
-    action: () => (showInfo[0].show.value= !showInfo[0].show.value)
+    action: () => (showInfo[0].show.value = !showInfo[0].show.value)
   },
   {
     id: 'info2',
@@ -117,49 +117,71 @@ const updateMenu = () => {
     refs.value[1].checked = showInfo[1].show.value
     refs.value[2].checked = showInfo[2].show.value
   }
-  filtered.value = showInfo.some(obj => !obj.show.value)
+  filtered.value = showInfo.some((obj) => !obj.show.value)
 }
-watch(menuOpen, () =>  setTimeout(() => updateMenu(), 0))
+watch(menuOpen, () => setTimeout(() => updateMenu(), 0))
 </script>
 
 <template>
   <div v-if="menuOpen" @click="toggleMenu" class="absolute w-full h-screen" />
   <div class="mx-auto max-w-3xl sm:px-6 lg:px-8">
     <div class="flex justify-center">
-      <label
-        for="search"
-        class="text-2xl font-bold tracking-tight text-gray-900"
-      >
+      <label for="search" class="text-2xl font-bold tracking-tight text-gray-900">
         Search by name or email
       </label>
     </div>
 
     <div class="mt-2">
       <div class="flex">
-
         <div class="flex flex-1 rounded-md shadow-sm">
           <div class="relative flex flex-grow items-stretch focus-within:z-50">
-            <input v-model="query" type="text" name="search" id="search" class="block w-full rounded-none rounded-l-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6" />
+            <input
+              v-model="query"
+              type="text"
+              name="search"
+              id="search"
+              class="block w-full rounded-none rounded-l-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+            />
             <button
               type="button"
               @click="query = ''"
               v-if="typing"
               class="group absolute inset-y-0 right-0 flex items-center pr-3"
             >
-              <XCircleIcon class="h-6 text-gray-400 group-hover:text-gray-400/70" aria-hidden="true" />
+              <XCircleIcon
+                class="h-6 text-gray-400 group-hover:text-gray-400/70"
+                aria-hidden="true"
+              />
             </button>
           </div>
         </div>
-      
-        <button type="button" @click="toggleMenu" :class="[menuOpen && 'bg-gray-50', 'relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 z-30']">
+
+        <button
+          type="button"
+          @click="toggleMenu"
+          :class="[
+            menuOpen && 'bg-gray-50',
+            'relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 z-30'
+          ]"
+        >
           <FunnelIcon v-if="!filtered" class="-ml-0.5 h-5 w-5 text-gray-400" aria-hidden="true" />
-          <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="-ml-0.5 w-5 h-5">
-            <path fill-rule="evenodd" d="M3.792 2.938A49.069 49.069 0 0112 2.25c2.797 0 5.54.236 8.209.688a1.857 1.857 0 011.541 1.836v1.044a3 3 0 01-.879 2.121l-6.182 6.182a1.5 1.5 0 00-.439 1.061v2.927a3 3 0 01-1.658 2.684l-1.757.878A.75.75 0 019.75 21v-5.818a1.5 1.5 0 00-.44-1.06L3.13 7.938a3 3 0 01-.879-2.121V4.774c0-.897.64-1.683 1.542-1.836z" clip-rule="evenodd" />
+          <svg
+            v-else
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            class="-ml-0.5 w-5 h-5"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M3.792 2.938A49.069 49.069 0 0112 2.25c2.797 0 5.54.236 8.209.688a1.857 1.857 0 011.541 1.836v1.044a3 3 0 01-.879 2.121l-6.182 6.182a1.5 1.5 0 00-.439 1.061v2.927a3 3 0 01-1.658 2.684l-1.757.878A.75.75 0 019.75 21v-5.818a1.5 1.5 0 00-.44-1.06L3.13 7.938a3 3 0 01-.879-2.121V4.774c0-.897.64-1.683 1.542-1.836z"
+              clip-rule="evenodd"
+            />
           </svg>
           Filter
         </button>
       </div>
-      
+
       <div class="flex justify-end">
         <transition
           enter-active-class="transition ease-out duration-100"
@@ -169,17 +191,27 @@ watch(menuOpen, () =>  setTimeout(() => updateMenu(), 0))
           leave-from-class="transform opacity-100 scale-100"
           leave-to-class="transform opacity-0 scale-95"
         >
-          <div v-if="menuOpen" class="w-40 absolute ring-1 ring-black ring-opacity-5 bg-white rounded-md pl-3 py-3 mt-2 space-y-3 shadow-lg">
+          <div
+            v-if="menuOpen"
+            class="w-40 absolute ring-1 ring-black ring-opacity-5 bg-white rounded-md pl-3 py-3 mt-2 space-y-3 shadow-lg"
+          >
             <div v-for="(item, index) in showInfo" :key="index" as="div" class="flex items-center">
-              <input :ref="setRef(index)" @click="item.action" type="checkbox" :id="item.id" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"/>
-              <label :for="item.id" class="ml-3 text-sm leading-6 font-medium text-gray-900">{{ item.name }}</label>
+              <input
+                :ref="setRef(index)"
+                @click="item.action"
+                type="checkbox"
+                :id="item.id"
+                class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
+              />
+              <label :for="item.id" class="ml-3 text-sm leading-6 font-medium text-gray-900">{{
+                item.name
+              }}</label>
             </div>
           </div>
         </transition>
       </div>
     </div>
   </div>
-  
 
   <div class="mx-auto max-w-3xl sm:px-6 lg:px-8 overflow-visible mt-6">
     <ul role="list" class="space-y-3 max-h-[510px] min-h-[24px] overflow-scroll">
@@ -194,7 +226,10 @@ watch(menuOpen, () =>  setTimeout(() => updateMenu(), 0))
               <span class="text-gray-900 font-bold">{{ item.name }}</span>
               <span class="text-gray-400 font-bold text-sm">{{ item.email }}</span>
             </div>
-            <div v-if="showInfo.some(obj => obj.show.value)" class="flex flex-wrap text-normal gap-1">
+            <div
+              v-if="showInfo.some((obj) => obj.show.value)"
+              class="flex flex-wrap text-normal gap-1"
+            >
               <span
                 v-if="showInfo[0].show.value"
                 class="text-center rounded-md px-2 py-1 text-xs text-gray-600 ring-1 ring-inset ring-gray-500/10"
