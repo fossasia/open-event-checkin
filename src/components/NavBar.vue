@@ -40,7 +40,7 @@ const showPasswordNotification = ref(false)
 <template>
   <PasswordModal
     :showNotification="showPasswordNotification"
-    @update:show-modal="showPasswordNotification = $event"
+    @update-show-modal="showPasswordNotification = $event"
   />
   <Disclosure as="header" class="bg-white shadow sticky top-0" v-slot="{ open }">
     <div class="mx-auto max-w-7xl px-2 sm:px-4 lg:divide-y lg:divide-gray-200 lg:px-8">

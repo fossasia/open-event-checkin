@@ -7,7 +7,7 @@ const props = defineProps({
   showNotification: Boolean
 })
 
-const emit = defineEmits(['update:show-modal'])
+const emit = defineEmits(['updateShowModal'])
 
 const open = ref(false)
 
@@ -25,7 +25,7 @@ const checkPassword = (value) => {
   // check password here
   if (value === '1234') {
     validPassword.value = true
-    emit('update:show-modal', false)
+    emit('updateShowModal', false)
     passwordField.value = ''
     // sign out
   } else {
@@ -36,7 +36,7 @@ const checkPassword = (value) => {
 </script>
 
 <template>
-  <TransitionRoot as="template" :show="open" @click="$emit('update:show-modal', false)">
+  <TransitionRoot as="template" :show="open" @click="$emit('updateShowModal', false)">
     <Dialog as="div" class="relative z-10">
       <TransitionChild
         as="template"
