@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onMounted, computed } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { XCircleIcon, PrinterIcon, MagnifyingGlassIcon } from '@heroicons/vue/20/solid'
 import { FunnelIcon } from '@heroicons/vue/24/outline'
 
@@ -73,17 +73,17 @@ const filterOptions = [
   {
     id: 'filterRole',
     name: 'Role',
-    show: ref(true)
+    show: ref(false)
   },
   {
     id: 'filterMem',
     name: 'Member type',
-    show: ref(true)
+    show: ref(false)
   },
   {
     id: 'filterOrg',
     name: 'Organisation',
-    show: ref(true)
+    show: ref(false)
   }
 ]
 
@@ -143,7 +143,7 @@ const updateMenu = () => {
               'relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-3 py-1.5 text-sm font-semibold text-gray-900 border border-gray-300 hover:bg-gray-50 group-focus:border-l-blue-600'
             ]"
           >
-            <FunnelIcon v-if="!filterOptions.some((obj) => !obj.show.value)" class="-ml-0.5 h-5 w-5 text-gray-400" aria-hidden="true" />
+            <FunnelIcon v-if="!filterOptions.some((obj) => obj.show.value)" class="-ml-0.5 h-5 w-5 text-gray-400" aria-hidden="true" />
             <svg
               v-else
               xmlns="http://www.w3.org/2000/svg"
