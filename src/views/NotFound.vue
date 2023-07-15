@@ -1,12 +1,4 @@
 <template>
-  <!--
-    This example requires updating your template:
-
-    ```
-    <html class="h-full">
-    <body class="h-full">
-    ```
-  -->
   <div class="flex min-h-full min-w-full flex-col bg-white pb-12 pt-16">
     <main class="mx-auto flex w-full max-w-7xl flex-grow flex-col justify-center px-6 lg:px-8">
       <div class="flex flex-shrink-0 justify-center">
