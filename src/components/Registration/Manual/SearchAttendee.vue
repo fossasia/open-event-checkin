@@ -1,16 +1,18 @@
 <script setup>
 import { ref, watch, onMounted, computed } from 'vue'
-import { XCircleIcon, PrinterIcon } from '@heroicons/vue/20/solid'
+import { XCircleIcon, PrinterIcon, MagnifyingGlassIcon } from '@heroicons/vue/20/solid'
 import { FunnelIcon } from '@heroicons/vue/24/outline'
 
 // INITIALISE TEMPLATE REFS
 const searchBar = ref(null)
 const refs = ref([])
+
 onMounted(() => {
   refs.value = Array(filterOptions.length)
     .fill(null)
     .map(() => ref(null))
 })
+
 function setRef(index) {
   return (el) => {
     refs.value[index] = el
@@ -19,9 +21,6 @@ function setRef(index) {
 
 const menuOpen = ref(false)
 const query = ref('')
-const userIsTyping = computed(() => {
-  return query.value !== ''
-})
 
 const items = [
   {
@@ -68,55 +67,41 @@ const items = [
       organisation: 'SUSS AI-IG'
     }
   },
-  {
-    id: 5,
-    name: 'Wei Tat Chung',
-    email: 'wtc@email.com',
-    checkedIn: ref(false),
-    info: {
-      role: 'Chairperson',
-      memberType: 'Organiser',
-      organisation: 'SUSS AI-IG'
-    }
-  }
 ]
 
 const filterOptions = [
   {
     id: 'filterRole',
     name: 'Role',
-    show: ref(true),
-    action: () => (filterOptions[0].show.value = !filterOptions[0].show.value)
+    show: ref(true)
   },
   {
-    id: 'info2',
-    name: 'filterMem',
-    show: ref(true),
-    action: () => (filterOptions[1].show.value = !filterOptions[1].show.value)
+    id: 'filterMem',
+    name: 'Member type',
+    show: ref(true)
   },
   {
-    id: 'info3',
-    name: 'filterOrg',
-    show: ref(true),
-    action: () => (filterOptions[2].show.value = !filterOptions[2].show.value)
+    id: 'filterOrg',
+    name: 'Organisation',
+    show: ref(true)
   }
 ]
 
-const filtered = ref(false) // changes filter icon
-
-// updates filter options when menu is open
-watch(menuOpen, () => {
-  setTimeout(() => {
+// toggles menuOpen and updates filter options when menu is open
+const updateMenu = () => {
+  new Promise((resolve) => {
+    menuOpen.value = !menuOpen.value
+    resolve()
+  }).then(() => {
     if (menuOpen.value) {
-      refs.value.forEach((element, index) => (element.checked = filterOptions[index].show.value))
+      refs.value.forEach((element, index) => element.checked = filterOptions[index].show.value)
     }
-    filtered.value = filterOptions.some((obj) => !obj.show.value) // check if at least one filter is unchecked
-  }, 0)
-})
+  })
+}
 </script>
 
 <template>
-  <div v-if="menuOpen" @click="menuOpen = !menuOpen" class="fixed top-0 left-0 w-full h-full" />
+  <div v-if="menuOpen" @click="updateMenu" class="fixed top-0 left-0 w-full h-full" />
   <div class="mx-auto w-full overflow-visible">
     <div>
       <div class="flex justify-center">
@@ -128,18 +113,18 @@ watch(menuOpen, () => {
       <div class="mt-2">
         <div class="flex">
           <div class="flex flex-1 rounded-md shadow-sm">
-            <div class="relative flex flex-grow items-stretch focus-within:z-10">
+            <div class="relative h-9 flex flex-grow items-stretch focus-within:z-10">
               <input
                 v-model="query"
                 type="text"
                 name="search"
                 id="search"
-                class="group block w-full rounded-none rounded-l-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+                class="group block w-full rounded-none rounded-l-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
               />
               <button
                 type="button"
                 @click="query = ''"
-                v-if="userIsTyping"
+                v-if="query !== ''"
                 class="group absolute inset-y-0 right-0 flex items-center pr-3 z-0"
               >
                 <XCircleIcon
@@ -152,13 +137,13 @@ watch(menuOpen, () => {
 
           <button
             type="button"
-            @click="menuOpen = !menuOpen"
+            @click="updateMenu"
             :class="[
               menuOpen && 'bg-gray-50',
-              'relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold text-gray-900 border border-gray-300 hover:bg-gray-50 group-focus:border-l-blue-600'
+              'relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-3 py-1.5 text-sm font-semibold text-gray-900 border border-gray-300 hover:bg-gray-50 group-focus:border-l-blue-600'
             ]"
           >
-            <FunnelIcon v-if="!filtered" class="-ml-0.5 h-5 w-5 text-gray-400" aria-hidden="true" />
+            <FunnelIcon v-if="!filterOptions.some((obj) => !obj.show.value)" class="-ml-0.5 h-5 w-5 text-gray-400" aria-hidden="true" />
             <svg
               v-else
               xmlns="http://www.w3.org/2000/svg"
@@ -187,7 +172,7 @@ watch(menuOpen, () => {
           >
             <div
               v-if="menuOpen"
-              class="w-40 absolute ring-1 ring-black ring-opacity-5 bg-white rounded-md pl-3 py-3 mt-2 space-y-3 shadow-lg"
+              class="w-40 absolute ring-1 ring-black/5 bg-white rounded-md pl-3 py-3 mt-2 space-y-3 shadow-lg"
             >
               <div
                 v-for="(item, index) in filterOptions"
@@ -197,7 +182,7 @@ watch(menuOpen, () => {
               >
                 <input
                   :ref="setRef(index)"
-                  @click="item.action"
+                  @click="item.show.value = !item.show.value"
                   type="checkbox"
                   :id="item.id"
                   class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
@@ -212,7 +197,7 @@ watch(menuOpen, () => {
       </div>
     </div>
 
-    <div class="mt-6 max-h-96 overflow-scroll">
+    <div v-if="items.length > 0" class="mt-5 h-96 overflow-scroll">
       <ul role="list" class="flex flex-col gap-3">
         <li
           v-for="item in items"
@@ -272,6 +257,12 @@ watch(menuOpen, () => {
           </div>
         </li>
       </ul>
+    </div>
+    <div v-else class="mt-5 h-96 rounded-lg bg-gray-50 border border-gray-300 flex items-center justify-center">
+      <div class="flex flex-col items-center gap-4">
+        <MagnifyingGlassIcon class="h-12 text-gray-300" />
+        <span class="text-2xl font-bold text-gray-300">No Search Results</span>
+      </div>
     </div>
   </div>
 </template>
