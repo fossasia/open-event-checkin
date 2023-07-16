@@ -1,23 +1,10 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { XCircleIcon, PrinterIcon, MagnifyingGlassIcon } from '@heroicons/vue/20/solid'
 import { FunnelIcon } from '@heroicons/vue/24/outline'
 
 // INITIALISE TEMPLATE REFS
 const searchBar = ref(null)
-const refs = ref([])
-
-onMounted(() => {
-  refs.value = Array(filterOptions.length)
-    .fill(null)
-    .map(() => ref(null))
-})
-
-function setRef(index) {
-  return (el) => {
-    refs.value[index] = el
-  }
-}
 
 const menuOpen = ref(false)
 const query = ref('')
@@ -86,22 +73,10 @@ const filterOptions = [
     show: ref(false)
   }
 ]
-
-// toggles menuOpen and updates filter options when menu is open
-const updateMenu = () => {
-  new Promise((resolve) => {
-    menuOpen.value = !menuOpen.value
-    resolve()
-  }).then(() => {
-    if (menuOpen.value) {
-      refs.value.forEach((element, index) => element.checked = filterOptions[index].show.value)
-    }
-  })
-}
 </script>
 
 <template>
-  <div v-if="menuOpen" @click="updateMenu" class="fixed top-0 left-0 w-full h-full" />
+  <div v-if="menuOpen" @click="menuOpen = !menuOpen" class="fixed top-0 left-0 w-full h-full" />
   <div class="mx-auto w-full overflow-visible">
     <div>
       <div class="flex justify-center">
@@ -137,7 +112,7 @@ const updateMenu = () => {
 
           <button
             type="button"
-            @click="updateMenu"
+            @click="menuOpen = !menuOpen"
             :class="[
               menuOpen && 'bg-gray-50',
               'relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-3 py-1.5 text-sm font-semibold text-gray-900 border border-gray-300 hover:bg-gray-50 group-focus:border-l-blue-600'
@@ -181,11 +156,11 @@ const updateMenu = () => {
                 class="flex items-center"
               >
                 <input
-                  :ref="setRef(index)"
                   @click="item.show.value = !item.show.value"
                   type="checkbox"
                   :id="item.id"
                   class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
+                  :checked="item.show.value"
                 />
                 <label :for="item.id" class="ml-3 text-sm leading-6 font-medium text-gray-900">{{
                   item.name
