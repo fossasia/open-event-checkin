@@ -95,12 +95,15 @@ async function logErrors(promise) {
             :camera="camera"
             @decode="decode"
           />
-          <StandardButton @click="switchCamera" text="Switch Camera" :render="ArrowsRightLeftIcon" class="bg-blue-600 text-white hover:bg-blue-500 mt-4" />
+          <StandardButton
+            @click="switchCamera"
+            text="Switch Camera"
+            :render="ArrowsRightLeftIcon"
+            class="bg-blue-600 text-white hover:bg-blue-500 mt-4"
+          />
         </div>
       </div>
-      <div class="w-full">
-        
-      </div>
+      <div class="w-full"></div>
     </div>
     <div class="grow">
       <SearchAttendee />

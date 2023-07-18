@@ -55,7 +55,7 @@ const items = [
       memberType: 'Organiser',
       organisation: 'SUSS AI-IG'
     }
-  },
+  }
 ]
 
 const filterOptions = [
@@ -120,7 +120,11 @@ const filterOptions = [
               'relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-3 py-1.5 text-sm font-semibold text-gray-900 border border-gray-300 hover:bg-gray-50 group-focus:border-l-blue-600'
             ]"
           >
-            <FunnelIcon v-if="!filterOptions.some((obj) => obj.show.value)" class="-ml-0.5 h-5 w-5 text-gray-400" aria-hidden="true" />
+            <FunnelIcon
+              v-if="!filterOptions.some((obj) => obj.show.value)"
+              class="-ml-0.5 h-5 w-5 text-gray-400"
+              aria-hidden="true"
+            />
             <svg
               v-else
               xmlns="http://www.w3.org/2000/svg"
@@ -210,7 +214,7 @@ const filterOptions = [
             </div>
 
             <div class="flex items-center gap-2 flex-none">
-              <StandardButton 
+              <StandardButton
                 @click="item.checkedIn.value = true"
                 :activated="item.checkedIn.value"
                 text="Check-in"
@@ -219,15 +223,22 @@ const filterOptions = [
                   item.checkedIn.value
                     ? 'bg-blue-600/20 text-blue-700/70'
                     : 'bg-blue-600 text-white hover:bg-blue-500'
-                ]" 
+                ]"
               />
-              <StandardButton text="Print" :render="PrinterIcon" class="bg-yellow-300 text-gray-900 hover:bg-yellow-200"/>
+              <StandardButton
+                text="Print"
+                :render="PrinterIcon"
+                class="bg-yellow-300 text-gray-900 hover:bg-yellow-200"
+              />
             </div>
           </div>
         </li>
       </ul>
     </div>
-    <div v-else class="mt-5 h-96 rounded-lg bg-gray-50 border border-gray-300 flex items-center justify-center">
+    <div
+      v-else
+      class="mt-5 h-96 rounded-lg bg-gray-50 border border-gray-300 flex items-center justify-center"
+    >
       <div class="flex flex-col items-center gap-4">
         <MagnifyingGlassIcon class="h-12 text-gray-300" />
         <span class="text-2xl font-bold text-gray-300">No Search Results</span>

@@ -1,5 +1,5 @@
 <script setup>
-import { PrinterIcon } from "@heroicons/vue/20/solid"
+import { PrinterIcon } from '@heroicons/vue/20/solid'
 
 const props = defineProps({
   text: String,

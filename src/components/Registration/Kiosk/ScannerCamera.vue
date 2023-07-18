@@ -98,7 +98,12 @@ async function logErrors(promise) {
           @decode="decode"
         >
         </qrcode-stream>
-        <StandardButton @click="switchCamera" text="Switch Camera" :render="ArrowsRightLeftIcon" class="bg-blue-600 text-white hover:bg-blue-500 mt-4" />
+        <StandardButton
+          @click="switchCamera"
+          text="Switch Camera"
+          :render="ArrowsRightLeftIcon"
+          class="bg-blue-600 text-white hover:bg-blue-500 mt-4"
+        />
       </div>
       <div class="w-full flex-auto text-center grid-cols-1">
         <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
