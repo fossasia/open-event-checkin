@@ -3,6 +3,8 @@ import { ref } from 'vue'
 import { XCircleIcon, PrinterIcon, MagnifyingGlassIcon } from '@heroicons/vue/20/solid'
 import { FunnelIcon } from '@heroicons/vue/24/outline'
 
+import StandardButton from '@/components/Shared/StandardButton.vue'
+
 // INITIALISE TEMPLATE REFS
 const searchBar = ref(null)
 
@@ -208,26 +210,18 @@ const filterOptions = [
             </div>
 
             <div class="flex items-center gap-2 flex-none">
-              <button
-                type="button"
+              <StandardButton 
                 @click="item.checkedIn.value = true"
+                :activated="item.checkedIn.value"
+                text="Check-in"
+                activatedText="Checked-in"
                 :class="[
-                  'rounded-md px-2.5 py-2 text-sm font-medium shadow-sm transition',
                   item.checkedIn.value
                     ? 'bg-blue-600/20 text-blue-700/70'
                     : 'bg-blue-600 text-white hover:bg-blue-500'
-                ]"
-              >
-                <span v-if="!item.checkedIn.value" class="transition-all">Check In</span>
-                <span v-else class="transition-all">Checked-in</span>
-              </button>
-              <button
-                type="button"
-                class="inline-flex items-center rounded-md bg-yellow-300 px-2.5 py-2 text-sm font-medium text-gray-900 hover:bg-yellow-200"
-              >
-                <PrinterIcon class="w-5 mr-1" />
-                <span>Print</span>
-              </button>
+                ]" 
+              />
+              <StandardButton text="Print" :render="PrinterIcon" class="bg-yellow-300 text-gray-900 hover:bg-yellow-200"/>
             </div>
           </div>
         </li>
