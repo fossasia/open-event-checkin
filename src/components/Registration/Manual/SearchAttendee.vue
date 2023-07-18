@@ -138,7 +138,7 @@ const filterOptions = [
                 clip-rule="evenodd"
               />
             </svg>
-            Filter
+            <span class="hidden sm:block">Filter</span>
           </button>
         </div>
 
@@ -183,17 +183,17 @@ const filterOptions = [
         <li
           v-for="item in items"
           :key="item.id"
-          class="rounded-md bg-white px-6 py-4 shadow border border-gray-300 last:mb-1"
+          class="rounded-md bg-white px-3 sm:px-6 py-3 sm:py-4 shadow border border-gray-300 last:mb-1"
         >
-          <div class="flex items-center justify-between gap-8">
-            <div class="flex flex-col gap-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 items-center justify-between gap-2 sm:gap-8">
+            <div class="flex flex-col sm:gap-3">
               <div class="flex flex-col gap-1">
                 <span class="text-gray-900 font-bold">{{ item.name }}</span>
                 <span class="text-gray-400 font-bold text-sm">{{ item.email }}</span>
               </div>
               <div
                 v-if="filterOptions.some((obj) => obj.show.value)"
-                class="flex flex-wrap text-normal gap-1"
+                class="flex flex-wrap text-normal gap-1 mt-1 sm:mt-0"
               >
                 <span
                   v-if="filterOptions[0].show.value"
@@ -213,7 +213,7 @@ const filterOptions = [
               </div>
             </div>
 
-            <div class="flex items-center gap-2 flex-none">
+            <div class="flex items-center justify-end gap-2">
               <StandardButton
                 @click="item.checkedIn.value = true"
                 :activated="item.checkedIn.value"
@@ -221,14 +221,14 @@ const filterOptions = [
                 activatedText="Checked-in"
                 :class="[
                   item.checkedIn.value
-                    ? 'bg-blue-600/20 text-blue-700/70'
-                    : 'bg-blue-600 text-white hover:bg-blue-500'
+                    ? 'bg-blue-600/20 text-blue-700/70 w-1/2 sm:w-auto justify-center min-w-fit'
+                    : 'bg-blue-600 text-white hover:bg-blue-500 w-1/2 sm:w-auto justify-center'
                 ]"
               />
               <StandardButton
                 text="Print"
                 :render="PrinterIcon"
-                class="bg-yellow-300 text-gray-900 hover:bg-yellow-200"
+                class="bg-yellow-300 text-gray-900 hover:bg-yellow-200 w-1/2 sm:w-auto justify-center"
               />
             </div>
           </div>

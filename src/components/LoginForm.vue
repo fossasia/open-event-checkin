@@ -46,9 +46,9 @@ async function submitLogin() {
 </script>
 
 <template>
-  <div class="flex flex-1 flex-col justify-center p-6 my-auto">
-    <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-      <h2 class="mt-0 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+  <div class="flex flex-1 flex-col justify-center my-auto">
+    <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+      <h2 class="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
         Sign in to your account
       </h2>
       <form class="space-y-6 mt-10" @submit.prevent="submitLogin">
@@ -90,7 +90,7 @@ async function submitLogin() {
           <StandardButton
             type="submit"
             text="Login"
-            class="w-full justify-center bg-blue-600 text-white hover:bg-blue-500"
+            class="w-full mt-6 justify-center bg-blue-600 text-white hover:bg-blue-500"
           />
         </div>
 
