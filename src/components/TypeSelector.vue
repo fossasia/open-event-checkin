@@ -222,8 +222,14 @@ const selectedStation = ref(availableStations[1])
         </div>
 
         <div>
-          <RouterLink :to="{ name: 'registration', params: { registrationType: 'scan', eventId: '1' } }">
-            <StandardButton type="submit" text="Go" class="bg-blue-600 text-white hover:bg-blue-500 w-full justify-center" />
+          <RouterLink
+            :to="{ name: 'registration', params: { registrationType: 'scan', eventId: '1' } }"
+          >
+            <StandardButton
+              type="submit"
+              text="Go"
+              class="bg-blue-600 text-white hover:bg-blue-500 w-full justify-center"
+            />
           </RouterLink>
         </div>
       </form>

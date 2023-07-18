@@ -2,8 +2,8 @@
 import { PrinterIcon } from '@heroicons/vue/20/solid'
 
 const props = defineProps({
-  type: { 
-    type: String, 
+  type: {
+    type: String,
     default: 'button'
   },
   text: String,

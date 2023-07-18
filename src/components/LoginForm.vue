@@ -87,7 +87,11 @@ async function submitLogin() {
         </div>
 
         <div>
-          <StandardButton type="submit" text="Login" class="w-full justify-center bg-blue-600 text-white hover:bg-blue-500" />
+          <StandardButton
+            type="submit"
+            text="Login"
+            class="w-full justify-center bg-blue-600 text-white hover:bg-blue-500"
+          />
         </div>
 
         <div v-if="showError">
