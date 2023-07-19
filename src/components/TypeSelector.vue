@@ -14,6 +14,7 @@ import {
   ListboxOption,
   ListboxOptions
 } from '@headlessui/vue'
+import StandardButton from '@/components/Shared/StandardButton.vue'
 
 const eventNames = [
   { id: 1, name: 'Leslie Alexander' }
@@ -221,13 +222,14 @@ const selectedStation = ref(availableStations[1])
         </div>
 
         <div>
-          <RouterLink :to="{ name: 'stationSelector', params: { scannerType: 'check-in' } }">
-            <button
+          <RouterLink
+            :to="{ name: 'registration', params: { registrationType: 'scan', eventId: '1' } }"
+          >
+            <StandardButton
               type="submit"
-              class="flex w-full justify-center rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-            >
-              Go
-            </button>
+              text="Go"
+              class="bg-blue-600 text-white hover:bg-blue-500 w-full justify-center"
+            />
           </RouterLink>
         </div>
       </form>

@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useLoadingStore } from '@/stores/loading'
 import { useAuthStore } from '@/stores/auth'
+import StandardButton from '@/components/Shared/StandardButton.vue'
 
 // form fields
 const email = ref('')
@@ -86,12 +87,11 @@ async function submitLogin() {
         </div>
 
         <div>
-          <button
+          <StandardButton
             type="submit"
-            class="flex w-full justify-center rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-          >
-            Login
-          </button>
+            text="Login"
+            class="w-full justify-center bg-blue-600 text-white hover:bg-blue-500"
+          />
         </div>
 
         <div v-if="showError">

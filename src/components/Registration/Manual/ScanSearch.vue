@@ -2,10 +2,11 @@
 import { QrcodeStream } from 'vue-qrcode-reader'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { ArrowsRightLeftIcon } from '@heroicons/vue/24/outline'
+import { ArrowsRightLeftIcon } from '@heroicons/vue/20/solid'
 
 import PrintModal from '@/components/Modals/PrintModal.vue'
 import SearchAttendee from '@/components/Registration/Manual/SearchAttendee.vue'
+import StandardButton from '@/components/Shared/StandardButton.vue'
 
 // get scanner type from vue router params
 const route = useRoute()
@@ -94,19 +95,15 @@ async function logErrors(promise) {
             :camera="camera"
             @decode="decode"
           />
-          <button
-            type="button"
-            class="mt-4 inline-flex items-center gap-x-2 rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+          <StandardButton
             @click="switchCamera"
-          >
-            <ArrowsRightLeftIcon class="-ml-0.5 h-5 w-5" aria-hidden="true" />
-            Switch Camera
-          </button>
+            text="Switch Camera"
+            :icon="ArrowsRightLeftIcon"
+            class="bg-blue-600 text-white hover:bg-blue-500 mt-4"
+          />
         </div>
       </div>
-      <div class="w-full">
-        
-      </div>
+      <div class="w-full"></div>
     </div>
     <div class="grow">
       <SearchAttendee />

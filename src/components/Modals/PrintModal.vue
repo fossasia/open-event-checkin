@@ -3,6 +3,7 @@ import { onMounted, ref, watch } from 'vue'
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { PrinterIcon } from '@heroicons/vue/24/outline'
 import { ExclamationCircleIcon } from '@heroicons/vue/24/outline'
+import StandardButton from '@/components/Shared/StandardButton.vue'
 
 const props = defineProps({
   showNotification: Boolean,
@@ -264,15 +265,15 @@ watch(
                 </div>
               </div>
               <div class="mt-6 sm:mt-5 mx-6 sm:mx-0">
-                <button
-                  type="button"
+                <StandardButton
+                  :text="notificationContent.buttonText"
                   :disabled="disableButton"
-                  :class="disableButton ? 'cursor-not-allowed opacity-20' : ''"
-                  class="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
                   @click="print"
-                >
-                  {{ notificationContent.buttonText }}
-                </button>
+                  :class="[
+                    disableButton && 'cursor-not-allowed opacity-20',
+                    'bg-blue-600 text-white hover:bg-blue-500 w-full justify-center'
+                  ]"
+                />
               </div>
             </DialogPanel>
           </TransitionChild>
