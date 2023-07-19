@@ -227,7 +227,7 @@ const filterOptions = [
               />
               <StandardButton
                 text="Print"
-                :render="PrinterIcon"
+                :icon="PrinterIcon"
                 class="bg-yellow-300 text-gray-900 hover:bg-yellow-200"
               />
             </div>

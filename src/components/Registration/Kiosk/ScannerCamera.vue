@@ -101,7 +101,7 @@ async function logErrors(promise) {
         <StandardButton
           @click="switchCamera"
           text="Switch Camera"
-          :render="ArrowsRightLeftIcon"
+          :icon="ArrowsRightLeftIcon"
           class="bg-blue-600 text-white hover:bg-blue-500 mt-4"
         />
       </div>
