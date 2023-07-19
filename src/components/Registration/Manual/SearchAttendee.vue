@@ -216,9 +216,7 @@ const filterOptions = [
             <div class="flex items-center gap-2 flex-none">
               <StandardButton
                 @click="item.checkedIn.value = true"
-                :activated="item.checkedIn.value"
-                text="Check-in"
-                activatedText="Checked-in"
+                :text="item.checkedIn.value ? 'Checked-in' : 'Check-in'"
                 :class="[
                   item.checkedIn.value
                     ? 'bg-blue-600/20 text-blue-700/70'
