@@ -6,8 +6,8 @@ import LoadingView from '@/components/Utilities/LoadingView.vue'
 
 <template>
   <div class="flex flex-col h-screen">
-    <div class="mx-3 grow flex">
-      <RouterView class="grow flex flex-col" />
+    <div class="grow flex">
+      <RouterView class="grow p-6 flex flex-col" />
     </div>
   </div>
   <LoadingView v-if="useLoadingStore().show"></LoadingView>
