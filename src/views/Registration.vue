@@ -1,6 +1,6 @@
 <script setup></script>
 <template>
-  <div class="p-6">
+  <div class="m-6">
     <RouterView />
   </div>
 </template>
