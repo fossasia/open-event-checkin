@@ -178,7 +178,7 @@ const filterOptions = [
       </div>
     </div>
 
-    <div v-if="items.length > 0" class="mt-5 h-96 overflow-scroll">
+    <div v-if="items.length > 0" class="mt-5 h-96 overflow-y-scroll">
       <ul role="list" class="flex flex-col gap-3">
         <li
           v-for="item in items"
@@ -226,7 +226,7 @@ const filterOptions = [
               <StandardButton
                 text="Print"
                 :icon="PrinterIcon"
-                class="bg-yellow-300 text-gray-900 hover:bg-yellow-200"
+                class="bg-yellow-300 text-gray-900 hover:bg-yellow-200 w-1/2 sm:w-auto justify-center"
               />
             </div>
           </div>
