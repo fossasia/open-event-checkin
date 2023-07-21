@@ -53,9 +53,9 @@ const selectedStation = ref(availableStations[1])
 </script>
 
 <template>
-  <div class="flex flex-1 flex-col justify-center p-6 my-auto">
-    <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-      <h2 class="mt-0 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+  <div class="flex flex-1 flex-col justify-center my-auto">
+    <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+      <h2 class="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
         Select Event
       </h2>
       <form class="space-y-6 mt-10" action="#" method="POST">
@@ -228,7 +228,7 @@ const selectedStation = ref(availableStations[1])
             <StandardButton
               type="submit"
               text="Go"
-              class="bg-blue-600 text-white hover:bg-blue-500 w-full justify-center"
+              class="bg-blue-600 text-white hover:bg-blue-500 w-full mt-6 justify-center"
             />
           </RouterLink>
         </div>
