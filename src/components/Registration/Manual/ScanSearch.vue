@@ -59,6 +59,7 @@ const updateShowNotification = (value) => {
 const printFunction = () => {
   // print user pass here
   console.log('Printing...')
+  refreshComponent()
 }
 
 const switchCamera = () => {
@@ -80,6 +81,7 @@ async function logErrors(promise) {
 <template>
   <div class="mx-auto grid grid-cols-1 xl:flex items-center gap-16 lg:w-3/4 h-full py-16">
     <PrintModal
+      :key="componentKey"
       :showNotification="showNotification"
       :validQRCode="validQRCode"
       @update:show-modal="updateShowNotification"
@@ -94,7 +96,6 @@ async function logErrors(promise) {
       <div class="w-full">
         <div class="mx-auto w-fit">
           <qrcode-stream
-            :key="componentKey"
             class="!aspect-square !h-auto max-w-lg grid-cols-1 align-middle justify-center items-center mt-2"
             :track="selected.value"
             @init="logErrors"
@@ -112,7 +113,12 @@ async function logErrors(promise) {
       <div class="w-full"></div>
     </div>
     <div class="grow">
-      <SearchAttendee @print="showNotification = true; console.log($event)" />
+      <SearchAttendee
+        @print="
+          showNotification = true
+          console.log($event)
+        "
+      />
     </div>
   </div>
 </template>
