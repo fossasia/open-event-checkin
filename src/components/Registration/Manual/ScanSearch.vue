@@ -56,7 +56,7 @@ const updateShowNotification = (value) => {
   showNotification.value = value
 }
 
-const fireFunction = () => {
+const printFunction = () => {
   // print user pass here
   console.log('Printing...')
 }
@@ -79,6 +79,12 @@ async function logErrors(promise) {
 
 <template>
   <div class="mx-auto grid grid-cols-1 xl:flex items-center gap-16 lg:w-3/4 h-full py-16">
+    <PrintModal
+      :showNotification="showNotification"
+      :validQRCode="validQRCode"
+      @update:show-modal="updateShowNotification"
+      @print="printFunction"
+    />
     <div class="xl:flex-none xl:w-96 flex flex-col items-start">
       <div class="w-full flex justify-center">
         <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-2xl">
@@ -106,7 +112,7 @@ async function logErrors(promise) {
       <div class="w-full"></div>
     </div>
     <div class="grow">
-      <SearchAttendee />
+      <SearchAttendee @print="showNotification = true; console.log($event)" />
     </div>
   </div>
 </template>
