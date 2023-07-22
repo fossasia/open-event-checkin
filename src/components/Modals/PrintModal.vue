@@ -36,6 +36,7 @@ const printDelay = (delay1, delay2) => {
 
 const print = () => {
   if (props.validQRCode) {
+    printOptions.forEach((element) => (element.disabled = true))
     titleText.value = 'Printing...'
     messageText.value = 'Please wait while we print your pass.'
     disableButton.value = true
@@ -191,8 +192,14 @@ const selectOrDeselectAll = () => {
                         <!--Select all button-->
                         <StandardButton
                           @click="selectOrDeselectAll"
+                          :disabled="disableButton"
                           :text="selectedOptions.length == 5 ? 'Deselect All' : 'Select All'"
-                          class="text-blue-600 border border-blue-600 hover:bg-blue-500 hover:border-blue-500 hover:text-white ml-6"
+                          :class="[
+                            disableButton
+                              ? 'cursor-not-allowed opacity-20'
+                              : 'hover:bg-blue-500 hover:border-blue-500 hover:text-white',
+                            'text-blue-600 border border-blue-600 ml-6'
+                          ]"
                         />
                       </div>
 

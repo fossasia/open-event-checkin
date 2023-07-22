@@ -7,6 +7,7 @@ import { ArrowsRightLeftIcon } from '@heroicons/vue/20/solid'
 import PrintModal from '@/components/Modals/PrintModal.vue'
 import SearchAttendee from '@/components/Registration/Manual/SearchAttendee.vue'
 import StandardButton from '@/components/Shared/StandardButton.vue'
+import SuccessNotification from '@/components/Shared/SuccessNotification.vue'
 
 // get scanner type from vue router params
 const route = useRoute()
@@ -15,6 +16,7 @@ const scannerType = route.params.scannerType
 const camera = ref('front')
 const QRCodeValue = ref('')
 const showNotification = ref(false)
+const showPrintedNotification = ref(false)
 const componentKey = ref(0)
 
 const paintOutline = (detectedCodes, ctx) => {
@@ -56,7 +58,13 @@ const updateShowNotification = (value) => {
   showNotification.value = value
 }
 
+const updateShowPrintedNotification = () => {
+  showPrintedNotification.value = true
+  setTimeout(() => (showPrintedNotification.value = false), 3000)
+}
+
 const printFunction = () => {
+  updateShowPrintedNotification()
   // print user pass here
   console.log('Printing...')
   refreshComponent()
@@ -79,6 +87,10 @@ async function logErrors(promise) {
 </script>
 
 <template>
+  <SuccessNotification
+    :show="showPrintedNotification"
+    @update-show="showPrintedNotification = false"
+  />
   <div class="mx-auto grid grid-cols-1 xl:flex items-center gap-16 lg:w-3/4 h-full py-16">
     <PrintModal
       :key="componentKey"
@@ -115,8 +127,10 @@ async function logErrors(promise) {
     <div class="grow">
       <SearchAttendee
         @print="
-          showNotification = true;
-          console.log($event)
+          ($event) => {
+            showNotification = true
+            console.log($event)
+          }
         "
       />
     </div>
