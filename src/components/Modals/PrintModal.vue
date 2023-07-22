@@ -29,17 +29,20 @@ const selectedOptions = ref(['code', 'name', 'email', 'org', 'role'])
 const titleText = ref(props.validQRCode ? 'Select items to print' : 'Error!')
 const messageText = ref(props.validQRCode ? '' : 'Please scan a valid QR code')
 
+const printDelay = (delay1, delay2) => {
+  setTimeout(() => updateLocalShowNotification(false), delay1)
+  setTimeout(() => emit('print'), delay2)
+}
+
 const print = () => {
   if (props.validQRCode) {
     titleText.value = 'Printing...'
     messageText.value = 'Please wait while we print your pass.'
     disableButton.value = true
     console.log(selectedOptions.value)
-    setTimeout(() => updateLocalShowNotification(false), 3000)
-    setTimeout(() => emit('print'), 3200)
+    printDelay(3000, 3200)
   } else {
-    updateLocalShowNotification(false)
-    setTimeout(() => emit('print'), 200)
+    printDelay(0, 200)
     console.log('Rescan')
   }
 }

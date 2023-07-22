@@ -115,7 +115,7 @@ async function logErrors(promise) {
     <div class="grow">
       <SearchAttendee
         @print="
-          showNotification = true
+          showNotification = true;
           console.log($event)
         "
       />
