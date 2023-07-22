@@ -6,7 +6,7 @@ import LoadingView from '@/components/Utilities/LoadingView.vue'
 <template>
   <div class="flex flex-col h-screen w-full">
     <NavBar />
-    <div class="mx-3 grow flex">
+    <div class="grow m-6 flex">
       <RouterView class="grow flex flex-col" />
     </div>
   </div>

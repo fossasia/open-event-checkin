@@ -86,7 +86,7 @@ async function logErrors(promise) {
       @print="printFunction"
     />
     <div
-      class="grid grid-cols-1 lg:grid-cols-2 w-full align-middle justify-center items-center place-items-center"
+      class="grid grid-cols-1 h-3/4 lg:h-auto gap-12 lg:gap-0 lg:grid-cols-2 w-full align-middle justify-center items-center place-items-center"
     >
       <div>
         <qrcode-stream
