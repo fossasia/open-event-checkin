@@ -6,10 +6,10 @@ import { ExclamationCircleIcon } from '@heroicons/vue/24/outline'
 import StandardButton from '@/components/Shared/StandardButton.vue'
 
 const props = defineProps({
-  showNotification: Boolean,
+  showPrintModal: Boolean,
   validQRCode: Boolean
 })
-const emit = defineEmits(['update:show-modal', 'print'])
+const emit = defineEmits(['hideModal', 'print'])
 
 const disableButton = ref(false)
 const selectedOptions = ref(['code', 'name', 'email', 'org', 'role'])
@@ -17,9 +17,9 @@ const selectedOptions = ref(['code', 'name', 'email', 'org', 'role'])
 const titleText = ref(props.validQRCode ? 'Select items to print' : 'Error!')
 const messageText = ref(props.validQRCode ? '' : 'Please scan a valid QR code')
 
-const printDelay = (delay1, delay2) => {
-  setTimeout(() => emit('update:show-modal'), delay1)
-  setTimeout(() => emit('print'), delay2)
+const printDelay = (delayHideModal, delayPrint) => {
+  setTimeout(() => emit('hideModal'), delayHideModal)
+  setTimeout(() => emit('print'), delayPrint)
 }
 
 const print = () => {
@@ -101,8 +101,8 @@ const selectOrDeselectAll = () => {
 </script>
 
 <template>
-  <TransitionRoot as="template" :show="props.showNotification">
-    <Dialog as="div" class="relative z-10" @close="$emit('update:show-modal')">
+  <TransitionRoot as="template" :show="props.showPrintModal">
+    <Dialog as="div" class="relative z-10" @close="$emit('hideModal')">
       <TransitionChild
         as="template"
         enter="ease-out duration-300"

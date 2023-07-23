@@ -15,7 +15,7 @@ const scannerType = route.params.scannerType
 
 const camera = ref('front')
 const QRCodeValue = ref('')
-const showNotification = ref(false)
+const showPrintModal = ref(false)
 const showPrintedNotification = ref(false)
 const componentKey = ref(0)
 
@@ -46,7 +46,7 @@ const validQRCode = ref(true)
 
 const decode = () => {
   // check if QRCodeValue is valid and conforms to what is needed over here
-  showNotification.value = true
+  showPrintModal.value = true
   console.log(QRCodeValue)
 }
 
@@ -74,15 +74,15 @@ async function logErrors(promise) {
 
 <template>
   <SuccessNotification
-    :show="showPrintedNotification"
-    @update-show="showPrintedNotification = false"
+    :showPrintedNotif="showPrintedNotification"
+    @hide-printed-notif="showPrintedNotification = false"
   />
   <div class="mx-auto grid grid-cols-1 xl:flex items-center gap-16 lg:w-3/4 h-full py-16">
     <PrintModal
       :key="componentKey"
-      :showNotification="showNotification"
+      :showPrintModal="showPrintModal"
       :validQRCode="validQRCode"
-      @update:show-modal="showNotification = false"
+      @hide-modal="showPrintModal = false"
       @print="printFunction"
     />
     <div class="xl:flex-none xl:w-96 flex flex-col items-start">
@@ -114,7 +114,7 @@ async function logErrors(promise) {
       <SearchAttendee
         @print="
           ($event) => {
-            showNotification = true
+            showPrintModal = true
             console.log($event)
           }
         "

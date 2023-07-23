@@ -4,15 +4,15 @@ import { CheckCircleIcon } from '@heroicons/vue/24/outline'
 import { XMarkIcon } from '@heroicons/vue/20/solid'
 
 const props = defineProps({
-  show: Boolean
+  showPrintedNotif: Boolean
 })
-const emit = defineEmits(['updateShow'])
+const emit = defineEmits(['hidePrintedNotif'])
 
 watch(
-  () => props.show, 
+  () => props.showPrintedNotif, 
   (value) => {
   if (value == true) {
-    setTimeout(() => emit('updateShow', false), 3000)
+    setTimeout(() => emit('hidePrintedNotif', false), 3000)
   }
 })
 </script>
@@ -34,7 +34,7 @@ watch(
         leave-to-class="opacity-0"
       >
         <div
-          v-if="props.show"
+          v-if="props.showPrintedNotif"
           class="pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5"
         >
           <div class="p-4">
@@ -49,7 +49,7 @@ watch(
               <div class="ml-4 flex flex-shrink-0">
                 <button
                   type="button"
-                  @click="emit('updateShow', false)"
+                  @click="emit('hidePrintedNotif', false)"
                   class="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                   <span class="sr-only">Close</span>

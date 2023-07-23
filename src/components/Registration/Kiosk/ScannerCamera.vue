@@ -14,7 +14,7 @@ const scannerType = route.params.scannerType
 
 const camera = ref('front')
 const QRCodeValue = ref('')
-const showNotification = ref(false)
+const showPrintModal = ref(false)
 const showPrintedNotification = ref(false)
 const componentKey = ref(0)
 
@@ -45,7 +45,7 @@ const validQRCode = ref(true)
 
 const decode = () => {
   // check if QRCodeValue is valid and conforms to what is needed over here
-  showNotification.value = true
+  showPrintModal.value = true
   console.log(QRCodeValue)
 }
 
@@ -74,15 +74,15 @@ async function logErrors(promise) {
 
 <template>
   <SuccessNotification
-    :show="showPrintedNotification"
-    @update-show="showPrintedNotification = false"
+    :showPrintedNotif="showPrintedNotification"
+    @hide-printed-notif="showPrintedNotification = false"
   />
   <div class="h-full mx-auto max-w-7xl flex">
     <PrintModal
       :key="componentKey"
-      :showNotification="showNotification"
+      :showPrintModal="showPrintModal"
       :validQRCode="validQRCode"
-      @update:show-modal="showNotification = false"
+      @hide-modal="showPrintModal = false"
       @print="printFunction"
     />
     <div
