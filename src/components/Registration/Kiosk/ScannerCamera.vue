@@ -49,24 +49,11 @@ const decode = () => {
   console.log(QRCodeValue)
 }
 
-// const refreshComponent = () => {
-//   componentKey.value += 1
-// }
-
-const updateShowNotification = (value) => {
-  showNotification.value = value
-}
-
-const updateShowPrintedNotification = () => {
-  showPrintedNotification.value = true
-  setTimeout(() => (showPrintedNotification.value = false), 3000)
-}
-
 const printFunction = () => {
-  updateShowPrintedNotification()
+  showPrintedNotification.value = true
   // print user pass here
   console.log('Printing...')
-  // refreshComponent()
+  componentKey.value += 1
 }
 
 const switchCamera = () => {
@@ -92,9 +79,10 @@ async function logErrors(promise) {
   />
   <div class="h-full mx-auto max-w-7xl flex">
     <PrintModal
+      :key="componentKey"
       :showNotification="showNotification"
       :validQRCode="validQRCode"
-      @update:show-modal="updateShowNotification"
+      @update:show-modal="showNotification = false"
       @print="printFunction"
     />
     <div
@@ -102,7 +90,6 @@ async function logErrors(promise) {
     >
       <div>
         <qrcode-stream
-          :key="componentKey"
           class="!aspect-square !h-auto max-w-lg grid-cols-1 align-middle justify-center items-center"
           :track="selected.value"
           @init="logErrors"

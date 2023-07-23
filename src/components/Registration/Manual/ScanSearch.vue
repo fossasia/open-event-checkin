@@ -50,29 +50,15 @@ const decode = () => {
   console.log(QRCodeValue)
 }
 
-const refreshComponent = () => {
-  componentKey.value += 1
-}
-
-const updateShowNotification = (value) => {
-  showNotification.value = value
-}
-
-const updateShowPrintedNotification = () => {
-  showPrintedNotification.value = true
-  setTimeout(() => (showPrintedNotification.value = false), 3000)
-}
-
 const printFunction = () => {
-  updateShowPrintedNotification()
+  showPrintedNotification.value = true
   // print user pass here
   console.log('Printing...')
-  refreshComponent()
+  componentKey.value += 1 // refresh print modal
 }
 
 const switchCamera = () => {
   camera.value = camera.value === 'front' ? 'rear' : 'front'
-  refreshComponent()
 }
 
 async function logErrors(promise) {
@@ -96,7 +82,7 @@ async function logErrors(promise) {
       :key="componentKey"
       :showNotification="showNotification"
       :validQRCode="validQRCode"
-      @update:show-modal="updateShowNotification"
+      @update:show-modal="showNotification = false"
       @print="printFunction"
     />
     <div class="xl:flex-none xl:w-96 flex flex-col items-start">

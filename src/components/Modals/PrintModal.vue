@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { PrinterIcon } from '@heroicons/vue/24/outline'
 import { ExclamationCircleIcon } from '@heroicons/vue/24/outline'
@@ -10,27 +10,15 @@ const props = defineProps({
   validQRCode: Boolean
 })
 const emit = defineEmits(['update:show-modal', 'print'])
-const updateLocalShowNotification = (value) => {
-  open.value = value
-  emit('update:show-modal', value)
-}
-
-watch(
-  () => props.showNotification,
-  (value) => {
-    open.value = value
-  }
-)
 
 const disableButton = ref(false)
-const open = ref(false)
 const selectedOptions = ref(['code', 'name', 'email', 'org', 'role'])
 
 const titleText = ref(props.validQRCode ? 'Select items to print' : 'Error!')
 const messageText = ref(props.validQRCode ? '' : 'Please scan a valid QR code')
 
 const printDelay = (delay1, delay2) => {
-  setTimeout(() => updateLocalShowNotification(false), delay1)
+  setTimeout(() => emit('update:show-modal'), delay1)
   setTimeout(() => emit('print'), delay2)
 }
 
@@ -113,8 +101,8 @@ const selectOrDeselectAll = () => {
 </script>
 
 <template>
-  <TransitionRoot as="template" :show="open">
-    <Dialog as="div" class="relative z-10" @close="updateLocalShowNotification">
+  <TransitionRoot as="template" :show="props.showNotification">
+    <Dialog as="div" class="relative z-10" @close="$emit('update:show-modal')">
       <TransitionChild
         as="template"
         enter="ease-out duration-300"

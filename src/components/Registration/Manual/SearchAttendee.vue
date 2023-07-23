@@ -225,7 +225,7 @@ const filterOptions = [
                 ]"
               />
               <StandardButton
-                @click="$emit('print', item.name)"
+                @click="emit('print', item.name)"
                 text="Print"
                 :icon="PrinterIcon"
                 class="bg-yellow-300 text-gray-900 hover:bg-yellow-200 w-1/2 sm:w-auto justify-center"
