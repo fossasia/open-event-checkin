@@ -130,7 +130,7 @@ const selectOrDeselectAll = () => {
               class="w-full h-screen absolute top-0 left-0 flex justify-center items-center"
             >
               <div
-                class="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 w-full sm:max-w-sm sm:p-6"
+                class="relative transform overflow-hidden rounded-lg bg-white px-4 mx-6 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 w-full sm:max-w-sm sm:p-6"
               >
                 <div>
                   <!--Icons-->
@@ -193,7 +193,7 @@ const selectOrDeselectAll = () => {
 
                       <!--DIVIDER-->
                       <div class="mt-5">
-                        <div class="border-0 border-b" />
+                        <div class="border-0 border-b mx-6 sm:m-0" />
                       </div>
                     </fieldset>
                     <p v-if="messageText !== ''" class="text-sm text-gray-500 mt-3">
