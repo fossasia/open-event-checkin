@@ -6,6 +6,7 @@ import { ArrowsRightLeftIcon } from '@heroicons/vue/20/solid'
 
 import PrintModal from '@/components/Modals/PrintModal.vue'
 import StandardButton from '@/components/Shared/StandardButton.vue'
+import SuccessNotification from '@/components/Shared/SuccessNotification.vue'
 
 // get scanner type from vue router params
 const route = useRoute()
@@ -14,6 +15,7 @@ const scannerType = route.params.scannerType
 const camera = ref('front')
 const QRCodeValue = ref('')
 const showNotification = ref(false)
+const showPrintedNotification = ref(false)
 const componentKey = ref(0)
 
 const paintOutline = (detectedCodes, ctx) => {
@@ -55,7 +57,13 @@ const updateShowNotification = (value) => {
   showNotification.value = value
 }
 
+const updateShowPrintedNotification = () => {
+  showPrintedNotification.value = true
+  setTimeout(() => (showPrintedNotification.value = false), 3000)
+}
+
 const printFunction = () => {
+  updateShowPrintedNotification()
   // print user pass here
   console.log('Printing...')
   // refreshComponent()
@@ -78,6 +86,10 @@ async function logErrors(promise) {
 </script>
 
 <template>
+  <SuccessNotification
+    :show="showPrintedNotification"
+    @update-show="showPrintedNotification = false"
+  />
   <div class="h-full mx-auto max-w-7xl flex">
     <PrintModal
       :showNotification="showNotification"

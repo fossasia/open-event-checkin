@@ -7,6 +7,7 @@ import { ArrowsRightLeftIcon } from '@heroicons/vue/20/solid'
 import PrintModal from '@/components/Modals/PrintModal.vue'
 import SearchAttendee from '@/components/Registration/Manual/SearchAttendee.vue'
 import StandardButton from '@/components/Shared/StandardButton.vue'
+import SuccessNotification from '@/components/Shared/SuccessNotification.vue'
 
 // get scanner type from vue router params
 const route = useRoute()
@@ -15,6 +16,7 @@ const scannerType = route.params.scannerType
 const camera = ref('front')
 const QRCodeValue = ref('')
 const showNotification = ref(false)
+const showPrintedNotification = ref(false)
 const componentKey = ref(0)
 
 const paintOutline = (detectedCodes, ctx) => {
@@ -56,9 +58,16 @@ const updateShowNotification = (value) => {
   showNotification.value = value
 }
 
-const fireFunction = () => {
+const updateShowPrintedNotification = () => {
+  showPrintedNotification.value = true
+  setTimeout(() => (showPrintedNotification.value = false), 3000)
+}
+
+const printFunction = () => {
+  updateShowPrintedNotification()
   // print user pass here
   console.log('Printing...')
+  refreshComponent()
 }
 
 const switchCamera = () => {
@@ -78,7 +87,18 @@ async function logErrors(promise) {
 </script>
 
 <template>
-  <div class="mx-auto grid grid-cols-1 xl:flex items-center gap-16 lg:w-3/4 h-full my-16">
+  <SuccessNotification
+    :show="showPrintedNotification"
+    @update-show="showPrintedNotification = false"
+  />
+  <div class="mx-auto grid grid-cols-1 xl:flex items-center gap-16 lg:w-3/4 h-full py-16">
+    <PrintModal
+      :key="componentKey"
+      :showNotification="showNotification"
+      :validQRCode="validQRCode"
+      @update:show-modal="updateShowNotification"
+      @print="printFunction"
+    />
     <div class="xl:flex-none xl:w-96 flex flex-col items-start">
       <div class="w-full flex justify-center">
         <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-2xl">
@@ -88,7 +108,6 @@ async function logErrors(promise) {
       <div class="w-full">
         <div class="mx-auto w-fit">
           <qrcode-stream
-            :key="componentKey"
             class="!aspect-square !h-auto max-w-lg grid-cols-1 align-middle justify-center items-center mt-2"
             :track="selected.value"
             @init="logErrors"
@@ -106,7 +125,14 @@ async function logErrors(promise) {
       <div class="w-full"></div>
     </div>
     <div class="grow">
-      <SearchAttendee />
+      <SearchAttendee
+        @print="
+          ($event) => {
+            showNotification = true
+            console.log($event)
+          }
+        "
+      />
     </div>
   </div>
 </template>
