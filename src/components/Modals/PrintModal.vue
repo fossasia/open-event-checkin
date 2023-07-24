@@ -1,37 +1,25 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { PrinterIcon } from '@heroicons/vue/24/outline'
 import { ExclamationCircleIcon } from '@heroicons/vue/24/outline'
 import StandardButton from '@/components/Shared/StandardButton.vue'
 
 const props = defineProps({
-  showNotification: Boolean,
+  showPrintModal: Boolean,
   validQRCode: Boolean
 })
-const emit = defineEmits(['update:show-modal', 'print'])
-const updateLocalShowNotification = (value) => {
-  open.value = value
-  emit('update:show-modal', value)
-}
-
-watch(
-  () => props.showNotification,
-  (value) => {
-    open.value = value
-  }
-)
+const emit = defineEmits(['hideModal', 'print'])
 
 const disableButton = ref(false)
-const open = ref(false)
 const selectedOptions = ref(['code', 'name', 'email', 'org', 'role'])
 
 const titleText = ref(props.validQRCode ? 'Select items to print' : 'Error!')
 const messageText = ref(props.validQRCode ? '' : 'Please scan a valid QR code')
 
-const printDelay = (delay1, delay2) => {
-  setTimeout(() => updateLocalShowNotification(false), delay1)
-  setTimeout(() => emit('print'), delay2)
+const printDelay = (delayHideModal, delayPrint) => {
+  setTimeout(() => emit('hideModal'), delayHideModal)
+  setTimeout(() => emit('print'), delayPrint)
 }
 
 const print = () => {
@@ -113,8 +101,8 @@ const selectOrDeselectAll = () => {
 </script>
 
 <template>
-  <TransitionRoot as="template" :show="open">
-    <Dialog as="div" class="relative z-10" @close="updateLocalShowNotification">
+  <TransitionRoot as="template" :show="props.showPrintModal">
+    <Dialog as="div" class="relative z-10" @close="$emit('hideModal')">
       <TransitionChild
         as="template"
         enter="ease-out duration-300"
@@ -142,7 +130,7 @@ const selectOrDeselectAll = () => {
               class="w-full h-screen absolute top-0 left-0 flex justify-center items-center"
             >
               <div
-                class="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 w-full sm:max-w-sm sm:p-6"
+                class="relative transform overflow-hidden rounded-lg bg-white px-4 mx-6 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 w-full sm:max-w-sm sm:p-6"
               >
                 <div>
                   <!--Icons-->
@@ -205,7 +193,7 @@ const selectOrDeselectAll = () => {
 
                       <!--DIVIDER-->
                       <div class="mt-5">
-                        <div class="border-0 border-b" />
+                        <div class="border-0 border-b mx-6 sm:m-0" />
                       </div>
                     </fieldset>
                     <p v-if="messageText !== ''" class="text-sm text-gray-500 mt-3">

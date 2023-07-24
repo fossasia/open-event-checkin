@@ -14,7 +14,7 @@ const scannerType = route.params.scannerType
 
 const camera = ref('front')
 const QRCodeValue = ref('')
-const showNotification = ref(false)
+const showPrintModal = ref(false)
 const showPrintedNotification = ref(false)
 const componentKey = ref(0)
 
@@ -45,33 +45,8 @@ const validQRCode = ref(true)
 
 const decode = () => {
   // check if QRCodeValue is valid and conforms to what is needed over here
-  showNotification.value = true
+  showPrintModal.value = true
   console.log(QRCodeValue)
-}
-
-// const refreshComponent = () => {
-//   componentKey.value += 1
-// }
-
-const updateShowNotification = (value) => {
-  showNotification.value = value
-}
-
-const updateShowPrintedNotification = () => {
-  showPrintedNotification.value = true
-  setTimeout(() => (showPrintedNotification.value = false), 3000)
-}
-
-const printFunction = () => {
-  updateShowPrintedNotification()
-  // print user pass here
-  console.log('Printing...')
-  // refreshComponent()
-}
-
-const switchCamera = () => {
-  camera.value = camera.value === 'front' ? 'rear' : 'front'
-  // refreshComponent()
 }
 
 async function logErrors(promise) {
@@ -87,22 +62,29 @@ async function logErrors(promise) {
 
 <template>
   <SuccessNotification
-    :show="showPrintedNotification"
-    @update-show="showPrintedNotification = false"
+    :showPrintedNotification="showPrintedNotification"
+    @hidePrintedNotification="showPrintedNotification = false"
   />
   <div class="h-full mx-auto max-w-7xl flex">
     <PrintModal
-      :showNotification="showNotification"
+      :key="componentKey"
+      :showPrintModal="showPrintModal"
       :validQRCode="validQRCode"
-      @update:show-modal="updateShowNotification"
-      @print="printFunction"
+      @hideModal="showPrintModal = false"
+      @print="
+        () => {
+          showPrintedNotification = true
+          // print user pass here
+          console.log('Printing...')
+          componentKey += 1
+        }
+      "
     />
     <div
       class="grid grid-cols-1 h-3/4 lg:h-auto gap-12 lg:gap-0 lg:grid-cols-2 w-full align-middle justify-center items-center place-items-center"
     >
       <div>
         <qrcode-stream
-          :key="componentKey"
           class="!aspect-square !h-auto max-w-lg grid-cols-1 align-middle justify-center items-center"
           :track="selected.value"
           @init="logErrors"
@@ -111,7 +93,7 @@ async function logErrors(promise) {
         >
         </qrcode-stream>
         <StandardButton
-          @click="switchCamera"
+          @click="camera = camera === 'front' ? 'rear' : 'front'"
           text="Switch Camera"
           :icon="ArrowsRightLeftIcon"
           class="bg-blue-600 text-white hover:bg-blue-500 mt-4"

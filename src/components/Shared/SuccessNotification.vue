@@ -1,12 +1,21 @@
 <script setup>
-import { ref } from 'vue'
+import { watch } from 'vue'
 import { CheckCircleIcon } from '@heroicons/vue/24/outline'
 import { XMarkIcon } from '@heroicons/vue/20/solid'
 
 const props = defineProps({
-  show: Boolean
+  showPrintedNotification: Boolean
 })
-const emit = defineEmits(['updateShow'])
+const emit = defineEmits(['hidePrintedNotification'])
+
+watch(
+  () => props.showPrintedNotification,
+  (value) => {
+    if (value == true) {
+      setTimeout(() => emit('hidePrintedNotification', false), 3000)
+    }
+  }
+)
 </script>
 
 <template>
@@ -26,7 +35,7 @@ const emit = defineEmits(['updateShow'])
         leave-to-class="opacity-0"
       >
         <div
-          v-if="props.show"
+          v-if="props.showPrintedNotification"
           class="pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5"
         >
           <div class="p-4">
@@ -41,7 +50,7 @@ const emit = defineEmits(['updateShow'])
               <div class="ml-4 flex flex-shrink-0">
                 <button
                   type="button"
-                  @click="$emit('updateShow', false)"
+                  @click="emit('hidePrintedNotification', false)"
                   class="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                   <span class="sr-only">Close</span>
