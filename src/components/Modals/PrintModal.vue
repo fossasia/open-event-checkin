@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { PrinterIcon } from '@heroicons/vue/24/outline'
 import { ExclamationCircleIcon } from '@heroicons/vue/24/outline'
@@ -15,14 +15,16 @@ const props = defineProps({
 const emit = defineEmits(['hideModal', 'print'])
 
 const disableButton = ref(false)
-const titleText = ref(props.validQRCode ? 'Select items to print' : 'Error!')
-const messageText = ref(props.validQRCode ? '' : 'Please scan a valid QR code')
+const selectedOptions = ref(['code', 'name', 'email', 'org', 'role'])
+
+const printingText = ref(false)
+const titleText = computed(() => props.validQRCode ? 'Select items to print' : 'Error!')
+const messageText = computed(() => !props.validQRCode ? 'Please scan a valid QR code' : '')
 
 const print = () => {
   if (props.validQRCode) {
     printModalStore.printOptions.forEach((option) => (option.disabled = true))
-    titleText.value = 'Printing...'
-    messageText.value = 'Please wait while we print your pass.'
+    printingText.value = true
     disableButton.value = true
     console.log(printModalStore.selectedOptions)
     printDelay(3000, 3200)
@@ -89,9 +91,10 @@ const printDelay = (delayHideModal, delayPrint) => {
 
                   <!--Title-->
                   <div class="mt-3 text-center sm:mt-5">
-                    <DialogTitle as="h3" class="text-base font-semibold leading-6 text-gray-900">{{
-                      titleText
-                    }}</DialogTitle>
+                    <DialogTitle as="h3" class="text-base font-semibold leading-6 text-gray-900">
+                      <span v-if="!printingText">{{ titleText }}</span>
+                      <span v-else>Printing...</span>
+                    </DialogTitle>
 
                     <!--Checklist-->
                     <fieldset v-if="props.validQRCode">
@@ -139,6 +142,9 @@ const printDelay = (delayHideModal, delayPrint) => {
                     </fieldset>
                     <p v-if="messageText !== ''" class="text-sm text-gray-500 mt-3">
                       {{ messageText }}
+                    </p>
+                    <p v-if="printingText" class="text-sm text-gray-500 mt-3">
+                      Please wait while we print your pass.
                     </p>
                   </div>
                 </div>

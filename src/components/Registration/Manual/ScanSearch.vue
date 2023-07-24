@@ -64,6 +64,7 @@ async function logErrors(promise) {
 <template>
   <SuccessNotification
     :showPrintedNotification="showPrintedNotification"
+    :validQRCode="validQRCode"
     @hidePrintedNotification="showPrintedNotification = false"
   />
   <div class="mx-auto grid grid-cols-1 xl:flex items-center gap-16 lg:w-3/4 h-full py-16">
