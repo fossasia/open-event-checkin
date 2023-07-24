@@ -49,18 +49,6 @@ const decode = () => {
   console.log(QRCodeValue)
 }
 
-const printFunction = () => {
-  showPrintedNotification.value = true
-  // print user pass here
-  console.log('Printing...')
-  componentKey.value += 1
-}
-
-const switchCamera = () => {
-  camera.value = camera.value === 'front' ? 'rear' : 'front'
-  // refreshComponent()
-}
-
 async function logErrors(promise) {
   try {
     await promise
@@ -74,16 +62,23 @@ async function logErrors(promise) {
 
 <template>
   <SuccessNotification
-    :showPrintedNotif="showPrintedNotification"
-    @hide-printed-notif="showPrintedNotification = false"
+    :showPrintedNotification="showPrintedNotification"
+    @hidePrintedNotification="showPrintedNotification = false"
   />
   <div class="h-full mx-auto max-w-7xl flex">
     <PrintModal
       :key="componentKey"
       :showPrintModal="showPrintModal"
       :validQRCode="validQRCode"
-      @hide-modal="showPrintModal = false"
-      @print="printFunction"
+      @hideModal="showPrintModal = false"
+      @print="
+        () => {
+          showPrintedNotification = true
+          // print user pass here
+          console.log('Printing...')
+          componentKey += 1
+        }
+      "
     />
     <div
       class="grid grid-cols-1 h-3/4 lg:h-auto gap-12 lg:gap-0 lg:grid-cols-2 w-full align-middle justify-center items-center place-items-center"
@@ -98,7 +93,7 @@ async function logErrors(promise) {
         >
         </qrcode-stream>
         <StandardButton
-          @click="switchCamera"
+          @click="camera = camera === 'front' ? 'rear' : 'front'"
           text="Switch Camera"
           :icon="ArrowsRightLeftIcon"
           class="bg-blue-600 text-white hover:bg-blue-500 mt-4"

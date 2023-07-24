@@ -50,17 +50,6 @@ const decode = () => {
   console.log(QRCodeValue)
 }
 
-const printFunction = () => {
-  showPrintedNotification.value = true
-  // print user pass here
-  console.log('Printing...')
-  componentKey.value += 1 // refresh print modal
-}
-
-const switchCamera = () => {
-  camera.value = camera.value === 'front' ? 'rear' : 'front'
-}
-
 async function logErrors(promise) {
   try {
     await promise
@@ -74,16 +63,23 @@ async function logErrors(promise) {
 
 <template>
   <SuccessNotification
-    :showPrintedNotif="showPrintedNotification"
-    @hide-printed-notif="showPrintedNotification = false"
+    :showPrintedNotification="showPrintedNotification"
+    @hidePrintedNotification="showPrintedNotification = false"
   />
   <div class="mx-auto grid grid-cols-1 xl:flex items-center gap-16 lg:w-3/4 h-full py-16">
     <PrintModal
       :key="componentKey"
       :showPrintModal="showPrintModal"
       :validQRCode="validQRCode"
-      @hide-modal="showPrintModal = false"
-      @print="printFunction"
+      @hideModal="showPrintModal = false"
+      @print="
+        () => {
+          showPrintedNotification = true
+          // print user pass here
+          console.log('Printing...')
+          componentKey += 1 // refresh print modal
+        }
+      "
     />
     <div class="xl:flex-none xl:w-96 flex flex-col items-start">
       <div class="w-full flex justify-center">
@@ -101,7 +97,7 @@ async function logErrors(promise) {
             @decode="decode"
           />
           <StandardButton
-            @click="switchCamera"
+            @click="camera = camera === 'front' ? 'rear' : 'front'"
             text="Switch Camera"
             :icon="ArrowsRightLeftIcon"
             class="bg-blue-600 text-white hover:bg-blue-500 mt-4"
@@ -111,14 +107,7 @@ async function logErrors(promise) {
       <div class="w-full"></div>
     </div>
     <div class="grow">
-      <SearchAttendee
-        @print="
-          ($event) => {
-            showPrintModal = true
-            console.log($event)
-          }
-        "
-      />
+      <SearchAttendee @print="showPrintModal = true" />
     </div>
   </div>
 </template>
