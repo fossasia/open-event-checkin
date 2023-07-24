@@ -4,6 +4,9 @@ import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } fro
 import { PrinterIcon } from '@heroicons/vue/24/outline'
 import { ExclamationCircleIcon } from '@heroicons/vue/24/outline'
 import StandardButton from '@/components/Shared/StandardButton.vue'
+import { usePrintModalStore } from '@/stores/printModal'
+
+const printModalStore = usePrintModalStore()
 
 const props = defineProps({
   showPrintModal: Boolean,
@@ -12,23 +15,16 @@ const props = defineProps({
 const emit = defineEmits(['hideModal', 'print'])
 
 const disableButton = ref(false)
-const selectedOptions = ref(['code', 'name', 'email', 'org', 'role'])
-
 const titleText = ref(props.validQRCode ? 'Select items to print' : 'Error!')
 const messageText = ref(props.validQRCode ? '' : 'Please scan a valid QR code')
 
-const printDelay = (delayHideModal, delayPrint) => {
-  setTimeout(() => emit('hideModal'), delayHideModal)
-  setTimeout(() => emit('print'), delayPrint)
-}
-
 const print = () => {
   if (props.validQRCode) {
-    printOptions.forEach((element) => (element.disabled = true))
+    printModalStore.printOptions.forEach((option) => (option.disabled = true))
     titleText.value = 'Printing...'
     messageText.value = 'Please wait while we print your pass.'
     disableButton.value = true
-    console.log(selectedOptions.value)
+    console.log(printModalStore.selectedOptions)
     printDelay(3000, 3200)
   } else {
     printDelay(0, 200)
@@ -36,67 +32,12 @@ const print = () => {
   }
 }
 
-const printOptions = [
-  {
-    id: 'code',
-    name: 'code',
-    label: 'QR Code',
-    checked: ref(true),
-    disabled: true
-  },
-  {
-    id: 'name',
-    name: 'name',
-    label: 'Name',
-    checked: ref(true),
-    disabled: false
-  },
-  {
-    id: 'email',
-    name: 'email',
-    label: 'Email',
-    checked: ref(true),
-    disabled: false
-  },
-  {
-    id: 'org',
-    name: 'org',
-    label: 'Organisation',
-    checked: ref(true),
-    disabled: false
-  },
-  {
-    id: 'role',
-    name: 'role',
-    label: 'Role',
-    checked: ref(true),
-    disabled: false
-  }
-]
-
-const selectOption = (option) => {
-  option.checked.value = !option.checked.value
-  if (!option.checked.value) {
-    selectedOptions.value.splice(selectedOptions.value.indexOf(option.id), 1)
-  } else {
-    selectedOptions.value.push(option.id)
-  }
-  console.log(selectedOptions.value)
-}
-
-const selectOrDeselectAll = () => {
-  if (selectedOptions.value.length == 5) {
-    printOptions.slice(1).forEach((element) => {
-      element.checked.value = false
-      selectedOptions.value = ['code']
-    })
-  } else {
-    printOptions.slice(1).forEach((element) => {
-      element.checked.value = true
-      selectedOptions.value = ['code', 'name', 'email', 'org', 'role']
-    })
-  }
-  console.log(selectedOptions.value)
+const printDelay = (delayHideModal, delayPrint) => {
+  setTimeout(() => {
+    emit('hideModal')
+    printModalStore.reset()
+  }, delayHideModal)
+  setTimeout(() => emit('print'), delayPrint)
 }
 </script>
 
@@ -156,17 +97,17 @@ const selectOrDeselectAll = () => {
                     <fieldset v-if="props.validQRCode">
                       <div class="space-y-5 mt-6 sm:mt-5 flex flex-col items-start">
                         <div
-                          v-for="(printOption, index) in printOptions"
+                          v-for="(printOption, index) in printModalStore.printOptions"
                           :key="index"
                           class="relative flex items-start px-12 sm:px-6 first:grayscale"
                         >
                           <div class="flex h-6 items-center">
                             <input
-                              @click="selectOption(printOption)"
+                              @click="printModalStore.selectOption(printOption)"
                               :disabled="printOption.disabled"
                               :id="printOption.id"
                               :name="printOption.name"
-                              :checked="printOption.checked.value"
+                              :checked="printOption.checked"
                               type="checkbox"
                               class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
                             />
@@ -179,9 +120,9 @@ const selectOrDeselectAll = () => {
                         </div>
                         <!--Select all button-->
                         <StandardButton
-                          @click="selectOrDeselectAll"
+                          @click="printModalStore.selectOrDeselectAll"
                           :disabled="disableButton"
-                          :text="selectedOptions.length == 5 ? 'Deselect All' : 'Select All'"
+                          :text="printModalStore.selectedOptions.length == 5 ? 'Deselect All' : 'Select All'"
                           :class="[
                             disableButton
                               ? 'cursor-not-allowed opacity-20'
