@@ -86,12 +86,14 @@ const selectOption = (option) => {
 
 const selectOrDeselectAll = () => {
   if (selectedOptions.value.length == 5) {
-    printOptions.slice(1).forEach((element) => {
-      element.checked.value = false
-      selectedOptions.value = ['code']
+    printOptions.forEach((element) => {
+      if (element.id !== 'code') {
+        element.checked.value = false
+        selectedOptions.value = ['code']
+      }
     })
   } else {
-    printOptions.slice(1).forEach((element) => {
+    printOptions.forEach((element) => {
       element.checked.value = true
       selectedOptions.value = ['code', 'name', 'email', 'org', 'role']
     })
