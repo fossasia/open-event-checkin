@@ -7,6 +7,7 @@ import { ArrowsRightLeftIcon } from '@heroicons/vue/20/solid'
 import PrintModal from '@/components/Modals/PrintModal.vue'
 import SearchAttendee from '@/components/Registration/Manual/SearchAttendee.vue'
 import StandardButton from '@/components/Shared/StandardButton.vue'
+import SuccessNotification from '@/components/Shared/SuccessNotification.vue'
 
 // get scanner type from vue router params
 const route = useRoute()
@@ -14,7 +15,8 @@ const scannerType = route.params.scannerType
 
 const camera = ref('front')
 const QRCodeValue = ref('')
-const showNotification = ref(false)
+const showPrintModal = ref(false)
+const showPrintedNotification = ref(false)
 const componentKey = ref(0)
 
 const paintOutline = (detectedCodes, ctx) => {
@@ -44,26 +46,8 @@ const validQRCode = ref(true)
 
 const decode = () => {
   // check if QRCodeValue is valid and conforms to what is needed over here
-  showNotification.value = true
+  showPrintModal.value = true
   console.log(QRCodeValue)
-}
-
-const refreshComponent = () => {
-  componentKey.value += 1
-}
-
-const updateShowNotification = (value) => {
-  showNotification.value = value
-}
-
-const fireFunction = () => {
-  // print user pass here
-  console.log('Printing...')
-}
-
-const switchCamera = () => {
-  camera.value = camera.value === 'front' ? 'rear' : 'front'
-  refreshComponent()
 }
 
 async function logErrors(promise) {
@@ -78,7 +62,26 @@ async function logErrors(promise) {
 </script>
 
 <template>
-  <div class="mx-auto grid grid-cols-1 xl:flex items-center gap-16 lg:w-3/4 h-full my-16">
+  <SuccessNotification
+    :showPrintedNotification="showPrintedNotification"
+    :validQRCode="validQRCode"
+    @hidePrintedNotification="showPrintedNotification = false"
+  />
+  <div class="mx-auto grid grid-cols-1 xl:flex items-center gap-16 lg:w-3/4 h-full py-16">
+    <PrintModal
+      :key="componentKey"
+      :showPrintModal="showPrintModal"
+      :validQRCode="validQRCode"
+      @hideModal="showPrintModal = false"
+      @print="
+        () => {
+          showPrintedNotification = true
+          // print user pass here
+          console.log('Printing...')
+          componentKey += 1 // refresh print modal
+        }
+      "
+    />
     <div class="xl:flex-none xl:w-96 flex flex-col items-start">
       <div class="w-full flex justify-center">
         <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-2xl">
@@ -88,7 +91,6 @@ async function logErrors(promise) {
       <div class="w-full">
         <div class="mx-auto w-fit">
           <qrcode-stream
-            :key="componentKey"
             class="!aspect-square !h-auto max-w-lg grid-cols-1 align-middle justify-center items-center mt-2"
             :track="selected.value"
             @init="logErrors"
@@ -96,7 +98,7 @@ async function logErrors(promise) {
             @decode="decode"
           />
           <StandardButton
-            @click="switchCamera"
+            @click="camera = camera === 'front' ? 'rear' : 'front'"
             text="Switch Camera"
             :icon="ArrowsRightLeftIcon"
             class="bg-blue-600 text-white hover:bg-blue-500 mt-4"
@@ -106,7 +108,7 @@ async function logErrors(promise) {
       <div class="w-full"></div>
     </div>
     <div class="grow">
-      <SearchAttendee />
+      <SearchAttendee @print="showPrintModal = true" />
     </div>
   </div>
 </template>
