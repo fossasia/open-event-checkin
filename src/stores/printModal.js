@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { useApiStore } from '@/stores/api'
 import { ref } from 'vue'
 
 export const usePrintModalStore = defineStore('printModal', () => {
@@ -54,7 +53,7 @@ export const usePrintModalStore = defineStore('printModal', () => {
   }
 
   function selectOrDeselectAll() {
-    if (selectedOptions.value.length == 5) {
+    if (selectedOptions.value.length === 5) {
       printOptions.forEach((option) => {
         if (option.id !== 'code') {
           option.checked.value = false
