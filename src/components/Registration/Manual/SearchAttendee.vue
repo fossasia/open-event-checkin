@@ -4,78 +4,14 @@ import { XCircleIcon, PrinterIcon, MagnifyingGlassIcon } from '@heroicons/vue/20
 import { FunnelIcon } from '@heroicons/vue/24/outline'
 
 import StandardButton from '@/components/Shared/StandardButton.vue'
+import { useSearchAttendeeStore } from '@/stores/searchAttendee'
+
+const searchAttendeeStore = useSearchAttendeeStore()
 
 const emit = defineEmits(['print'])
 
-const searchBar = ref(null)
-
 const menuOpen = ref(false)
 const query = ref('')
-
-const items = [
-  {
-    id: 1,
-    name: 'Wei Tat Chung',
-    email: 'wtc@email.com',
-    checkedIn: ref(false),
-    info: {
-      role: 'Chairperson',
-      memberType: 'Organiser',
-      organisation: 'SUSS AI-IG'
-    }
-  },
-  {
-    id: 2,
-    name: 'Don Chia',
-    email: 'wtc@email.com',
-    checkedIn: ref(false),
-    info: {
-      role: 'Chairperson',
-      memberType: 'Organiser',
-      organisation: 'SUSS AI-IG'
-    }
-  },
-  {
-    id: 3,
-    name: 'Shaun Ming Laclemence',
-    email: 'wtc@email.com',
-    checkedIn: ref(false),
-    info: {
-      role: 'Chairperson',
-      memberType: 'Organiser',
-      organisation: 'SUSS AI-IG'
-    }
-  },
-  {
-    id: 4,
-    name: 'Very very very very very very very very very very long name',
-    email: 'wtc@email.com',
-    checkedIn: ref(false),
-    info: {
-      role: 'Chairperson',
-      memberType: 'Organiser',
-      organisation: 'SUSS AI-IG'
-    }
-  }
-]
-
-const filterOptions = [
-  {
-    id: 'filterRole',
-    name: 'Role',
-    show: ref(false)
-  },
-  {
-    id: 'filterMem',
-    name: 'Member type',
-    show: ref(false)
-  },
-  {
-    id: 'filterOrg',
-    name: 'Organisation',
-    show: ref(false)
-  }
-]
 </script>
 
 <template>
@@ -122,7 +58,7 @@ const filterOptions = [
             ]"
           >
             <FunnelIcon
-              v-if="!filterOptions.some((obj) => obj.show.value)"
+              v-if="!searchAttendeeStore.filterOptions.some((option) => option.show)"
               class="-ml-0.5 h-5 w-5 text-gray-400"
               aria-hidden="true"
             />
@@ -157,20 +93,20 @@ const filterOptions = [
               class="w-40 absolute ring-1 ring-black/5 bg-white rounded-md pl-3 py-3 mt-2 space-y-3 shadow-lg"
             >
               <div
-                v-for="(item, index) in filterOptions"
+                v-for="(option, index) in searchAttendeeStore.filterOptions"
                 :key="index"
                 as="div"
                 class="flex items-center"
               >
                 <input
-                  @click="item.show.value = !item.show.value"
+                  @click="option.show = !option.show"
                   type="checkbox"
-                  :id="item.id"
+                  :id="option.id"
                   class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
-                  :checked="item.show.value"
+                  :checked="option.show"
                 />
-                <label :for="item.id" class="ml-3 text-sm leading-6 font-medium text-gray-900">{{
-                  item.name
+                <label :for="option.id" class="ml-3 text-sm leading-6 font-medium text-gray-900">{{
+                  option.name
                 }}</label>
               </div>
             </div>
@@ -179,53 +115,53 @@ const filterOptions = [
       </div>
     </div>
 
-    <div v-if="items.length > 0" class="mt-5 h-96 overflow-y-scroll">
+    <div v-if="searchAttendeeStore.people.length > 0" class="mt-5 h-96 overflow-y-scroll">
       <ul role="list" class="flex flex-col gap-3">
         <li
-          v-for="item in items"
-          :key="item.id"
+          v-for="person in searchAttendeeStore.people"
+          :key="person.id"
           class="rounded-md bg-white px-3 sm:px-6 py-3 sm:py-4 shadow border border-gray-300 last:mb-1"
         >
           <div class="grid grid-cols-1 sm:grid-cols-2 items-center justify-between gap-2 sm:gap-8">
             <div class="flex flex-col sm:gap-3">
               <div class="flex flex-col gap-1">
-                <span class="text-gray-900 font-bold">{{ item.name }}</span>
-                <span class="text-gray-400 font-bold text-sm">{{ item.email }}</span>
+                <span class="text-gray-900 font-bold">{{ person.name }}</span>
+                <span class="text-gray-400 font-bold text-sm">{{ person.email }}</span>
               </div>
               <div
-                v-if="filterOptions.some((obj) => obj.show.value)"
+                v-if="searchAttendeeStore.filterOptions.some((option) => option.show)"
                 class="flex flex-wrap text-normal gap-1 mt-1 sm:mt-0"
               >
                 <span
-                  v-if="filterOptions[0].show.value"
+                  v-if="searchAttendeeStore.filterOptions[0].show"
                   class="text-center rounded-md px-2 py-1 text-xs text-gray-600 ring-1 ring-inset ring-gray-500/10"
-                  >{{ item.info.role }}</span
+                  >{{ person.info.role }}</span
                 >
                 <span
-                  v-if="filterOptions[1].show.value"
+                  v-if="searchAttendeeStore.filterOptions[1].show"
                   class="text-center rounded-md px-2 bg-yellow-50 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20"
-                  >{{ item.info.memberType }}</span
+                  >{{ person.info.memberType }}</span
                 >
                 <span
-                  v-if="filterOptions[2].show.value"
+                  v-if="searchAttendeeStore.filterOptions[2].show"
                   class="text-center rounded-md px-2 bg-gray-50 py-1 text-xs font-bold text-gray-600 ring-1 ring-inset ring-gray-500/10"
-                  >{{ item.info.organisation }}</span
+                  >{{ person.info.organisation }}</span
                 >
               </div>
             </div>
 
             <div class="flex items-center justify-end gap-2">
               <StandardButton
-                @click="item.checkedIn.value = true"
-                :text="item.checkedIn.value ? 'Checked-in' : 'Check-in'"
+                @click="person.checkedIn = true"
+                :text="person.checkedIn ? 'Checked-in' : 'Check-in'"
                 :class="[
-                  item.checkedIn.value
+                  person.checkedIn
                     ? 'bg-blue-600/20 text-blue-700/70 w-1/2 sm:w-auto justify-center min-w-fit'
                     : 'bg-blue-600 text-white hover:bg-blue-500 w-1/2 sm:w-auto justify-center'
                 ]"
               />
               <StandardButton
-                @click="emit('print', item.name)"
+                @click="emit('print', person.name)"
                 text="Print"
                 :icon="PrinterIcon"
                 class="bg-yellow-300 text-gray-900 hover:bg-yellow-200 w-1/2 sm:w-auto justify-center"

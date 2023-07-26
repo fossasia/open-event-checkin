@@ -15,40 +15,24 @@ import {
   ListboxOptions
 } from '@headlessui/vue'
 import StandardButton from '@/components/Shared/StandardButton.vue'
+import { useTypeSelectorStore } from '@/stores/typeSelector'
 
-const eventNames = [
-  { id: 1, name: 'Leslie Alexander' }
-  // More events...
-]
+const typeSelectorStore = useTypeSelectorStore()
 
+const stationTypes = typeSelectorStore.stationTypes
+const availableStations = typeSelectorStore.availableStations
 const query = ref('')
 const selectedEvent = ref(null)
+
 const filteredEvents = computed(() =>
   query.value === ''
-    ? eventNames
-    : eventNames.filter((person) => {
+    ? typeSelectorStore.eventNames
+    : typeSelectorStore.eventNames.filter((person) => {
         return person.name.toLowerCase().includes(query.value.toLowerCase())
       })
 )
 
-const stationTypes = [
-  { id: 'registration-scan', name: 'Registration (via scan)', href: 'registerScan' },
-  { id: 'registration-search', name: 'Registration (via search)', href: 'registerSearch' },
-  { id: 'registration-hybrid', name: 'Registration (hybrid)', href: 'registerHybrid' },
-  { id: 'check-in-daily', name: 'Daily Check-In', href: 'scannerCamera' },
-  { id: 'check-in', name: 'Session Check-In', href: 'scannerCamera' },
-  { id: 'checkout', name: 'Session Checkout', href: 'scannerCamera' }
-]
-
 const selectedType = ref(stationTypes[1])
-
-const availableStations = [
-  { id: 'none', name: 'Create New' },
-  { id: '1', name: 'Booth 1' },
-  { id: '2', name: 'Booth ABC' },
-  { id: '3', name: 'Door 1' }
-]
-
 const selectedStation = ref(availableStations[1])
 </script>
 

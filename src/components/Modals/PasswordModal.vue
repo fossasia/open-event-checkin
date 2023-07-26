@@ -1,32 +1,26 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { EllipsisHorizontalIcon } from '@heroicons/vue/24/outline'
 import StandardButton from '@/components/Shared/StandardButton.vue'
+import { usePasswordModalStore } from '@/stores/passwordModal'
+
+const passwordModalStore = usePasswordModalStore()
 
 const props = defineProps({
-  showNotification: Boolean
+  showPasswordModal: Boolean
 })
 
-const emit = defineEmits(['updateShowModal'])
-
-const open = ref(false)
-
-watch(
-  () => props.showNotification,
-  (value) => {
-    open.value = value
-  }
-)
+const emit = defineEmits(['hidePasswordModal'])
 
 const passwordField = ref('')
 const validPassword = ref(null)
 
 const checkPassword = (value) => {
   // check password here
-  if (value === '1234') {
+  if (value === passwordModalStore.password) {
     validPassword.value = true
-    emit('updateShowModal', false)
+    emit('hidePasswordModal', false)
     passwordField.value = ''
     // sign out
   } else {
@@ -37,8 +31,12 @@ const checkPassword = (value) => {
 </script>
 
 <template>
-  <TransitionRoot as="template" :show="open" @click="$emit('updateShowModal', false)">
-    <Dialog as="div" class="relative z-10">
+  <TransitionRoot
+    as="template"
+    :show="props.showPasswordModal"
+    @click="$emit('hidePasswordModal', false)"
+  >
+    <Dialog as="div" class="relative z-30">
       <TransitionChild
         as="template"
         enter="ease-out duration-300"

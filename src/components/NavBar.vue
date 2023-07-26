@@ -30,19 +30,19 @@ const navigation = [
 ]
 const userNavigation = [
   { name: 'Stats' },
-  { name: 'Sign out', action: () => (showPasswordNotification.value = true) }
+  { name: 'Sign out', action: () => (showPasswordModal.value = true) }
 ]
 const showNavigation = ref(false)
 const eventName = ref('test event')
-const showPasswordNotification = ref(false)
+const showPasswordModal = ref(false)
 </script>
 
 <template>
   <PasswordModal
-    :showNotification="showPasswordNotification"
-    @update-show-modal="showPasswordNotification = $event"
+    :showPasswordModal="showPasswordModal"
+    @hidePasswordModal="showPasswordModal = $event"
   />
-  <Disclosure as="header" class="bg-white shadow sticky top-0 z-10" v-slot="{ open }">
+  <Disclosure as="header" class="bg-white shadow sticky top-0 z-20" v-slot="{ open }">
     <div class="mx-auto max-w-7xl px-2 sm:px-4 lg:divide-y lg:divide-gray-200 lg:px-8">
       <div class="relative flex h-16 justify-between space-x-5">
         <div class="relative z-10 flex pl-2">
@@ -84,7 +84,7 @@ const showPasswordNotification = ref(false)
               leave-to-class="transform opacity-0 scale-95"
             >
               <MenuItems
-                class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                class="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
               >
                 <MenuItem v-for="item in userNavigation" :key="item.name">
                   <button
