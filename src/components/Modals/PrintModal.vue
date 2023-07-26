@@ -15,8 +15,9 @@ const disableButton = ref(false)
 const selectedOptions = ref(['code', 'name', 'email', 'org', 'role'])
 
 const printingText = ref(false)
-const titleText = computed(() => (props.validQRCode ? 'Select items to print' : 'Error!'))
-const messageText = computed(() => (!props.validQRCode ? 'Please scan a valid QR code' : ''))
+
+const titleText = computed(() => props.validQRCode ? 'Select items to print' : 'Error!')
+const messageText = computed(() => !props.validQRCode ? 'Please scan a valid QR code' : '')
 
 const printDelay = (delayHideModal, delayPrint) => {
   setTimeout(() => emit('hideModal'), delayHideModal)
