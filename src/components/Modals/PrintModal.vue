@@ -15,8 +15,8 @@ const disableButton = ref(false)
 const selectedOptions = ref(['code', 'name', 'email', 'org', 'role'])
 
 const printingText = ref(false)
-const titleText = computed(() => props.validQRCode ? 'Select items to print' : 'Error!')
-const messageText = computed(() => !props.validQRCode ? 'Please scan a valid QR code' : '')
+const titleText = computed(() => (props.validQRCode ? 'Select items to print' : 'Error!'))
+const messageText = computed(() => (!props.validQRCode ? 'Please scan a valid QR code' : ''))
 
 const printDelay = (delayHideModal, delayPrint) => {
   setTimeout(() => emit('hideModal'), delayHideModal)
@@ -104,7 +104,7 @@ const selectOrDeselectAll = () => {
 
 <template>
   <TransitionRoot as="template" :show="props.showPrintModal">
-    <Dialog as="div" class="relative z-10" @close="$emit('hideModal')">
+    <Dialog as="div" class="relative z-30" @close="$emit('hideModal')">
       <TransitionChild
         as="template"
         enter="ease-out duration-300"
