@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { useApiStore } from '@/stores/api'
-import { ref } from 'vue'
 
 export const useEventsStore = defineStore('events', () => {
   async function getEvents() {

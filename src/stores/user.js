@@ -1,6 +1,4 @@
 import { defineStore } from 'pinia'
-import { useApiStore } from '@/stores/api'
-import { ref } from 'vue'
 
 export const useUserStore = defineStore('user', () => {
   async function storeDetails(payload) {

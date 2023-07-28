@@ -36,7 +36,5 @@ export const useTypeSelectorStore = defineStore('typeSelector', () => {
     }
   }
 
-  async function setAvailableStations() {}
-
   return { getStations, stationTypes, availableStations }
 })
