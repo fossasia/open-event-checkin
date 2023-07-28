@@ -3,6 +3,8 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useLoadingStore } from '@/stores/loading'
 import { useAuthStore } from '@/stores/auth'
+import { useApiStore } from '@/stores/api'
+import { useUserStore } from '@/stores/user'
 import StandardButton from '@/components/Shared/StandardButton.vue'
 
 // form fields
@@ -15,6 +17,8 @@ const showError = ref(false)
 // stores
 const loadingStore = useLoadingStore()
 const authStore = useAuthStore()
+const apiStore = useApiStore()
+const userStore = useUserStore()
 
 // router
 const router = useRouter()
@@ -42,11 +46,21 @@ async function submitLogin() {
       console.log(err)
       showError.value = true
     })
+
+  //get user ID after login
+  await apiStore.get(true, 'users/user-details/get-user-id').then((res) => {})
+
+  /*get user details with user ID
+  await apiStore
+    .get(true, `users/${userId}`)
+    .then(async (res) => {
+      userStore.storeDetails(res)
+    })*/
 }
 </script>
 
 <template>
-  <div class="flex flex-1 flex-col justify-center my-auto">
+  <div class="flex flex-1 flex-col justify-center my-auto h-screen">
     <div class="sm:mx-auto sm:w-full sm:max-w-sm">
       <h2 class="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
         Sign in to your account

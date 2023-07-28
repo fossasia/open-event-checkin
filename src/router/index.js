@@ -45,7 +45,7 @@ const router = createRouter({
           ]
         },
         {
-          path: ':eventId/scanner/:scannerType',
+          path: ':eventId/:roomId/scanner/:scannerType',
           name: 'scanner',
           component: QRScannerCamera
         }

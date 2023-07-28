@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { XCircleIcon, PrinterIcon, MagnifyingGlassIcon } from '@heroicons/vue/20/solid'
 import { FunnelIcon } from '@heroicons/vue/24/outline'
 
@@ -12,6 +12,16 @@ const emit = defineEmits(['print'])
 
 const menuOpen = ref(false)
 const query = ref('')
+
+watch(query, (value) => {
+  if (value.includes('@')) {
+    searchAttendeeStore.getAttendee('', value) // is an email
+  } else if (value == '') {
+    searchAttendeeStore.clearAttendees()
+  } else {
+    searchAttendeeStore.getAttendee(value, '') // is a name
+  }
+})
 </script>
 
 <template>

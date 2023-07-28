@@ -17,8 +17,8 @@ const emit = defineEmits(['hideModal', 'print'])
 const disableButton = ref(false)
 const printingText = ref(false)
 
-const titleText = computed(() => props.validQRCode ? 'Select items to print' : 'Error!')
-const messageText = computed(() => !props.validQRCode ? 'Please scan a valid QR code' : '')
+const titleText = computed(() => (props.validQRCode ? 'Select items to print' : 'Error!'))
+const messageText = computed(() => (!props.validQRCode ? 'Please scan a valid QR code' : ''))
 
 const printDelay = (delayHideModal, delayPrint) => {
   setTimeout(() => emit('hideModal'), delayHideModal)
@@ -124,7 +124,11 @@ const print = () => {
                         <StandardButton
                           @click="printModalStore.selectOrDeselectAll"
                           :disabled="disableButton"
-                          :text="printModalStore.selectedOptions.length === 5 ? 'Deselect All' : 'Select All'"
+                          :text="
+                            printModalStore.selectedOptions.length === 5
+                              ? 'Deselect All'
+                              : 'Select All'
+                          "
                           :class="[
                             disableButton
                               ? 'cursor-not-allowed opacity-20'

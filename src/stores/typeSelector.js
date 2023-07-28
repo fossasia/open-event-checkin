@@ -1,18 +1,13 @@
 import { defineStore } from 'pinia'
+import { useApiStore } from '@/stores/api'
 
 export const useTypeSelectorStore = defineStore('typeSelector', () => {
-  const eventNames = [
-    { id: 1, name: 'Leslie Alexander' }
-    // More events...
-  ]
-
   const stationTypes = [
-    { id: 'registration-scan', name: 'Registration (via scan)', href: 'registerScan' },
-    { id: 'registration-search', name: 'Registration (via search)', href: 'registerSearch' },
+    { id: 'registration-kiosk', name: 'Registration (via scan)', href: 'registerKiosk' },
     { id: 'registration-hybrid', name: 'Registration (hybrid)', href: 'registerHybrid' },
-    { id: 'check-in-daily', name: 'Daily Check-In', href: 'scannerCamera' },
-    { id: 'check-in', name: 'Session Check-In', href: 'scannerCamera' },
-    { id: 'checkout', name: 'Session Checkout', href: 'scannerCamera' }
+    { id: 'check-in-daily', name: 'Daily Check-In', href: 'scanner' },
+    { id: 'check-in', name: 'Session Check-In', href: 'scanner' },
+    { id: 'checkout', name: 'Session Checkout', href: 'scanner' }
   ]
 
   const availableStations = [
@@ -22,5 +17,26 @@ export const useTypeSelectorStore = defineStore('typeSelector', () => {
     { id: '3', name: 'Door 1' }
   ]
 
-  return { eventNames, stationTypes, availableStations }
+  async function getStations(eventId) {
+    try {
+      const stations = []
+      const stationRes = await useApiStore().get(true, `events/${eventId}/stations`)
+      for (const station of stationRes.data) {
+        stations.push({
+          id: station.id,
+          name: station.attributes['station-name'],
+          microlocationId: station.attributes['microlocation-id'],
+          stationType: station.attributes['daily'],
+          room: station.attributes['room']
+        })
+      }
+      return stations
+    } catch (error) {
+      throw error
+    }
+  }
+
+  async function setAvailableStations() {}
+
+  return { getStations, stationTypes, availableStations }
 })

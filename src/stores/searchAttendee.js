@@ -1,53 +1,10 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
+import { useApiStore } from '@/stores/api'
+import { useEventsStore } from '@/stores/events'
 
 export const useSearchAttendeeStore = defineStore('searchAttendee', () => {
-  const people = [
-    {
-      id: 1,
-      name: 'Wei Tat Chung',
-      email: 'wtc@email.com',
-      checkedIn: ref(false),
-      info: {
-        role: 'Chairperson',
-        memberType: 'Organiser',
-        organisation: 'SUSS AI-IG'
-      }
-    },
-    {
-      id: 2,
-      name: 'Don Chia',
-      email: 'wtc@email.com',
-      checkedIn: ref(false),
-      info: {
-        role: 'Chairperson',
-        memberType: 'Organiser',
-        organisation: 'SUSS AI-IG'
-      }
-    },
-    {
-      id: 3,
-      name: 'Shaun Ming Laclemence',
-      email: 'wtc@email.com',
-      checkedIn: ref(false),
-      info: {
-        role: 'Chairperson',
-        memberType: 'Organiser',
-        organisation: 'SUSS AI-IG'
-      }
-    },
-    {
-      id: 4,
-      name: 'Very very very very very very very very very very long name',
-      email: 'wtc@email.com',
-      checkedIn: ref(false),
-      info: {
-        role: 'Chairperson',
-        memberType: 'Organiser',
-        organisation: 'SUSS AI-IG'
-      }
-    }
-  ]
+  const people = ref([])
 
   const filterOptions = [
     {
@@ -67,5 +24,36 @@ export const useSearchAttendeeStore = defineStore('searchAttendee', () => {
     }
   ]
 
-  return { people, filterOptions }
+  async function getAttendee(name, email) {
+    try {
+      const searchedAttendees = []
+      const eventId = useEventsStore().getEventId()
+      const attendees = await useApiStore().get(
+        true,
+        `events/${eventId}/attendees/search?name=${name}&email=${email}`
+      )
+      for (const attendee of attendees.attendees) {
+        searchedAttendees.push({
+          id: attendee.id,
+          name: attendee.firstname + ' ' + attendee.lastname,
+          email: attendee.email,
+          checkedIn: ref(attendee.is_checked_in),
+          info: {
+            role: null,
+            memberType: null,
+            organisation: attendee.company
+          }
+        })
+      }
+      people.value = searchedAttendees
+    } catch (error) {
+      throw error
+    }
+  }
+
+  function clearAttendees() {
+    people.value = []
+  }
+
+  return { people, filterOptions, getAttendee, clearAttendees }
 })
