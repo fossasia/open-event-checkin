@@ -14,7 +14,6 @@ import { useRouter } from 'vue-router'
 import { useLoadingStore } from '@/stores/loading'
 import { useApiStore } from '@/stores/api'
 import StandardButton from '@/components/Shared/StandardButton.vue'
-import { useTypeSelectorStore } from '@/stores/typeSelector'
 
 // stores
 const eventsStore = useEventsStore()
