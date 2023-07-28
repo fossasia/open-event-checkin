@@ -43,7 +43,7 @@ const componentKey = ref(0)
     :key="componentKey"
     :showPasswordModal="showPasswordModal"
     @hidePasswordModal="
-      {
+      () => {
         showPasswordModal = $event
         componentKey += 1
       }
