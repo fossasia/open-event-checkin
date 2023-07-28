@@ -3,7 +3,6 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useLoadingStore } from '@/stores/loading'
 import { useAuthStore } from '@/stores/auth'
-import { useApiStore } from '@/stores/api'
 import StandardButton from '@/components/Shared/StandardButton.vue'
 
 // form fields
@@ -16,7 +15,6 @@ const showError = ref(false)
 // stores
 const loadingStore = useLoadingStore()
 const authStore = useAuthStore()
-const apiStore = useApiStore()
 
 // router
 const router = useRouter()
