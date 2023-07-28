@@ -4,7 +4,6 @@ import { useRouter } from 'vue-router'
 import { useLoadingStore } from '@/stores/loading'
 import { useAuthStore } from '@/stores/auth'
 import { useApiStore } from '@/stores/api'
-import { useUserStore } from '@/stores/user'
 import StandardButton from '@/components/Shared/StandardButton.vue'
 
 // form fields
@@ -18,7 +17,6 @@ const showError = ref(false)
 const loadingStore = useLoadingStore()
 const authStore = useAuthStore()
 const apiStore = useApiStore()
-const userStore = useUserStore()
 
 // router
 const router = useRouter()
@@ -46,16 +44,6 @@ async function submitLogin() {
       console.log(err)
       showError.value = true
     })
-
-  //get user ID after login
-  await apiStore.get(true, 'users/user-details/get-user-id').then((res) => {})
-
-  /*get user details with user ID
-  await apiStore
-    .get(true, `users/${userId}`)
-    .then(async (res) => {
-      userStore.storeDetails(res)
-    })*/
 }
 </script>
 

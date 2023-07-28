@@ -12,14 +12,12 @@ import { useEventsStore } from '@/stores/events'
 import { useTypeSelectorStore } from '@/stores/typeSelector'
 import { useRouter } from 'vue-router'
 import { useLoadingStore } from '@/stores/loading'
-import { useApiStore } from '@/stores/api'
 import StandardButton from '@/components/Shared/StandardButton.vue'
 
 // stores
 const eventsStore = useEventsStore()
 const loadingStore = useLoadingStore()
 const typeSelectorStore = useTypeSelectorStore()
-const apiStore = useApiStore()
 
 // router
 const router = useRouter()
@@ -92,7 +90,7 @@ const availableStations = [
   { id: '2', name: 'Booth ABC' },
   { id: '3', name: 'Door 1' }
 ]
-watch(selectedEvent, (event) => {
+watch(selectedEvent, () => {
   eventsStore.setEventId(selectedEvent.value.id)
   //typeSelectorStore.getStations(event.id) // doesnt work
 })

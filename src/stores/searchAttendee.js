@@ -25,30 +25,27 @@ export const useSearchAttendeeStore = defineStore('searchAttendee', () => {
   ]
 
   async function getAttendee(name, email) {
-    try {
-      const searchedAttendees = []
-      const eventId = useEventsStore().getEventId()
-      const attendees = await useApiStore().get(
-        true,
-        `events/${eventId}/attendees/search?name=${name}&email=${email}`
-      )
-      for (const attendee of attendees.attendees) {
-        searchedAttendees.push({
-          id: attendee.id,
-          name: attendee.firstname + ' ' + attendee.lastname,
-          email: attendee.email,
-          checkedIn: ref(attendee.is_checked_in),
-          info: {
-            role: null,
-            memberType: null,
-            organisation: attendee.company
-          }
-        })
-      }
-      people.value = searchedAttendees
-    } catch (error) {
-      throw error
+
+    const searchedAttendees = []
+    const eventId = useEventsStore().getEventId()
+    const attendees = await useApiStore().get(
+      true,
+      `events/${eventId}/attendees/search?name=${name}&email=${email}`
+    )
+    for (const attendee of attendees.attendees) {
+      searchedAttendees.push({
+        id: attendee.id,
+        name: attendee.firstname + ' ' + attendee.lastname,
+        email: attendee.email,
+        checkedIn: ref(attendee.is_checked_in),
+        info: {
+          role: null,
+          memberType: null,
+          organisation: attendee.company
+        }
+      })
     }
+    people.value = searchedAttendees
   }
 
   function clearAttendees() {

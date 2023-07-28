@@ -22,7 +22,7 @@ const passwordField = ref('')
 const validPassword = ref(null)
 const disableButton = ref(false)
 
-async function checkPassword(value) {
+async function checkPassword() {
   disableButton.value = true
   loadingStore.show = true
   const payload = { password: passwordField.value }
@@ -114,7 +114,7 @@ async function checkPassword(value) {
                 <StandardButton
                   text="Sign Out"
                   :disabled="disableButton"
-                  @click="checkPassword(passwordField)"
+                  @click="checkPassword()"
                   :class="[
                     disableButton && 'cursor-not-allowed opacity-20',
                     'bg-blue-600 text-white hover:bg-blue-500 w-full justify-center'

@@ -1,47 +1,40 @@
 import { defineStore } from 'pinia'
 import { useApiStore } from '@/stores/api'
-import { ref } from 'vue'
 
 export const useEventsStore = defineStore('events', () => {
   async function getEvents() {
-    try {
-      let userId
+    let userId
 
-      await useApiStore()
-        .get(true, 'users/user-details/get-user-id')
-        .then((res) => (userId = res.user_id))
+    await useApiStore()
+      .get(true, 'users/user-details/get-user-id') // get user id
+      .then((res) => (userId = res.user_id))
 
-      const events = []
-      const eventRes = await useApiStore().get(true, `users/${userId}/events`)
-      for (const event of eventRes.data) {
-        const roomId = event.id
-        const rooms = await useApiStore().get(true, `events/${roomId}/microlocations`)
-        const roomsData = []
-        for (const room of Object(rooms.data)) {
-          roomsData.push({
-            id: room.id,
-            name: room.attributes.name
-          })
-        }
-        events.push({
-          id: event.id,
-          name: event.attributes.name,
-          rooms: roomsData
+    const events = []
+    const eventRes = await useApiStore().get(true, `users/${userId}/events`)
+    for (const event of eventRes.data) {
+      const roomId = event.id
+      const rooms = await useApiStore().get(true, `events/${roomId}/microlocations`)
+      const roomsData = []
+      for (const room of Object(rooms.data)) {
+        roomsData.push({
+          id: room.id,
+          name: room.attributes.name
         })
       }
-      return events
-    } catch (error) {
-      throw error
+      events.push({
+        id: event.id,
+        name: event.attributes.name,
+        rooms: roomsData
+      })
     }
+    return events
   }
 
   async function getEventName(eventId) {
-    try {
-      const event = await useApiStore().get(true, `events/${eventId}`)
-      return event.data.attributes.name
-    } catch (error) {
-      throw error
-    }
+
+    const event = await useApiStore().get(true, `events/${eventId}`)
+    return event.data.attributes.name
+
   }
 
   function setEventId(eventId) {

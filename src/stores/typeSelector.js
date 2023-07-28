@@ -18,25 +18,20 @@ export const useTypeSelectorStore = defineStore('typeSelector', () => {
   ]
 
   async function getStations(eventId) {
-    try {
-      const stations = []
-      const stationRes = await useApiStore().get(true, `events/${eventId}/stations`)
-      for (const station of stationRes.data) {
-        stations.push({
-          id: station.id,
-          name: station.attributes['station-name'],
-          microlocationId: station.attributes['microlocation-id'],
-          stationType: station.attributes['daily'],
-          room: station.attributes['room']
-        })
-      }
-      return stations
-    } catch (error) {
-      throw error
-    }
-  }
 
-  async function setAvailableStations() {}
+    const stations = []
+    const stationRes = await useApiStore().get(true, `events/${eventId}/stations`)
+    for (const station of stationRes.data) {
+      stations.push({
+        id: station.id,
+        name: station.attributes['station-name'],
+        microlocationId: station.attributes['microlocation-id'],
+        stationType: station.attributes['daily'],
+        room: station.attributes['room']
+      })
+    }
+    return stations
+  }
 
   return { getStations, stationTypes, availableStations }
 })
