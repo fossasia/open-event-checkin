@@ -122,13 +122,13 @@ const print = () => {
                         </div>
                         <!--Select all button-->
                         <StandardButton
-                          @click="printModalStore.selectOrDeselectAll"
-                          :disabled="disableButton"
                           :text="
                             printModalStore.selectedOptions.length === 5
                               ? 'Deselect All'
                               : 'Select All'
                           "
+                          @click="printModalStore.selectOrDeselectAll"
+                          :disabled="disableButton"
                           :class="[
                             disableButton
                               ? 'cursor-not-allowed opacity-20'

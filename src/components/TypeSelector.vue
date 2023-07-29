@@ -133,7 +133,7 @@ async function submitForm() {
         Select Event
       </h2>
       <form class="space-y-6 mt-10" @submit.prevent="submitForm">
-        <Listbox as="div" v-model="selectedEvent">
+        <Listbox v-model="selectedEvent" as="div">
           <ListboxLabel class="block text-sm font-medium leading-6 text-gray-900"
             >Event</ListboxLabel
           >
@@ -153,11 +153,11 @@ async function submitForm() {
               class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
             >
               <ListboxOption
-                as="template"
                 v-for="event in eventNames"
                 :key="event.id"
+                as="template"
+                v-slot="{ active }"
                 :value="event"
-                v-slot="{ active, eventNames }"
               >
                 <li
                   :class="[
@@ -203,8 +203,8 @@ async function submitForm() {
               class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
             >
               <ListboxOption
-                as="template"
                 v-for="stationType in typeSelectorStore.stationTypes"
+                as="template"
                 :key="stationType.id"
                 :value="stationType"
                 v-slot="{ active, stationTypes }"
@@ -243,8 +243,8 @@ async function submitForm() {
             selectedType.id == 'registration-hybrid' ||
             selectedType.id == 'check-in-daily'
           "
-          as="div"
           v-model="selectedStation"
+          as="div"
         >
           <ListboxLabel class="block text-sm font-medium leading-6 text-gray-900"
             >Selected Station</ListboxLabel
@@ -298,8 +298,8 @@ async function submitForm() {
         <!-- for room checkin and checkout, only retrieve locations from api and not able to create new -->
         <Listbox
           v-if="selectedType.id == 'check-in' || selectedType.id == 'checkout'"
-          as="div"
           v-model="selectedRoom"
+          as="div"
         >
           <ListboxLabel class="block text-sm font-medium leading-6 text-gray-900"
             >Selected Room</ListboxLabel
@@ -320,11 +320,11 @@ async function submitForm() {
               class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
             >
               <ListboxOption
-                as="template"
                 v-for="room in availableRooms"
                 :key="room.id"
+                as="template"
+                v-slot="{ active }"
                 :value="room"
-                v-slot="{ active, availableRooms }"
               >
                 <li
                   :class="[

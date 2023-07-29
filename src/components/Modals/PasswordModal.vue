@@ -114,11 +114,11 @@ async function checkPassword() {
                 <StandardButton
                   text="Sign Out"
                   :disabled="disableButton"
-                  @click="checkPassword()"
                   :class="[
                     disableButton && 'cursor-not-allowed opacity-20',
                     'bg-blue-600 text-white hover:bg-blue-500 w-full justify-center'
                   ]"
+                  @click="checkPassword()"
                 />
               </div>
             </DialogPanel>
