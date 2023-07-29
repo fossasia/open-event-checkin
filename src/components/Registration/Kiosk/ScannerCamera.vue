@@ -41,15 +41,15 @@ async function logErrors(promise) {
 
 <template>
   <SuccessNotification
-    :showPrintedNotification="showPrintedNotification"
-    :validQRCode="validQRCode"
+    :show-printed-notification="showPrintedNotification"
+    :valid-q-r-code="validQRCode"
     @hidePrintedNotification="showPrintedNotification = false"
   />
   <div class="h-full mx-auto max-w-7xl flex">
     <PrintModal
       :key="componentKey"
-      :showPrintModal="showPrintModal"
-      :validQRCode="validQRCode"
+      :show-print-modal="showPrintModal"
+      :valid-q-r-code="validQRCode"
       @hideModal="showPrintModal = false"
       @print="
         () => {
@@ -67,16 +67,16 @@ async function logErrors(promise) {
         <qrcode-stream
           class="!aspect-square !h-auto max-w-lg grid-cols-1 align-middle justify-center items-center"
           :track="scannerStore.selected.value"
-          @init="logErrors"
           :camera="camera"
+          @init="logErrors"
           @decode="decode"
         >
         </qrcode-stream>
         <StandardButton
-          @click="camera = camera === 'front' ? 'rear' : 'front'"
           text="Switch Camera"
           :icon="ArrowsRightLeftIcon"
           class="bg-blue-600 text-white hover:bg-blue-500 mt-4"
+          @click="camera = camera === 'front' ? 'rear' : 'front'"
         />
       </div>
       <div class="w-full flex-auto text-center grid-cols-1">

@@ -94,10 +94,10 @@ async function checkPassword() {
                   >
                   <div class="mt-5 sm:mt-6">
                     <input
+                      id="password"
                       v-model="passwordField"
                       type="password"
                       name="password"
-                      id="password"
                       autocomplete="password"
                       class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                     />

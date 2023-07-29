@@ -186,7 +186,7 @@ async function submitForm() {
 
         <!-- select booth type -->
 
-        <Listbox as="div" v-model="selectedType">
+        <Listbox v-model="selectedType" as="div">
           <ListboxLabel class="block text-sm font-medium leading-6 text-gray-900"
             >Type</ListboxLabel
           >
@@ -206,8 +206,9 @@ async function submitForm() {
                 v-for="stationType in typeSelectorStore.stationTypes"
                 as="template"
                 :key="stationType.id"
-                :value="stationType"
                 v-slot="{ active, stationTypes }"
+                as="template"
+                :value="stationType"
               >
                 <li
                   :class="[
@@ -262,11 +263,11 @@ async function submitForm() {
               class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
             >
               <ListboxOption
-                as="template"
                 v-for="station in availableStations"
                 :key="station.id"
-                :value="station"
                 v-slot="{ active, availableStations }"
+                as="template"
+                :value="station"
               >
                 <li
                   :class="[

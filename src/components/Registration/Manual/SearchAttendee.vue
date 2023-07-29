@@ -25,7 +25,7 @@ watch(query, (value) => {
 </script>
 
 <template>
-  <div v-if="menuOpen" @click="menuOpen = !menuOpen" class="fixed top-0 left-0 w-full h-full" />
+  <div v-if="menuOpen" class="fixed top-0 left-0 w-full h-full" @click="menuOpen = !menuOpen" />
   <div class="mx-auto w-full overflow-visible">
     <div>
       <div class="flex justify-center">
@@ -39,17 +39,17 @@ watch(query, (value) => {
           <div class="flex flex-1 rounded-md shadow-sm">
             <div class="relative h-9 flex flex-grow items-stretch focus-within:z-10">
               <input
+                id="search"
                 v-model="query"
                 type="text"
                 name="search"
-                id="search"
                 class="group block w-full rounded-none rounded-l-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
               />
               <button
-                type="button"
-                @click="query = ''"
                 v-if="query !== ''"
+                type="button"
                 class="group absolute inset-y-0 right-0 flex items-center pr-3 z-0"
+                @click="query = ''"
               >
                 <XCircleIcon
                   class="h-6 text-gray-400 group-hover:text-gray-400/70"
@@ -61,11 +61,11 @@ watch(query, (value) => {
 
           <button
             type="button"
-            @click="menuOpen = !menuOpen"
             :class="[
               menuOpen && 'bg-gray-50',
               'relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-3 py-1.5 text-sm font-semibold text-gray-900 border border-gray-300 hover:bg-gray-50 group-focus:border-l-blue-600'
             ]"
+            @click="menuOpen = !menuOpen"
           >
             <FunnelIcon
               v-if="!searchAttendeeStore.filterOptions.some((option) => option.show)"
@@ -109,11 +109,11 @@ watch(query, (value) => {
                 class="flex items-center"
               >
                 <input
-                  @click="option.show = !option.show"
-                  type="checkbox"
                   :id="option.id"
+                  type="checkbox"
                   class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
                   :checked="option.show"
+                  @click="option.show = !option.show"
                 />
                 <label :for="option.id" class="ml-3 text-sm leading-6 font-medium text-gray-900">{{
                   option.name
@@ -162,19 +162,19 @@ watch(query, (value) => {
 
             <div class="flex items-center justify-end gap-2">
               <StandardButton
-                @click="person.checkedIn = true"
                 :text="person.checkedIn ? 'Checked-in' : 'Check-in'"
                 :class="[
                   person.checkedIn
                     ? 'bg-blue-600/20 text-blue-700/70 w-1/2 sm:w-auto justify-center min-w-fit'
                     : 'bg-blue-600 text-white hover:bg-blue-500 w-1/2 sm:w-auto justify-center'
                 ]"
+                @click="person.checkedIn = true"
               />
               <StandardButton
-                @click="emit('print', person.name)"
                 text="Print"
                 :icon="PrinterIcon"
                 class="bg-yellow-300 text-gray-900 hover:bg-yellow-200 w-1/2 sm:w-auto justify-center"
+                @click="emit('print', person.name)"
               />
             </div>
           </div>

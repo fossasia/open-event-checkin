@@ -49,7 +49,7 @@ const componentKey = ref(0)
       }
     "
   />
-  <Disclosure as="header" class="bg-white shadow sticky top-0 z-20" v-slot="{ open }">
+  <Disclosure v-slot="{ open }" as="header" class="bg-white shadow sticky top-0 z-20">
     <div class="mx-auto max-w-7xl px-2 sm:px-4 lg:divide-y lg:divide-gray-200 lg:px-8">
       <div class="relative flex h-16 justify-between space-x-5">
         <div class="relative z-10 flex pl-2">
@@ -95,13 +95,13 @@ const componentKey = ref(0)
               >
                 <MenuItem v-for="item in userNavigation" :key="item.name">
                   <button
-                    @click="item.action"
                     :class="[
                       item.name == 'Sign out'
                         ? 'text-red-600 hover:bg-red-100 font-semibold'
                         : 'text-gray-700 hover:bg-gray-100',
                       'w-full text-left px-4 py-2 text-sm'
                     ]"
+                    @click="item.action"
                   >
                     <component
                       :is="item.icon"
