@@ -29,7 +29,7 @@
     "@vue/test-utils": "^2.3.2",
     "autoprefixer": "^10.4.14",
     "cypress": "^12.14.0",
-    "eslint": "^8.39.0",
+    "eslint": "^8.46.0",
     "eslint-plugin-cypress": "^2.13.3",
     "eslint-plugin-vue": "^9.11.0",
     "jsdom": "^22.1.0",
@@ -38,6 +38,7 @@
     "start-server-and-test": "^2.0.0",
     "tailwindcss": "^3.3.2",
     "vite": "^4.3.9",
-    "vitest": "^0.32.0"
+    "vitest": "^0.32.0",
+    "vue-eslint-parser": "^9.3.1"
   }
 }
