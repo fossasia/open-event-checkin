@@ -135,7 +135,6 @@ const print = () => {
                               : 'hover:bg-blue-500 hover:border-blue-500 hover:text-white',
                             'text-blue-600 border border-blue-600 ml-6'
                           ]"
-                          @click="printModalStore.selectOrDeselectAll"
                         />
                       </div>
 

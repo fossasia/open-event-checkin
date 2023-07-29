@@ -207,7 +207,6 @@ async function submitForm() {
                 as="template"
                 :key="stationType.id"
                 v-slot="{ active, stationTypes }"
-                as="template"
                 :value="stationType"
               >
                 <li
