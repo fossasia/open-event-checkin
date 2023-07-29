@@ -3,9 +3,14 @@ import { ref } from 'vue'
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { EllipsisHorizontalIcon } from '@heroicons/vue/24/outline'
 import StandardButton from '@/components/Shared/StandardButton.vue'
-import { usePasswordModalStore } from '@/stores/passwordModal'
+import { useAuthStore } from '@/stores/auth'
+import { useLoadingStore } from '@/stores/loading'
+import { useRouter } from 'vue-router'
 
-const passwordModalStore = usePasswordModalStore()
+const authStore = useAuthStore()
+const loadingStore = useLoadingStore()
+
+const router = useRouter()
 
 const props = defineProps({
   showPasswordModal: Boolean
@@ -15,18 +20,30 @@ const emit = defineEmits(['hidePasswordModal'])
 
 const passwordField = ref('')
 const validPassword = ref(null)
+const disableButton = ref(false)
 
-const checkPassword = (value) => {
-  // check password here
-  if (value === passwordModalStore.password) {
-    validPassword.value = true
-    emit('hidePasswordModal', false)
-    passwordField.value = ''
-    // sign out
-  } else {
-    validPassword.value = false
-    passwordField.value = ''
-  }
+async function checkPassword() {
+  disableButton.value = true
+  loadingStore.show = true
+  const payload = { password: passwordField.value }
+
+  await authStore.login(payload, 'auth/verify-password').then((res) => { //verify password
+    if (res.result) {
+      authStore.logout('auth/logout').then((res) => console.log(res)) // post logout api and clear local storage
+      validPassword.value = true
+      emit('hidePasswordModal', false)
+      // sign out
+      router.push({
+        name: 'userAuth'
+      })
+      loadingStore.show = false
+    } else {
+      loadingStore.show = false
+      disableButton.value = false
+      validPassword.value = false
+      passwordField.value = ''
+    }
+  })
 }
 </script>
 
@@ -96,8 +113,12 @@ const checkPassword = (value) => {
               <div class="mt-5 sm:mt-6">
                 <StandardButton
                   text="Sign Out"
-                  class="bg-blue-600 text-white hover:bg-blue-500 w-full justify-center"
-                  @click="checkPassword(passwordField)"
+                  :disabled="disableButton"
+                  :class="[
+                    disableButton && 'cursor-not-allowed opacity-20',
+                    'bg-blue-600 text-white hover:bg-blue-500 w-full justify-center'
+                  ]"
+                  @click="checkPassword()"
                 />
               </div>
             </DialogPanel>

@@ -46,7 +46,7 @@ async function submitLogin() {
 </script>
 
 <template>
-  <div class="flex flex-1 flex-col justify-center my-auto">
+  <div class="flex flex-1 flex-col justify-center my-auto h-screen">
     <div class="sm:mx-auto sm:w-full sm:max-w-sm">
       <h2 class="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
         Sign in to your account

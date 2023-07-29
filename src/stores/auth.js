@@ -11,7 +11,7 @@ export const useAuthStore = defineStore('auth', () => {
   async function logout(route) {
     try {
       await useApiStore()
-        .post(true, route)
+        .post(false, route)
         .then(() => {
           logoutClear()
           return true

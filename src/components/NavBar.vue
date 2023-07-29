@@ -35,12 +35,19 @@ const userNavigation = [
 const showNavigation = ref(false)
 const eventName = ref('test event')
 const showPasswordModal = ref(false)
+const componentKey = ref(0)
 </script>
 
 <template>
   <PasswordModal
+    :key="componentKey"
     :show-password-modal="showPasswordModal"
-    @hidePasswordModal="showPasswordModal = $event"
+    @hide-password-modal="
+      () => {
+        showPasswordModal = $event
+        componentKey += 1
+      }
+    "
   />
   <Disclosure v-slot="{ open }" as="header" class="bg-white shadow sticky top-0 z-20">
     <div class="mx-auto max-w-7xl px-2 sm:px-4 lg:divide-y lg:divide-gray-200 lg:px-8">
