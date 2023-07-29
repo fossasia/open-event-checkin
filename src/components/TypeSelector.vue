@@ -322,9 +322,9 @@ async function submitForm() {
               <ListboxOption
                 v-for="room in availableRooms"
                 :key="room.id"
-                as="template"
                 v-slot="{ active }"
                 :value="room"
+                as="template"
               >
                 <li
                   :class="[

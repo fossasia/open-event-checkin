@@ -27,7 +27,7 @@ async function checkPassword() {
   loadingStore.show = true
   const payload = { password: passwordField.value }
 
-  await authStore.verifyPassword(payload, 'auth/verify-password').then((res) => {
+  await authStore.login(payload, 'auth/verify-password').then((res) => { //verify password
     if (res.result) {
       authStore.logout('auth/logout').then((res) => console.log(res)) // post logout api and clear local storage
       validPassword.value = true
