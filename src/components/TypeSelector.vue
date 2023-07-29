@@ -155,8 +155,8 @@ async function submitForm() {
               <ListboxOption
                 v-for="event in eventNames"
                 :key="event.id"
-                as="template"
                 v-slot="{ active }"
+                as="template"
                 :value="event"
               >
                 <li
@@ -204,10 +204,10 @@ async function submitForm() {
             >
               <ListboxOption
                 v-for="stationType in typeSelectorStore.stationTypes"
-                as="template"
                 :key="stationType.id"
                 v-slot="{ active, stationTypes }"
                 :value="stationType"
+                as="template"
               >
                 <li
                   :class="[
