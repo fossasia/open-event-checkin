@@ -105,13 +105,13 @@ const print = () => {
                         >
                           <div class="flex h-6 items-center">
                             <input
-                              @click="printModalStore.selectOption(printOption)"
-                              :disabled="printOption.disabled"
                               :id="printOption.id"
+                              :disabled="printOption.disabled"
                               :name="printOption.name"
                               :checked="printOption.checked"
                               type="checkbox"
                               class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
+                              @click="printModalStore.selectOption(printOption)"
                             />
                           </div>
                           <div class="ml-3 text-sm leading-6 text-start">
@@ -122,7 +122,6 @@ const print = () => {
                         </div>
                         <!--Select all button-->
                         <StandardButton
-                          @click="printModalStore.selectOrDeselectAll"
                           :disabled="disableButton"
                           :text="printModalStore.selectedOptions.length === 5 ? 'Deselect All' : 'Select All'"
                           :class="[
@@ -131,6 +130,7 @@ const print = () => {
                               : 'hover:bg-blue-500 hover:border-blue-500 hover:text-white',
                             'text-blue-600 border border-blue-600 ml-6'
                           ]"
+                          @click="printModalStore.selectOrDeselectAll"
                         />
                       </div>
 
@@ -153,11 +153,11 @@ const print = () => {
                   <StandardButton
                     :text="props.validQRCode ? 'Print' : 'Try Again'"
                     :disabled="disableButton"
-                    @click="print"
                     :class="[
                       disableButton && 'cursor-not-allowed opacity-20',
                       'bg-blue-600 text-white hover:bg-blue-500 w-full justify-center'
                     ]"
+                    @click="print"
                   />
                 </div>
               </div>

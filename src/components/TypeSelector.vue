@@ -43,15 +43,15 @@ const selectedStation = ref(availableStations[1])
         Select Event
       </h2>
       <form class="space-y-6 mt-10" action="#" method="POST">
-        <Combobox as="div" v-model="selectedEvent">
+        <Combobox v-model="selectedEvent" as="div">
           <ComboboxLabel class="block text-sm font-medium leading-6 text-gray-900"
             >Event Name</ComboboxLabel
           >
           <div class="relative mt-2">
             <ComboboxInput
               class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-gray-300 focus:ring-1 focus:ring-blue-600 sm:text-sm sm:leading-6"
-              @change="query = $event.target.value"
               :display-value="(person) => event?.name"
+              @change="query = $event.target.value"
             />
             <ComboboxButton
               class="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none"
@@ -66,9 +66,9 @@ const selectedStation = ref(availableStations[1])
               <ComboboxOption
                 v-for="event in filteredEvents"
                 :key="event.id"
+                v-slot="{ selected }"
                 :value="event"
                 as="template"
-                v-slot="{ selected }"
               >
                 <li :class="['relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900']">
                   <span :class="['block truncate', selected && 'font-semibold']">
@@ -89,7 +89,7 @@ const selectedStation = ref(availableStations[1])
 
         <!-- select booth type -->
 
-        <Listbox as="div" v-model="selectedType">
+        <Listbox v-model="selectedType" as="div">
           <ListboxLabel class="block text-sm font-medium leading-6 text-gray-900"
             >Type</ListboxLabel
           >
@@ -106,11 +106,11 @@ const selectedStation = ref(availableStations[1])
               class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
             >
               <ListboxOption
-                as="template"
                 v-for="stationType in stationTypes"
                 :key="stationType.id"
-                :value="stationType"
                 v-slot="{ active, stationTypes }"
+                as="template"
+                :value="stationType"
               >
                 <li
                   :class="[
@@ -140,7 +140,7 @@ const selectedStation = ref(availableStations[1])
 
         <!-- allow user to select booth or give a new field to store booth -->
         <!-- for session checkin and checkout, only retrieve locations from api and not able to create new -->
-        <Listbox as="div" v-model="selectedStation">
+        <Listbox v-model="selectedStation" as="div">
           <ListboxLabel class="block text-sm font-medium leading-6 text-gray-900"
             >Selected Station</ListboxLabel
           >
@@ -157,11 +157,11 @@ const selectedStation = ref(availableStations[1])
               class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
             >
               <ListboxOption
-                as="template"
                 v-for="station in availableStations"
                 :key="station.id"
-                :value="station"
                 v-slot="{ active, availableStations }"
+                as="template"
+                :value="station"
               >
                 <li
                   :class="[

@@ -85,20 +85,20 @@ async function logErrors(promise) {
           :key="componentKey"
           class="!aspect-square !h-auto max-w-lg grid-cols-1 align-middle justify-center items-center"
           :track="selected.value"
-          @init="logErrors"
           :camera="camera"
+          @init="logErrors"
           @decode="decode"
         >
         </qrcode-stream>
         <StandardButton
-          @click="switchCamera"
           text="Switch Camera"
           :icon="ArrowsRightLeftIcon"
           class="bg-blue-600 text-white hover:bg-blue-500 mt-4"
+          @click="switchCamera"
         />
       </div>
     </div>
-    <div class="text-green-500 font-bold mt-5 text-lg text-center" v-if="QRCodeValue != ''">
+    <div v-if="QRCodeValue != ''" class="text-green-500 font-bold mt-5 text-lg text-center">
       { user name } has been checked into { room name }
     </div>
   </div>
