@@ -2,6 +2,7 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { useApiStore } from '@/stores/api'
 import { useEventsStore } from '@/stores/events'
+import dayjs from 'dayjs'
 
 export const useSearchAttendeeStore = defineStore('searchAttendee', () => {
   const people = ref([])
@@ -55,28 +56,6 @@ export const useSearchAttendeeStore = defineStore('searchAttendee', () => {
     people.value = []
   }
 
-  function getCurrentISO8601DateTime() {
-    const now = new Date()
-
-    const year = now.getFullYear()
-    const month = String(now.getMonth() + 1).padStart(2, '0')
-    const day = String(now.getDate()).padStart(2, '0')
-
-    const hour = String(now.getHours()).padStart(2, '0')
-    const minute = String(now.getMinutes()).padStart(2, '0')
-    const second = String(now.getSeconds()).padStart(2, '0')
-    const milliseconds = String(now.getMilliseconds()).padStart(3, '0')
-
-    const timezoneOffset = -now.getTimezoneOffset()
-    const timezoneOffsetHours = String(Math.floor(Math.abs(timezoneOffset) / 60)).padStart(2, '0')
-    const timezoneOffsetMinutes = String(Math.abs(timezoneOffset) % 60).padStart(2, '0')
-    const timezoneOffsetSign = timezoneOffset >= 0 ? '+' : '-'
-
-    const iso8601DateTime = `${year}-${month}-${day}T${hour}:${minute}:${second}.${milliseconds}${timezoneOffsetSign}${timezoneOffsetHours}:${timezoneOffsetMinutes}`
-
-    return iso8601DateTime
-  }
-
   async function checkInAttendee(id) {
     var attendeeRes = null
     await useApiStore()
@@ -87,7 +66,7 @@ export const useSearchAttendeeStore = defineStore('searchAttendee', () => {
       data: {
         attributes: {
           'is-checked-in': 'true',
-          'checkin-times': getCurrentISO8601DateTime(),
+          'checkin-times': dayjs().format('YYYY-MM-DDTHH:mm:ssZ'),
           'attendee-notes': null,
           pdf_url: attendeeRes['pdf-url']
         },

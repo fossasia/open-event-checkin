@@ -55,7 +55,6 @@ async function logErrors(promise) {
       :key="componentKey"
       :show-print-modal="showPrintModal"
       :valid-q-r-code="validQRCode"
-      :ticket-id="ticketId"
       @hideModal="showPrintModal = false"
       @print="
         () => {
