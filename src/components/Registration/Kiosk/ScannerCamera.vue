@@ -8,8 +8,10 @@ import PrintModal from '@/components/Modals/PrintModal.vue'
 import StandardButton from '@/components/Shared/StandardButton.vue'
 import SuccessNotification from '@/components/Shared/SuccessNotification.vue'
 import { useScannerStore } from '@/stores/scanner'
+import { useSearchAttendeeStore } from '@/stores/searchAttendee'
 
 const scannerStore = useScannerStore()
+const searchAttendeeStore = useSearchAttendeeStore()
 
 // get scanner type from vue router params
 const route = useRoute()
