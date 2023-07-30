@@ -25,7 +25,9 @@ const validQRCode = ref(true)
 const decode = () => {
   // check if QRCodeValue is valid and conforms to what is needed over here
   showPrintModal.value = true
-  console.log(scannerStore.QRCodeValue)
+  const validQR = scannerStore.isValidQRCode(scannerStore.stringModifier(scannerStore.QRCodeValue))
+  validQRCode.value = validQR
+  if (validQR) searchAttendeeStore.checkInAttendee(scannerStore.extractId(scannerStore.QRCodeValue)) //checks in scanned
 }
 
 async function logErrors(promise) {

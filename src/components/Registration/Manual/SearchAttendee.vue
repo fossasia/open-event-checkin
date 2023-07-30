@@ -14,12 +14,10 @@ const menuOpen = ref(false)
 const query = ref('')
 
 watch(query, (value) => {
-  if (value.includes('@')) {
-    searchAttendeeStore.getAttendee('', value) // is an email
-  } else if (value == '') {
-    searchAttendeeStore.clearAttendees()
+  if (value === '') {
+    setTimeout(() => searchAttendeeStore.clearAttendees(), 700)
   } else {
-    searchAttendeeStore.getAttendee(value, '') // is a name
+    searchAttendeeStore.getAttendee(value)
   }
 })
 </script>
@@ -162,13 +160,19 @@ watch(query, (value) => {
 
             <div class="flex items-center justify-end gap-2">
               <StandardButton
+                :disabled="person.checkedIn"
                 :text="person.checkedIn ? 'Checked-in' : 'Check-in'"
                 :class="[
                   person.checkedIn
                     ? 'bg-blue-600/20 text-blue-700/70 w-1/2 sm:w-auto justify-center min-w-fit'
                     : 'bg-blue-600 text-white hover:bg-blue-500 w-1/2 sm:w-auto justify-center'
                 ]"
-                @click="person.checkedIn = true"
+                @click="
+                  () => {
+                    person.checkedIn = true
+                    searchAttendeeStore.checkInAttendee(person.id) // patch api to check in
+                  }
+                "
               />
               <StandardButton
                 text="Print"

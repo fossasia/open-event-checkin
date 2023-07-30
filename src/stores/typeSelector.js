@@ -18,7 +18,6 @@ export const useTypeSelectorStore = defineStore('typeSelector', () => {
   ]
 
   async function getStations(eventId) {
-
     const stations = []
     const stationRes = await useApiStore().get(true, `events/${eventId}/stations`)
     for (const station of stationRes.data) {
