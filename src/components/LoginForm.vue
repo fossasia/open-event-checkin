@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useLoadingStore } from '@/stores/loading'
-import { useAuthStore } from '@/stores/auth'
+import { useApiStore } from '@/stores/api'
 import StandardButton from '@/components/Shared/StandardButton.vue'
 
 // form fields
@@ -14,7 +14,6 @@ const showError = ref(false)
 
 // stores
 const loadingStore = useLoadingStore()
-const authStore = useAuthStore()
 
 // router
 const router = useRouter()
@@ -27,8 +26,7 @@ async function submitLogin() {
     password: password.value
   }
 
-  await authStore
-    .login(payload, 'auth/login')
+  await useApiStore().post(true, 'auth/login', payload, false)
     .then(async (res) => {
       localStorage.setItem('token', Object(res).access_token)
       showError.value = false
@@ -39,7 +37,6 @@ async function submitLogin() {
     })
     .catch((err) => {
       loadingStore.show = false
-      console.log(err)
       showError.value = true
     })
 }
@@ -51,7 +48,7 @@ async function submitLogin() {
       <h2 class="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
         Sign in to your account
       </h2>
-      <form class="space-y-6 mt-10" @submit.prevent="submitLogin">
+      <form class="space-y-3 mt-10" @submit.prevent="submitLogin">
         <div>
           <label for="email" class="block text-sm font-medium leading-6 text-gray-900"
             >Email address</label
