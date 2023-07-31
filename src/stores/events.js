@@ -31,10 +31,8 @@ export const useEventsStore = defineStore('events', () => {
   }
 
   async function getEventName(eventId) {
-
     const event = await useApiStore().get(true, `events/${eventId}`)
     return event.data.attributes.name
-
   }
 
   function setEventId(eventId) {

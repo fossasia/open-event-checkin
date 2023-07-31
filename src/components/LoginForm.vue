@@ -26,7 +26,8 @@ async function submitLogin() {
     password: password.value
   }
 
-  await useApiStore().post(true, 'auth/login', payload, false)
+  await useApiStore()
+    .post(true, 'auth/login', payload, false)
     .then(async (res) => {
       localStorage.setItem('token', Object(res).access_token)
       showError.value = false

@@ -13,13 +13,11 @@ const emit = defineEmits(['print'])
 const menuOpen = ref(false)
 const query = ref('')
 
-watch(query, (value) => {
-  if (value.includes('@')) {
-    searchAttendeeStore.getAttendee('', value) // is an email
-  } else if (value == '') {
-    searchAttendeeStore.clearAttendees()
+watch(query, (newValue) => {
+  if (newValue === '') {
+    setTimeout(() => searchAttendeeStore.clearAttendees(), 700)
   } else {
-    searchAttendeeStore.getAttendee(value, '') // is a name
+    searchAttendeeStore.getAttendee(newValue)
   }
 })
 </script>
@@ -162,13 +160,20 @@ watch(query, (value) => {
 
             <div class="flex items-center justify-end gap-2">
               <StandardButton
+                :disabled="person.checkedIn"
                 :text="person.checkedIn ? 'Checked-in' : 'Check-in'"
                 :class="[
                   person.checkedIn
                     ? 'bg-blue-600/20 text-blue-700/70 w-1/2 sm:w-auto justify-center min-w-fit'
                     : 'bg-blue-600 text-white hover:bg-blue-500 w-1/2 sm:w-auto justify-center'
                 ]"
-                @click="person.checkedIn = true"
+                @click="
+                  async () => {
+                    const checkedIn = await searchAttendeeStore.checkInAttendee(person.id) // Patch API to check-in
+                    if (checkedIn) person.checkedIn = true
+                    else console.log('check in failed')
+                  }
+                "
               />
               <StandardButton
                 text="Print"
