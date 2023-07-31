@@ -22,7 +22,7 @@ watch(
 <template>
   <div
     aria-live="assertive"
-    class="pointer-events-none fixed inset-0 top-16 flex items-end px-4 py-6 sm:items-start sm:p-6"
+    class="pointer-events-none fixed inset-0 top-16 flex items-end px-4 py-6 sm:items-start sm:p-6 z-10"
   >
     <div class="flex w-full flex-col items-center space-y-4 sm:items-end">
       <transition
@@ -49,8 +49,8 @@ watch(
               <div class="ml-4 flex flex-shrink-0">
                 <button
                   type="button"
-                  @click="emit('hidePrintedNotification', false)"
                   class="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  @click="emit('hidePrintedNotification', false)"
                 >
                   <span class="sr-only">Close</span>
                   <XMarkIcon class="h-5 w-5" aria-hidden="true" />

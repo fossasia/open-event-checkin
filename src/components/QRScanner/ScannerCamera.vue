@@ -48,7 +48,7 @@ async function logErrors(promise) {
       <div>
         <qrcode-stream
           class="!aspect-square !h-auto max-w-lg grid-cols-1 align-middle justify-center items-center"
-          :track="qrScannerStore.selected.value"
+          :track="selected.value"
           :camera="camera"
           @init="logErrors"
           @decode="decode"

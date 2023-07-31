@@ -7,46 +7,29 @@ import { ArrowsRightLeftIcon } from '@heroicons/vue/20/solid'
 import PrintModal from '@/components/Modals/PrintModal.vue'
 import StandardButton from '@/components/Shared/StandardButton.vue'
 import SuccessNotification from '@/components/Shared/SuccessNotification.vue'
+import { useScannerStore } from '@/stores/scanner'
+import { useSearchAttendeeStore } from '@/stores/searchAttendee'
+
+const scannerStore = useScannerStore()
+const searchAttendeeStore = useSearchAttendeeStore()
 
 // get scanner type from vue router params
 const route = useRoute()
 const scannerType = route.params.scannerType
 
 const camera = ref('front')
-const QRCodeValue = ref('')
 const showPrintModal = ref(false)
 const showPrintedNotification = ref(false)
 const componentKey = ref(0)
-
-const paintOutline = (detectedCodes, ctx) => {
-  for (const detectedCode of detectedCodes) {
-    QRCodeValue.value = detectedCode.rawValue
-    const [firstPoint, ...otherPoints] = detectedCode.cornerPoints
-    ctx.strokeStyle = 'red'
-    ctx.strokeWidth = 5
-
-    ctx.beginPath()
-    ctx.moveTo(firstPoint.x, firstPoint.y)
-    for (const { x, y } of otherPoints) {
-      ctx.lineTo(x, y)
-    }
-    ctx.lineTo(firstPoint.x, firstPoint.y)
-    ctx.closePath()
-    ctx.stroke()
-  }
-}
-
-const selected = {
-  text: 'outline',
-  value: paintOutline
-}
 
 const validQRCode = ref(true)
 
 const decode = () => {
   // check if QRCodeValue is valid and conforms to what is needed over here
   showPrintModal.value = true
-  console.log(QRCodeValue)
+  const validQR = scannerStore.isValidQRCode(scannerStore.stringModifier(scannerStore.QRCodeValue))
+  validQRCode.value = validQR
+  if (validQR) searchAttendeeStore.checkInAttendee(scannerStore.extractId(scannerStore.QRCodeValue)) //checks in scanned
 }
 
 async function logErrors(promise) {
@@ -62,15 +45,15 @@ async function logErrors(promise) {
 
 <template>
   <SuccessNotification
-    :showPrintedNotification="showPrintedNotification"
-    :validQRCode="validQRCode"
+    :show-printed-notification="showPrintedNotification"
+    :valid-q-r-code="validQRCode"
     @hidePrintedNotification="showPrintedNotification = false"
   />
   <div class="h-full mx-auto max-w-7xl flex">
     <PrintModal
       :key="componentKey"
-      :showPrintModal="showPrintModal"
-      :validQRCode="validQRCode"
+      :show-print-modal="showPrintModal"
+      :valid-q-r-code="validQRCode"
       @hideModal="showPrintModal = false"
       @print="
         () => {
@@ -87,17 +70,17 @@ async function logErrors(promise) {
       <div>
         <qrcode-stream
           class="!aspect-square !h-auto max-w-lg grid-cols-1 align-middle justify-center items-center"
-          :track="selected.value"
-          @init="logErrors"
+          :track="scannerStore.selected.value"
           :camera="camera"
+          @init="logErrors"
           @decode="decode"
         >
         </qrcode-stream>
         <StandardButton
-          @click="camera = camera === 'front' ? 'rear' : 'front'"
           text="Switch Camera"
           :icon="ArrowsRightLeftIcon"
           class="bg-blue-600 text-white hover:bg-blue-500 mt-4"
+          @click="camera = camera === 'front' ? 'rear' : 'front'"
         />
       </div>
       <div class="w-full flex-auto text-center grid-cols-1">

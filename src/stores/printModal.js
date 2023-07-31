@@ -1,9 +1,7 @@
 import { defineStore } from 'pinia'
-import { useApiStore } from '@/stores/api'
 import { ref } from 'vue'
 
 export const usePrintModalStore = defineStore('printModal', () => {
-
   const printOptions = [
     {
       id: 'code',
@@ -53,16 +51,18 @@ export const usePrintModalStore = defineStore('printModal', () => {
       selectedOptions.value.push(option.id)
     }
   }
-  
-  function selectOrDeselectAll () {
-    if (selectedOptions.value.length == 5) {
-      printOptions.slice(1).forEach((element) => {
-        element.checked.value = false
-        selectedOptions.value = ['code']
+
+  function selectOrDeselectAll() {
+    if (selectedOptions.value.length === 5) {
+      printOptions.forEach((option) => {
+        if (option.id !== 'code') {
+          option.checked.value = false
+          selectedOptions.value = ['code']
+        }
       })
     } else {
-      printOptions.slice(1).forEach((element) => {
-        element.checked.value = true
+      printOptions.forEach((option) => {
+        option.checked.value = true
         selectedOptions.value = ['code', 'name', 'email', 'org', 'role']
       })
     }
@@ -70,9 +70,11 @@ export const usePrintModalStore = defineStore('printModal', () => {
 
   function reset() {
     selectedOptions.value = ['code', 'name', 'email', 'org', 'role']
-    printOptions.slice(1).forEach((option) => {
-      option.disabled = false
-      option.checked.value = true
+    printOptions.forEach((option) => {
+      if (option.id !== 'code') {
+        option.disabled = false
+        option.checked.value = true
+      }
     })
   }
 
