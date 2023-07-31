@@ -4,62 +4,27 @@ import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { ArrowsRightLeftIcon } from '@heroicons/vue/20/solid'
 import StandardButton from '@/components/Shared/StandardButton.vue'
+import { useQRScannerStore } from '@/stores/qrScanner'
+
+const qrScannerStore = useQRScannerStore()
 
 // get scanner type from vue router params
 const route = useRoute()
 const scannerType = route.params.scannerType
 
 const camera = ref('front')
-const QRCodeValue = ref('')
-const showNotification = ref(false)
-const componentKey = ref(0)
-
-const paintOutline = (detectedCodes, ctx) => {
-  for (const detectedCode of detectedCodes) {
-    QRCodeValue.value = detectedCode.rawValue
-    const [firstPoint, ...otherPoints] = detectedCode.cornerPoints
-    ctx.strokeStyle = 'red'
-    ctx.strokeWidth = 5
-
-    ctx.beginPath()
-    ctx.moveTo(firstPoint.x, firstPoint.y)
-    for (const { x, y } of otherPoints) {
-      ctx.lineTo(x, y)
-    }
-    ctx.lineTo(firstPoint.x, firstPoint.y)
-    ctx.closePath()
-    ctx.stroke()
-  }
-}
-
-const selected = {
-  text: 'outline',
-  value: paintOutline
-}
-
 const validQRCode = ref(true)
+
+const name = ref('')
 
 const decode = () => {
   // check if QRCodeValue is valid and conforms to what is needed over here
-  console.log(QRCodeValue)
-}
-
-const refreshComponent = () => {
-  componentKey.value += 1
-}
-
-const updateShowNotification = (value) => {
-  showNotification.value = value
-}
-
-const fireFunction = () => {
-  // print user pass here
-  console.log('Printing...')
-}
-
-const switchCamera = () => {
-  camera.value = camera.value === 'front' ? 'rear' : 'front'
-  refreshComponent()
+  const validQR = qrScannerStore.isValidQRCode(qrScannerStore.stringModifier(qrScannerStore.QRCodeValue))
+  validQRCode.value = validQR
+  if (validQR) {
+    console.log('checkin attendee', qrScannerStore.extractId(qrScannerStore.QRCodeValue)) // checks in to room
+    name.value = qrScannerStore.getAttendeeName(qrScannerStore.extractId(qrScannerStore.QRCodeValue))
+  }
 }
 
 async function logErrors(promise) {
@@ -82,24 +47,23 @@ async function logErrors(promise) {
     <div class="w-full items-center flex justify-center">
       <div>
         <qrcode-stream
-          :key="componentKey"
           class="!aspect-square !h-auto max-w-lg grid-cols-1 align-middle justify-center items-center"
-          :track="selected.value"
-          @init="logErrors"
+          :track="qrScannerStore.selected.value"
           :camera="camera"
+          @init="logErrors"
           @decode="decode"
         >
         </qrcode-stream>
         <StandardButton
-          @click="switchCamera"
           text="Switch Camera"
           :icon="ArrowsRightLeftIcon"
           class="bg-blue-600 text-white hover:bg-blue-500 mt-4"
+          @click="camera = camera === 'front' ? 'rear' : 'front'"
         />
       </div>
     </div>
-    <div class="text-green-500 font-bold mt-5 text-lg text-center" v-if="QRCodeValue != ''">
-      { user name } has been checked into { room name }
+    <div v-if="qrScannerStore.QRCodeValue != ''" class="text-green-500 font-bold mt-5 text-lg text-center">
+      {{ name }} has been checked into {{  }}
     </div>
   </div>
 </template>
