@@ -24,14 +24,6 @@ const componentKey = ref(0)
 
 const validQRCode = ref(true)
 
-const decode = () => {
-  // check if QRCodeValue is valid and conforms to what is needed over here
-  showPrintModal.value = true
-  const validQR = scannerStore.isValidQRCode(scannerStore.stringModifier(scannerStore.QRCodeValue))
-  validQRCode.value = validQR
-  if (validQR) searchAttendeeStore.checkInAttendee(scannerStore.extractId(scannerStore.QRCodeValue)) //checks in scanned
-}
-
 async function logErrors(promise) {
   try {
     await promise
@@ -73,7 +65,13 @@ async function logErrors(promise) {
           :track="scannerStore.selected.value"
           :camera="camera"
           @init="logErrors"
-          @decode="decode"
+          @decode="
+            ;async () => {
+              validQRCode = await scannerStore
+                .checkInAttendeeScanner()
+                .then(() => (showPrintModal = true))
+            }
+          "
         >
         </qrcode-stream>
         <StandardButton

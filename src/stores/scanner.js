@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
+import { useSearchAttendeeStore } from '@/stores/searchAttendee'
 
 export const useScannerStore = defineStore('scanner', () => {
   const QRCodeValue = ref('')
@@ -45,5 +46,28 @@ export const useScannerStore = defineStore('scanner', () => {
     return match ? parseInt(match[1], 10) : null
   }
 
-  return { QRCodeValue, selected, paintOutline, isValidQRCode, stringModifier, extractId }
+  async function checkInAttendeeScanner() {
+    if (isValidQRCode(stringModifier(QRCodeValue.value))) {
+      const checkedIn = await useSearchAttendeeStore().checkInAttendee(extractId(QRCodeValue.value)) // Patch API to check-in
+      if (checkedIn) {
+        return true
+      } else {
+        console.log('Error: Check in failed')
+        return false
+      }
+    } else {
+      console.log('Error: Invalid QR code')
+      return false
+    }
+  }
+
+  return {
+    QRCodeValue,
+    selected,
+    paintOutline,
+    isValidQRCode,
+    stringModifier,
+    extractId,
+    checkInAttendeeScanner
+  }
 })
