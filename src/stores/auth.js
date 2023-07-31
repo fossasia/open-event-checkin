@@ -21,14 +21,5 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  async function login(payload, route) {
-    try {
-      const res = await useApiStore().post(true, route, payload, false)
-      return Object(res)
-    } catch (error) {
-      return error
-    }
-  }
-
-  return { logout, login }
+  return { logout }
 })
