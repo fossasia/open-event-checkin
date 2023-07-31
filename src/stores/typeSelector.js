@@ -1,3 +1,4 @@
+import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { useApiStore } from '@/stores/api'
 
@@ -10,28 +11,37 @@ export const useTypeSelectorStore = defineStore('typeSelector', () => {
     { id: 'checkout', name: 'Session Checkout', href: 'scanner' }
   ]
 
-  const availableStations = [
-    { id: 'none', name: 'Create New' },
-    { id: '1', name: 'Booth 1' },
-    { id: '2', name: 'Booth ABC' },
-    { id: '3', name: 'Door 1' }
-  ]
+  const stations = ref([])
+  // breakdown of for stationTypes
+
 
   async function getStations(eventId) {
-
-    const stations = []
-    const stationRes = await useApiStore().get(true, `events/${eventId}/stations`)
-    for (const station of stationRes.data) {
-      stations.push({
-        id: station.id,
-        name: station.attributes['station-name'],
-        microlocationId: station.attributes['microlocation-id'],
-        stationType: station.attributes['daily'],
-        room: station.attributes['room']
+    // clear eventStations
+    stations.value = []
+    // init with create new option
+    stations.value.push({
+      id: 'create-new',
+      name: 'Create New',
+      microlocationId: '',
+      stationType: '',
+      room: ''
+    })
+    
+    await useApiStore().get(true, `events/${eventId}/stations`).then((res) => {
+      // remap data to new key
+      res.data.forEach((station) => {
+        stations.value.push({
+          id: station.id,
+          name: station.attributes['name'],
+          microlocationId: station.attributes['microlocation-id'],
+          stationType: station.attributes['daily'],
+          room: station.attributes['room']
+        })
       })
-    }
-    return stations
+    }).catch((error) => {
+      throw(error)
+    })
   }
 
-  return { getStations, stationTypes, availableStations }
+  return { stations, getStations, stationTypes }
 })

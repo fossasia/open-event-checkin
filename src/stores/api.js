@@ -50,6 +50,8 @@ export const useApiStore = defineStore('api', () => {
       }
     } else {
       if (payload) {
+        instance.options.headers['Accept'] = 'application/vnd.api+json'
+        instance.options.headers['Content-Type'] = 'application/vnd.api+json'
         try {
           return await instance.post(path, payload)
         } catch (error) {
