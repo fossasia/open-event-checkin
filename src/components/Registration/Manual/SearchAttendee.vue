@@ -13,11 +13,11 @@ const emit = defineEmits(['print'])
 const menuOpen = ref(false)
 const query = ref('')
 
-watch(query, (value) => {
-  if (value === '') {
+watch(query, (newValue) => {
+  if (newValue === '') {
     setTimeout(() => searchAttendeeStore.clearAttendees(), 700)
   } else {
-    searchAttendeeStore.getAttendee(value)
+    searchAttendeeStore.getAttendee(newValue)
   }
 })
 </script>
@@ -168,9 +168,10 @@ watch(query, (value) => {
                     : 'bg-blue-600 text-white hover:bg-blue-500 w-1/2 sm:w-auto justify-center'
                 ]"
                 @click="
-                  () => {
-                    person.checkedIn = true
-                    searchAttendeeStore.checkInAttendee(person.id) // patch api to check in
+                  ;async () => {
+                    const checkedIn = await searchAttendeeStore.checkInAttendee(person.id) // Patch API to check-in
+                    if (checkedIn) person.checkedIn = true
+                    else console.log('check in failed')
                   }
                 "
               />

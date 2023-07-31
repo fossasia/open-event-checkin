@@ -57,26 +57,30 @@ export const useSearchAttendeeStore = defineStore('searchAttendee', () => {
   }
 
   async function checkInAttendee(id) {
-    var attendeeRes = null
-    await useApiStore()
-      .get(true, `attendees/${id}`)
-      .then((res) => (attendeeRes = res.data.attributes))
+    try {
+      const attendee = await useApiStore().get(true, `attendees/${id}`) // to get pdf url
+      const attendeeRes = attendee.data.attributes
 
-    const payload = {
-      data: {
-        attributes: {
-          'is-checked-in': 'true',
-          'checkin-times': dayjs().format('YYYY-MM-DDTHH:mm:ssZ'),
-          'attendee-notes': null,
-          pdf_url: attendeeRes['pdf-url']
-        },
-        type: 'attendee',
-        id: `${id}`
+      const payload = {
+        data: {
+          attributes: {
+            'is-checked-in': 'true',
+            'checkin-times': dayjs().format('YYYY-MM-DDTHH:mm:ssZ'),
+            'attendee-notes': null,
+            pdf_url: attendeeRes['pdf-url']
+          },
+          type: 'attendee',
+          id: `${id}`
+        }
       }
+
+      const patchResponse = await useApiStore().patch(`attendees/${id}`, payload)
+      console.log('check in success', patchResponse)
+      return true
+    } catch (error) {
+      console.log(error)
+      return false
     }
-    await useApiStore()
-      .patch(`attendees/${id}`, payload)
-      .then((res) => console.log(res.data.attributes))
   }
 
   return { people, filterOptions, getAttendee, clearAttendees, checkInAttendee }
