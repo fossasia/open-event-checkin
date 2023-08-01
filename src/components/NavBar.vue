@@ -17,7 +17,10 @@ import {
   UserCircleIcon,
   ChevronDownIcon
 } from '@heroicons/vue/24/outline'
+import { useEventsStore } from '@/stores/events'
 import PasswordModal from '@/components/Modals/PasswordModal.vue'
+
+const eventsStore = useEventsStore()
 
 const user = {
   name: 'Tom Cook',
@@ -33,7 +36,6 @@ const userNavigation = [
   { name: 'Sign out', action: () => (showPasswordModal.value = true) }
 ]
 const showNavigation = ref(false)
-const eventName = ref('test event')
 const showPasswordModal = ref(false)
 const componentKey = ref(0)
 </script>
@@ -58,7 +60,7 @@ const componentKey = ref(0)
         <div
           class="z-0 flex flex-1 items-center justify-center max-w-xs sm:max-w-sm md:max-w-xl lg:max-w-3xl"
         >
-          <p class="font-bold text-xl truncate">{{ eventName }}</p>
+          <p class="font-bold text-xl truncate">{{ eventsStore.eventName }}</p>
         </div>
         <div class="relative z-10 flex items-center lg:hidden">
           <!-- Mobile menu button -->

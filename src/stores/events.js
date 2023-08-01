@@ -5,6 +5,7 @@ import { useApiStore } from '@/stores/api'
 export const useEventsStore = defineStore('events', () => {
   const userEvents = ref([])
   const eventRooms = ref([])
+  const eventName = ref('')
 
   async function getEvents() {
     await useApiStore()
@@ -48,14 +49,14 @@ export const useEventsStore = defineStore('events', () => {
   }
 
   async function getEventName(eventId) {
-
+    // should not use this api to get events list
+    // should use getevents then check from inside the list
+    // means the user dont have access to the event
+    // redirect to 404
     const event = await useApiStore().get(true, `events/${eventId}`)
-    return event.data.attributes.name
+    eventName.value = event.data.attributes.name
+    return eventName.value
   }
 
-  function getEventId() {
-    return localStorage.getItem('event_id')
-  }
-
-  return { userEvents, eventRooms, getEvents, getEventRooms, getEventName, getEventId }
+  return { userEvents, eventRooms, getEvents, getEventRooms, getEventName }
 })

@@ -22,9 +22,9 @@ export const useTypeSelectorStore = defineStore('typeSelector', () => {
     stations.value.push({
       id: 'create-new',
       name: 'Create New',
-      microlocationId: '',
+      // microlocationId: '',
       stationType: '',
-      room: ''
+      // room: ''
     })
     
     await useApiStore().get(true, `events/${eventId}/stations`).then((res) => {
@@ -32,10 +32,11 @@ export const useTypeSelectorStore = defineStore('typeSelector', () => {
       res.data.forEach((station) => {
         stations.value.push({
           id: station.id,
-          name: station.attributes['name'],
-          microlocationId: station.attributes['microlocation-id'],
-          stationType: station.attributes['daily'],
-          room: station.attributes['room']
+          name: station.attributes['station-name'],
+          stationType: station.attributes['station-type'],
+
+          // microlocationId: station.attributes['microlocation-id'],
+          // room: station.attributes['room']
         })
       })
     }).catch((error) => {

@@ -160,13 +160,14 @@ async function submitForm() {
     })
   }
 
-    // router.push({
-    //   name: selectedType.value.href,
-    //   params: {
-    //     eventId: selectedEvent.value.id,
-    //     registrationType: selectedType.value.id
-    //   }
-    // })
+    router.push({
+      name: selectedType.value.href,
+      params: {
+        eventId: selectedEvent.value.id,
+        registrationType: selectedType.value.id
+        
+      }
+    })
   } else {
     router.push({
       name: selectedType.value.href,
