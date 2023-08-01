@@ -322,10 +322,6 @@ async function submitForm() {
             </ListboxOptions>
           </div>
         </Listbox>
-        {{ typeSelectorStore.checkInStations }}
-        <br /><br />
-        {{ typeSelectorStore.checkOutStations }}
-        <br /><br />
         <!-- select booth type -->
         <Listbox v-model="selectedType" as="div">
           <ListboxLabel class="block text-sm font-medium leading-6 text-gray-900"
