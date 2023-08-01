@@ -5,10 +5,12 @@ import { EllipsisHorizontalIcon } from '@heroicons/vue/24/outline'
 import StandardButton from '@/components/Shared/StandardButton.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useLoadingStore } from '@/stores/loading'
+import { useApiStore } from '@/stores/api'
 import { useRouter } from 'vue-router'
 
 const authStore = useAuthStore()
 const loadingStore = useLoadingStore()
+const apiStore = useApiStore()
 
 const router = useRouter()
 
@@ -27,23 +29,31 @@ async function checkPassword() {
   loadingStore.show = true
   const payload = { password: passwordField.value }
 
-  await authStore.login(payload, 'auth/verify-password').then((res) => { //verify password
-    if (res.result) {
-      authStore.logout('auth/logout').then((res) => console.log(res)) // post logout api and clear local storage
+  try {
+    const res = await authStore.verifyPassword(payload, 'auth/verify-password')
+    if (res === true) {
+      console.log('Password verified: correct')
+      await authStore.logout('auth/logout')
       validPassword.value = true
       emit('hidePasswordModal', false)
-      // sign out
       router.push({
         name: 'userAuth'
       })
       loadingStore.show = false
     } else {
+      console.log('Password verified: incorrect')
       loadingStore.show = false
       disableButton.value = false
       validPassword.value = false
       passwordField.value = ''
     }
-  })
+  } catch (error) {
+    console.log(error)
+    loadingStore.show = false
+    disableButton.value = false
+    validPassword.value = false
+    passwordField.value = ''
+  }
 }
 </script>
 

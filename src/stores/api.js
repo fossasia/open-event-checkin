@@ -78,6 +78,9 @@ export const useApiStore = defineStore('api', () => {
 
   async function patch(path, payload) {
     newSession(true)
+    instance.options.headers['Content-Type'] = 'application/vnd.api+json'
+    instance.options.headers['Accept'] = 'application/vnd.api+json'
+
     try {
       return await instance.patch(path, payload)
     } catch (error) {

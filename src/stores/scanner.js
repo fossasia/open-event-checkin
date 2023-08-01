@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
+import { useSearchAttendeeStore } from '@/stores/searchAttendee'
 
 export const useScannerStore = defineStore('scanner', () => {
   const QRCodeValue = ref('')
@@ -27,5 +28,46 @@ export const useScannerStore = defineStore('scanner', () => {
     value: paintOutline
   }
 
-  return { QRCodeValue, selected, paintOutline }
+  function isValidQRCode(str) {
+    const uuidRegex =
+      /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
+    return uuidRegex.test(str)
+  }
+
+  function stringModifier(str) {
+    const parts = str.split('-')
+    parts.pop() // Remove the last part (e.g., '-902', '-82', etc.)
+    return parts.join('-')
+  }
+
+  function extractId(str) {
+    const regex = /-(\d+)$/
+    const match = str.match(regex)
+    return match ? parseInt(match[1], 10) : null
+  }
+
+  async function checkInAttendeeScanner() {
+    if (isValidQRCode(stringModifier(QRCodeValue.value))) {
+      const checkedIn = await useSearchAttendeeStore().checkInAttendee(extractId(QRCodeValue.value)) // Patch API to check-in
+      if (checkedIn) {
+        return true
+      } else {
+        console.log('Error: Check in failed')
+        return false
+      }
+    } else {
+      console.log('Error: Invalid QR code')
+      return false
+    }
+  }
+
+  return {
+    QRCodeValue,
+    selected,
+    paintOutline,
+    isValidQRCode,
+    stringModifier,
+    extractId,
+    checkInAttendeeScanner
+  }
 })

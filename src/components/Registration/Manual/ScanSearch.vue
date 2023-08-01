@@ -9,8 +9,10 @@ import SearchAttendee from '@/components/Registration/Manual/SearchAttendee.vue'
 import StandardButton from '@/components/Shared/StandardButton.vue'
 import SuccessNotification from '@/components/Shared/SuccessNotification.vue'
 import { useScannerStore } from '@/stores/scanner'
+import { useSearchAttendeeStore } from '@/stores/searchAttendee'
 
 const scannerStore = useScannerStore()
+const searchAttendeeStore = useSearchAttendeeStore()
 
 // get scanner type from vue router params
 const route = useRoute()
@@ -22,12 +24,6 @@ const showPrintedNotification = ref(false)
 const componentKey = ref(0)
 
 const validQRCode = ref(true)
-
-const decode = () => {
-  // check if QRCodeValue is valid and conforms to what is needed over here
-  showPrintModal.value = true
-  console.log(scannerStore.QRCodeValue)
-}
 
 async function logErrors(promise) {
   try {
@@ -74,7 +70,13 @@ async function logErrors(promise) {
             :track="scannerStore.selected.value"
             :camera="camera"
             @init="logErrors"
-            @decode="decode"
+            @decode="
+              async () => {
+                validQRCode = await scannerStore
+                  .checkInAttendeeScanner()
+                  .then(() => (showPrintModal = true))
+              }
+            "
           />
           <StandardButton
             text="Switch Camera"
