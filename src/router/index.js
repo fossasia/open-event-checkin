@@ -27,7 +27,7 @@ const router = createRouter({
           component: StationSelector
         },
         {
-          path: ':eventId/registration/:registrationType',
+          path: ':eventId/registration/:registrationType/:stationId',
           name: 'registration',
           redirect: { name: 'registerKiosk' },
           component: Registration,
@@ -45,7 +45,7 @@ const router = createRouter({
           ]
         },
         {
-          path: ':eventId/:roomId/scanner/:scannerType',
+          path: ':eventId/:microlocationId/:stationId/scanner/:scannerType',
           name: 'scanner',
           component: QRScannerCamera
         }

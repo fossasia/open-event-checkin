@@ -1,3 +1,4 @@
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { useApiStore } from '@/stores/api'
 
@@ -10,27 +11,70 @@ export const useTypeSelectorStore = defineStore('typeSelector', () => {
     { id: 'checkout', name: 'Session Checkout', href: 'scanner' }
   ]
 
-  const availableStations = [
-    { id: 'none', name: 'Create New' },
-    { id: '1', name: 'Booth 1' },
-    { id: '2', name: 'Booth ABC' },
-    { id: '3', name: 'Door 1' }
-  ]
+  const registrationStations = ref([])
+  const checkInDailyStations = ref([])
+  const checkInStations = ref([])
+  const checkOutStations = ref([])
 
   async function getStations(eventId) {
-    const stations = []
-    const stationRes = await useApiStore().get(true, `events/${eventId}/stations`)
-    for (const station of stationRes.data) {
-      stations.push({
-        id: station.id,
-        name: station.attributes['station-name'],
-        microlocationId: station.attributes['microlocation-id'],
-        stationType: station.attributes['daily'],
-        room: station.attributes['room']
-      })
+    // clear eventStations
+    registrationStations.value = []
+    checkInDailyStations.value = []
+    checkInStations.value = []
+    checkOutStations.value = []
+    // add create new option
+    const obj = {
+      id: 'create-new',
+      name: 'Create New'
     }
-    return stations
+    registrationStations.value.push(obj)
+    checkInDailyStations.value.push(obj)
+
+    await useApiStore()
+      .get(true, `events/${eventId}/stations`)
+      .then((res) => {
+        // remap data to new key
+        // types: registration | daily | check in | check out
+        res.data.forEach((station) => {
+          const stationType = station.attributes['station-type']
+          if (stationType === 'registration') {
+            registrationStations.value.push({
+              id: station.id,
+              name: station.attributes['station-name']
+            })
+          } else if (stationType === 'daily') {
+            checkInDailyStations.value.push({
+              id: station.id,
+              name: station.attributes['station-name']
+            })
+          } else if (stationType === 'check in') {
+            checkInStations.value.push({
+              id: station.id,
+              name: station.attributes['station-name'],
+              microlocationId: station.attributes['microlocation-id']
+            })
+          } else if (stationType === 'check out') {
+            checkOutStations.value.push({
+              id: station.id,
+              name: station.attributes['station-name'],
+              microlocationId: station.attributes['microlocation-id']
+            })
+          } else {
+            console.log('station type not found')
+          }
+        })
+      })
+      .catch((error) => {
+        throw error
+      })
   }
 
-  return { getStations, stationTypes, availableStations }
+  return {
+    registrationStations,
+    checkInDailyStations,
+    checkInStations,
+    checkOutStations,
+    getStations,
+    stationTypes
+  }
 })
