@@ -4,7 +4,7 @@ import { useApiStore } from '@/stores/api'
 
 export const useEventsStore = defineStore('events', () => {
   const userEvents = ref([])
-  const eventRooms = ref([])
+  const eventMicrolocations = ref([])
   const eventName = ref('')
 
   async function getEvents() {
@@ -14,38 +14,43 @@ export const useEventsStore = defineStore('events', () => {
         // clear userEvents
         userEvents.value = []
         // get user list of events
-        await useApiStore().get(true, `users/${res.user_id}/events`)
-        .then((res) => {
-          // remap data to new key
-          res.data.forEach((event) => {
-            userEvents.value.push({
-              id: event.id,
-              name: event.attributes.name
+        await useApiStore()
+          .get(true, `users/${res.user_id}/events`)
+          .then((res) => {
+            // remap data to new key
+            res.data.forEach((event) => {
+              userEvents.value.push({
+                id: event.id,
+                name: event.attributes.name
+              })
             })
           })
-        })
-        .catch((error) => {
-          throw(error)
-        })
-      }).catch((error) => {
-        throw(error)
+          .catch((error) => {
+            throw error
+          })
       })
-    }
+      .catch((error) => {
+        throw error
+      })
+  }
 
-  async function getEventRooms(eventId) {
-    await useApiStore().get(true, `events/${eventId}/microlocations`).then((res) => {
-      // clear eventRooms
-      eventRooms.value = []
-      // remap data to new key
-      res.data.forEach((room) => {
-        eventRooms.value.push({
-          id: room.id,
-          name: room.attributes.name
+  async function getEventMicrolocations(eventId) {
+    await useApiStore()
+      .get(true, `events/${eventId}/microlocations`)
+      .then((res) => {
+        // clear eventMicrolocations
+        eventMicrolocations.value = []
+        // remap data to new key
+        res.data.forEach((microlocation) => {
+          eventMicrolocations.value.push({
+            id: microlocation.id,
+            name: microlocation.attributes.name
+          })
         })
       })
-    }).catch((error) => {
-      throw(error)
-    })
+      .catch((error) => {
+        throw error
+      })
   }
 
   async function getEventName(eventId) {
@@ -58,5 +63,5 @@ export const useEventsStore = defineStore('events', () => {
     return eventName.value
   }
 
-  return { userEvents, eventRooms, getEvents, getEventRooms, getEventName }
+  return { userEvents, eventMicrolocations, getEvents, getEventMicrolocations, getEventName }
 })

@@ -45,30 +45,13 @@ const selectedEvent = ref({
   name: ''
 })
 
-watch(selectedEvent, async (newValue) => {
-  if (newValue.id !== null) {
-    typeSelectorStore.getStations(newValue.id)
-    eventsStore.getEventRooms(newValue.id)
-  }
-})
-
 const selectedType = ref({
   id: null,
   name: '',
   href: ''
 })
 
-const isStationType = computed(() => {
-  if (selectedType.value.id === 'registration-kiosk' || selectedType.value.id === 'registration-hybrid' || selectedType.value.id === 'check-in-daily') {
-    return true
-  }
-
-  if (selectedType.value.id === 'check-in' || selectedType.value.id === 'checkout') {
-    return false
-  }
-})
-
-const selectedRoom = ref({
+const selectedMicrolocation = ref({
   id: null,
   name: ''
 })
@@ -80,18 +63,66 @@ const selectedStation = ref({
 
 const newStationName = ref('')
 
-const displayCreateNewRoom = computed(() => {
-  if (selectedType.value.id === 'check-in' || selectedType.value.id === 'checkout') {
+const isStationType = computed(() => {
+  if (
+    selectedType.value.id === 'registration-kiosk' ||
+    selectedType.value.id === 'registration-hybrid' ||
+    selectedType.value.id === 'check-in-daily'
+  ) {
+    return true
+  } else if (selectedType.value.id === 'check-in' || selectedType.value.id === 'checkout') {
     return false
+  } else {
+    return undefined
   }
+})
 
-  if (selectedType.value.id === 'check-in-daily' || selectedType.value.id === 'registration-kiosk' || selectedType.value.id === 'registration-hybrid') {
-    if (selectedStation.value.id === 'create-new') {
-      return true
+watch(selectedEvent, async (newValue) => {
+  if (newValue.id !== null) {
+    typeSelectorStore.getStations(newValue.id)
+    eventsStore.getEventMicrolocations(newValue.id)
+    // clear all fields after
+    selectedType.value = {
+      id: null,
+      name: '',
+      href: ''
     }
+    selectedMicrolocation.value = {
+      id: null,
+      name: ''
+    }
+    selectedStation.value = {
+      id: null,
+      name: ''
+    }
+    newStationName.value = ''
   }
+})
 
-  return false
+watch(selectedType, async (newValue) => {
+  // type change so clear all fields after
+  selectedMicrolocation.value = {
+    id: null,
+    name: ''
+  }
+  selectedStation.value = {
+    id: null,
+    name: ''
+  }
+  newStationName.value = ''
+})
+
+const availableStations = computed(() => {
+  if (
+    selectedType.value.id === 'registration-kiosk' ||
+    selectedType.value.id === 'registration-hybrid'
+  ) {
+    return typeSelectorStore.registrationStations
+  } else if (selectedType.value.id === 'check-in-daily') {
+    return typeSelectorStore.checkInDailyStations
+  } else {
+    return []
+  }
 })
 
 const allFieldsSelected = computed(() => {
@@ -100,12 +131,16 @@ const allFieldsSelected = computed(() => {
   }
 
   if (selectedType.value.id === 'check-in' || selectedType.value.id === 'checkout') {
-    if (selectedRoom.value.id === null) {
+    if (selectedMicrolocation.value.id === null) {
       return false
     }
   }
 
-  if (selectedType.value.id === 'check-in-daily' || selectedType.value.id === 'registration-kiosk' || selectedType.value.id === 'registration-hybrid') {
+  if (
+    selectedType.value.id === 'check-in-daily' ||
+    selectedType.value.id === 'registration-kiosk' ||
+    selectedType.value.id === 'registration-hybrid'
+  ) {
     if (selectedStation.value.id === null) {
       return false
     }
@@ -119,61 +154,109 @@ const allFieldsSelected = computed(() => {
   return true
 })
 
-async function submitForm() {
-  localStorage.setItem('event_id', selectedEvent.value.id)
-  loadingStore.show = true
-  if (
-    selectedType.value.id == 'registration-kiosk' ||
-    selectedType.value.id == 'registration-hybrid' ||
-    selectedType.value.id == 'check-in-daily'
-  ) {
-    // if create new station is selected, create new station
-
-    if (selectedStation.value.id === 'create-new') {
-    const payload = {
-     "data": {
-         "attributes": {
-             "station-name": newStationName.value,
-             "station-type": (selectedType.value.id === 'check-in-daily') ? 'daily' : 'registration'
-         },
-         "relationships": {
-             "event": {
-                 "data": {
-                     "type": "event",
-                     "id": selectedEvent.value.id
-                 }
-             }
-         },
-         "type": "station"
-     }
-   }
-
-    await apiStore.post(true, 'station', payload, false)
+async function createStation(payload) {
+  await apiStore
+    .post(true, 'station', payload, false)
     .then(async (res) => {
-      console.log(res)
+      // update selected station to latest response
+      selectedStation.value.id = res.data.id
+      selectedStation.value.name = res.data.attributes['station-name']
       loadingStore.show = false
-     
     })
     .catch((err) => {
       loadingStore.show = false
       console.log(err)
     })
-  }
+}
+
+async function submitForm() {
+  localStorage.setItem('event_id', selectedEvent.value.id)
+  loadingStore.show = true
+  if (
+    selectedType.value.id === 'registration-kiosk' ||
+    selectedType.value.id === 'registration-hybrid' ||
+    selectedType.value.id === 'check-in-daily'
+  ) {
+    // if create new station is selected, create new station
+
+    if (selectedStation.value.id === 'create-new') {
+      const payload = {
+        data: {
+          attributes: {
+            'station-name': newStationName.value,
+            //  registration | daily | check in | check out
+            'station-type': selectedType.value.id === 'check-in-daily' ? 'daily' : 'registration'
+          },
+          relationships: {
+            event: {
+              data: {
+                type: 'event',
+                id: selectedEvent.value.id
+              }
+            }
+          },
+          type: 'station'
+        }
+      }
+
+      await createStation(payload)
+    }
 
     router.push({
       name: selectedType.value.href,
       params: {
         eventId: selectedEvent.value.id,
-        registrationType: selectedType.value.id
-        
+        registrationType: selectedType.value.id,
+        stationId: selectedStation.value.id
       }
     })
   } else {
+    // front end to lock only one station for checkin and checkout
+    // station, check if station exist else create
+    const payload = {
+      data: {
+        attributes: {
+          'station-name': selectedMicrolocation.value.name,
+          //  check in | check out
+          'station-type': selectedType.value.id === 'check-in' ? 'check in' : 'check out'
+        },
+        relationships: {
+          event: {
+            data: {
+              type: 'event',
+              id: selectedEvent.value.id
+            }
+          },
+          microlocation: {
+            data: {
+              id: selectedMicrolocation.value.id,
+              type: 'microlocation'
+            }
+          }
+        },
+        type: 'station'
+      }
+    }
+
+    if (selectedType.value.id === 'check-in') {
+      if (typeSelectorStore.checkInStations.length < 1) {
+        // means station not created
+        await createStation(payload)
+      }
+    }
+
+    if (selectedType.value.id === 'checkout') {
+      if (typeSelectorStore.checkOutStations.length < 1) {
+        // means station not created
+        await createStation(payload)
+      }
+    }
     router.push({
       name: selectedType.value.href,
       params: {
         eventId: selectedEvent.value.id,
-        roomId: selectedRoom.value.id,
+        microlocationId: selectedMicrolocation.value.id,
+        stationId: selectedStation.value.id,
         scannerType: selectedType.value.id
       }
     })
@@ -221,10 +304,9 @@ async function submitForm() {
                     'relative cursor-default select-none py-2 pl-3 pr-9'
                   ]"
                 >
-                <span
-                    :class="[active ? 'font-semibold' : 'font-normal', 'block truncate']"
-                    >{{ event.name }}</span
-                  >
+                  <span :class="[active ? 'font-semibold' : 'font-normal', 'block truncate']">{{
+                    event.name
+                  }}</span>
 
                   <span
                     v-if="selected"
@@ -240,9 +322,11 @@ async function submitForm() {
             </ListboxOptions>
           </div>
         </Listbox>
-
+        {{ typeSelectorStore.checkInStations }}
+        <br /><br />
+        {{ typeSelectorStore.checkOutStations }}
+        <br /><br />
         <!-- select booth type -->
-
         <Listbox v-model="selectedType" as="div">
           <ListboxLabel class="block text-sm font-medium leading-6 text-gray-900"
             >Type</ListboxLabel
@@ -251,7 +335,7 @@ async function submitForm() {
             <ListboxButton
               class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600 sm:text-sm sm:leading-6"
             >
-            <span v-if="selectedType.name == ''" class="block truncate text-gray-400"
+              <span v-if="selectedType.name == ''" class="block truncate text-gray-400"
                 >Select Type</span
               >
               <span class="block truncate">{{ selectedType.name }}</span>
@@ -275,10 +359,9 @@ async function submitForm() {
                     'relative cursor-default select-none py-2 pl-3 pr-9'
                   ]"
                 >
-                  <span
-                    :class="[active ? 'font-semibold' : 'font-normal', 'block truncate']"
-                    >{{ stationType.name }}</span
-                  >
+                  <span :class="[active ? 'font-semibold' : 'font-normal', 'block truncate']">{{
+                    stationType.name
+                  }}</span>
 
                   <span
                     v-if="selected"
@@ -296,11 +379,7 @@ async function submitForm() {
         </Listbox>
         <!-- allow user to select booth or give a new field to store booth -->
         <!-- for session checkin and checkout, only retrieve locations from api and not able to create new -->
-        <Listbox
-          v-if="isStationType"
-          v-model="selectedStation"
-          as="div"
-        >
+        <Listbox v-if="isStationType" v-model="selectedStation" as="div">
           <ListboxLabel class="block text-sm font-medium leading-6 text-gray-900"
             >Selected Station</ListboxLabel
           >
@@ -308,7 +387,7 @@ async function submitForm() {
             <ListboxButton
               class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600 sm:text-sm sm:leading-6"
             >
-            <span v-if="selectedStation.name == ''" class="block truncate text-gray-400"
+              <span v-if="selectedStation.name == ''" class="block truncate text-gray-400"
                 >Select Station</span
               >
               <span class="block truncate">{{ selectedStation.name }}</span>
@@ -320,7 +399,7 @@ async function submitForm() {
               class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
             >
               <ListboxOption
-                v-for="station in typeSelectorStore.stations"
+                v-for="station in availableStations"
                 :key="station.id"
                 v-slot="{ active, selected }"
                 as="template"
@@ -332,10 +411,9 @@ async function submitForm() {
                     'relative cursor-default select-none py-2 pl-3 pr-9'
                   ]"
                 >
-                  <span
-                    :class="[active ? 'font-semibold' : 'font-normal', 'block truncate']"
-                    >{{ station.name }}</span
-                  >
+                  <span :class="[active ? 'font-semibold' : 'font-normal', 'block truncate']">{{
+                    station.name
+                  }}</span>
 
                   <span
                     v-if="selected"
@@ -352,24 +430,24 @@ async function submitForm() {
           </div>
         </Listbox>
 
-        <!-- allow user to select room or give a new field to store room -->
-        <!-- for room checkin and checkout, only retrieve locations from api and not able to create new -->
+        <!-- allow user to select microlocation or give a new field to store microlocation -->
+        <!-- for microlocation checkin and checkout, only retrieve locations from api and not able to create new -->
         <Listbox
           v-if="!isStationType && isStationType !== undefined"
-          v-model="selectedRoom"
+          v-model="selectedMicrolocation"
           as="div"
         >
           <ListboxLabel class="block text-sm font-medium leading-6 text-gray-900"
-            >Selected Room</ListboxLabel
+            >Selected Microlocation</ListboxLabel
           >
           <div class="relative mt-2">
             <ListboxButton
               class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600 sm:text-sm sm:leading-6"
             >
-              <span v-if="selectedRoom.name == ''" class="block truncate text-gray-400"
-                >Select Room</span
+              <span v-if="selectedMicrolocation.name == ''" class="block truncate text-gray-400"
+                >Select Microlocation</span
               >
-              <span class="block truncate">{{ selectedRoom.name }}</span>
+              <span class="block truncate">{{ selectedMicrolocation.name }}</span>
               <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                 <ChevronUpDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
               </span>
@@ -378,10 +456,10 @@ async function submitForm() {
               class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
             >
               <ListboxOption
-                v-for="room in eventsStore.eventRooms"
-                :key="room.id"
+                v-for="microlocation in eventsStore.eventMicrolocations"
+                :key="microlocation.id"
                 v-slot="{ active, selected }"
-                :value="room"
+                :value="microlocation"
                 as="template"
               >
                 <li
@@ -390,10 +468,9 @@ async function submitForm() {
                     'relative cursor-default select-none py-2 pl-3 pr-9'
                   ]"
                 >
-                  <span
-                    :class="[active ? 'font-semibold' : 'font-normal', 'block truncate']"
-                    >{{ room.name }}</span
-                  >
+                  <span :class="[active ? 'font-semibold' : 'font-normal', 'block truncate']">{{
+                    microlocation.name
+                  }}</span>
 
                   <span
                     v-if="selected"
@@ -425,10 +502,10 @@ async function submitForm() {
           <div class="mt-2">
             <input
               id="station"
+              v-model="newStationName"
               name="station"
               type="text"
               required="true"
-              v-model="newStationName"
               placeholder="Enter station name"
               class="block pl-2 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-blue-600 sm:text-sm sm:leading-6"
             />
