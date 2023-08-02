@@ -66,7 +66,7 @@ async function logErrors(promise) {
           :camera="camera"
           @init="logErrors"
           @decode="
-            ;async () => {
+            async () => {
               validQRCode = await scannerStore
                 .checkInAttendeeScanner()
                 .then(() => (showPrintModal = true))

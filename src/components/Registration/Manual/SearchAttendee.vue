@@ -168,7 +168,7 @@ watch(query, (newValue) => {
                     : 'bg-blue-600 text-white hover:bg-blue-500 w-1/2 sm:w-auto justify-center'
                 ]"
                 @click="
-                  ;async () => {
+                  async () => {
                     const checkedIn = await searchAttendeeStore.checkInAttendee(person.id) // Patch API to check-in
                     if (checkedIn) person.checkedIn = true
                     else console.log('check in failed')
