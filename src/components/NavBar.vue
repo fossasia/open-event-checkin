@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import {
   Disclosure,
   DisclosureButton,
@@ -23,6 +23,7 @@ import { useEventsStore } from '@/stores/events'
 import PasswordModal from '@/components/Modals/PasswordModal.vue'
 
 const route = useRoute()
+const router = useRouter()
 const apiStore = useApiStore()
 const typeSelectorStore = useTypeSelectorStore()
 const eventsStore = useEventsStore()
@@ -41,6 +42,12 @@ onMounted(() => {
       apiStore.get(true, `/users/${res.user_id}`).then((response) => {
         // get name
         userName.value = response.data.attributes['first-name']
+      })
+    })
+    .catch((err) => {
+      // if error, kick user to login page
+      router.replace({
+        name: 'userAuth'
       })
     })
 })
