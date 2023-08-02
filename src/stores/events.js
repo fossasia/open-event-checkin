@@ -7,6 +7,14 @@ export const useEventsStore = defineStore('events', () => {
   const eventMicrolocations = ref([])
   const eventName = ref('')
 
+  function setEvent(selectedEvent) {
+    localStorage.setItem('Event', JSON.stringify(selectedEvent))
+  }
+
+  function getEvent() {
+    return JSON.parse(localStorage.getItem('Event'))
+  }
+
   async function getEvents() {
     await useApiStore()
       .get(true, 'users/user-details/get-user-id') // get user id
@@ -63,5 +71,5 @@ export const useEventsStore = defineStore('events', () => {
     return eventName.value
   }
 
-  return { userEvents, eventMicrolocations, getEvents, getEventMicrolocations, getEventName }
+  return { userEvents, eventMicrolocations, getEvents, getEventMicrolocations, getEventName, getEvent, setEvent }
 })

@@ -7,6 +7,7 @@ import RegistrationKiosk from '@/components/Registration/Kiosk/ScannerCamera.vue
 import RegistrationManual from '@/components/Registration/Manual/ScanSearch.vue'
 import NotFound from '@/views/NotFound.vue'
 import AuthTemplate from '@/AuthTemplate.vue'
+import RegistrationStats from '@/components/Registration/Manual/RegistrationStats.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -41,13 +42,18 @@ const router = createRouter({
               path: 'manual',
               name: 'registerHybrid',
               component: RegistrationManual
-            }
+            },
           ]
         },
         {
           path: ':eventId/:stationId/scanner/:scannerType',
           name: 'scanner',
           component: QRScannerCamera
+        },
+        {
+          path: 'statistics',
+          name: 'registerStats',
+          component: RegistrationStats
         }
       ]
     },

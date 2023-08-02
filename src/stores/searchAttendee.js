@@ -1,7 +1,6 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { useApiStore } from '@/stores/api'
-import { useEventsStore } from '@/stores/events'
 import dayjs from 'dayjs'
 
 export const useSearchAttendeeStore = defineStore('searchAttendee', () => {
@@ -25,20 +24,20 @@ export const useSearchAttendeeStore = defineStore('searchAttendee', () => {
     }
   ]
 
-  async function getAttendee(value) {
+  async function getAttendee(value, eventId) {
     try {
-      const searchedAttendees = await fetchAttendees(`name=${value}&email=`)
+      const searchedAttendees = await fetchAttendees(`name=${value}&email=`, eventId)
       if (searchedAttendees.length === 0) throw new Error('No search results')
       people.value = searchedAttendees
     } catch {
-      const searchedAttendees = await fetchAttendees(`name=&email=${value}`)
+      const searchedAttendees = await fetchAttendees(`name=&email=${value}`, eventId)
       people.value = searchedAttendees
     }
   }
 
-  async function fetchAttendees(path) {
-    const eventId = useEventsStore().getEventId()
+  async function fetchAttendees(path, eventId) {
     const attendees = await useApiStore().get(true, `events/${eventId}/attendees/search?${path}`)
+    console.log(attendees)
     return attendees.attendees.map((attendee) => ({
       id: attendee.id,
       name: attendee.firstname + ' ' + attendee.lastname,
@@ -56,30 +55,39 @@ export const useSearchAttendeeStore = defineStore('searchAttendee', () => {
     people.value = []
   }
 
-  async function checkInAttendee(id) {
+  async function checkInAttendee(attendeeId, stationId, eventId) {
     try {
-      const attendee = await useApiStore().get(true, `attendees/${id}`) // to get pdf url
-      const attendeeRes = attendee.data.attributes
-
+      const stations = await useApiStore().get(true, `events/${eventId}/stations`)
+      const station = stations.data.find((station) => station.id == stationId)
       const payload = {
         data: {
-          attributes: {
-            'is-checked-in': 'true',
-            'checkin-times': dayjs().format('YYYY-MM-DDTHH:mm:ssZ'),
-            'attendee-notes': null,
-            pdf_url: attendeeRes['pdf-url']
+          relationships: {
+            station: {
+              data: {
+                type: station.type,
+                id: stationId + ''
+              }
+            },
+            ticket_holder: {
+              data: {
+                type: 'attendee',
+                id: attendeeId + ''
+              }
+            }
           },
-          type: 'attendee',
-          id: `${id}`
+          type: 'user_check_in'
         }
       }
-
-      const patchResponse = await useApiStore().patch(`attendees/${id}`, payload)
-      console.log('check in success', patchResponse)
+      const checkInRes = await useApiStore().post(true, 'user-check-in', payload, false)
+      console.log('check in success:', attendeeId, checkInRes)
       return true
+
     } catch (error) {
-      console.log(error)
-      return false
+      const errors = error.originalError.body.errors
+      if (errors.find((error) => error.detail === 'Attendee already checked in.')) {
+        throw new Error('Already checked in')
+        return false
+      }
     }
   }
 
