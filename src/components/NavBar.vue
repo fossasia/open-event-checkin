@@ -1,5 +1,6 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import {
   Disclosure,
   DisclosureButton,
@@ -14,18 +15,53 @@ import {
   XMarkIcon,
   HomeIcon,
   ChartBarIcon,
-  UserCircleIcon,
   ChevronDownIcon
 } from '@heroicons/vue/24/outline'
+import { useApiStore } from '@/stores/api'
+import { useTypeSelectorStore } from '@/stores/typeSelector'
 import { useEventsStore } from '@/stores/events'
 import PasswordModal from '@/components/Modals/PasswordModal.vue'
 
+const route = useRoute()
+const apiStore = useApiStore()
+const typeSelectorStore = useTypeSelectorStore()
 const eventsStore = useEventsStore()
+const userName = ref('')
 
-const user = {
-  name: 'Tom Cook',
-  icon: UserCircleIcon
-}
+onMounted(() => {
+  if (route.params.eventId && route.params.stationId) {
+    eventsStore.getEvents()
+    typeSelectorStore.getStations(route.params.eventId)
+  }
+
+  // get user name
+  apiStore
+    .get(true, 'users/user-details/get-user-id') // get user id
+    .then(async (res) => {
+      apiStore.get(true, `/users/${res.user_id}`).then((response) => {
+        // get name
+        userName.value = response.data.attributes['first-name']
+      })
+    })
+})
+
+const navbarTitle = computed(() => {
+  // check if event id and station id exist in url params
+  if (route.params.eventId && route.params.stationId) {
+    // find the event
+    const event = eventsStore.userEvents.find((event) => event.id === route.params.eventId)
+    // find station name
+    const station = typeSelectorStore.eventStations.find(
+      (station) => station.id === parseInt(route.params.stationId)
+    )
+    if (!event || !station) {
+      return ''
+    }
+    return `${event.name} - ${station.attributes['station-name']}`
+  }
+  return ''
+})
+
 const navigation = [
   { name: 'Main', href: '#', current: true, icon: HomeIcon },
   { name: 'Statistics', href: '#', current: false, icon: ChartBarIcon },
@@ -60,7 +96,7 @@ const componentKey = ref(0)
         <div
           class="z-0 flex flex-1 items-center justify-center max-w-xs sm:max-w-sm md:max-w-xl lg:max-w-3xl"
         >
-          <p class="font-bold text-xl truncate">{{ eventsStore.eventName }}</p>
+          <p class="font-bold text-xl truncate">{{ navbarTitle }}</p>
         </div>
         <div class="relative z-10 flex items-center lg:hidden">
           <!-- Mobile menu button -->
@@ -80,7 +116,6 @@ const componentKey = ref(0)
                 class="flex items-center rounded-full bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
               >
                 <span class="sr-only">Open user menu</span>
-                <component :is="user.icon" class="h-8 w-8 text-gray-400" aria-hidden="true" />
                 <ChevronDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
               </MenuButton>
             </div>
@@ -98,7 +133,7 @@ const componentKey = ref(0)
                 <MenuItem v-for="item in userNavigation" :key="item.name">
                   <button
                     :class="[
-                      item.name == 'Sign out'
+                      item.name === 'Sign out'
                         ? 'text-red-600 hover:bg-red-100 font-semibold'
                         : 'text-gray-700 hover:bg-gray-100',
                       'w-full text-left px-4 py-2 text-sm'
@@ -159,13 +194,8 @@ const componentKey = ref(0)
         >
       </div>
       <div class="border-t border-gray-200 pb-3 pt-4">
-        <div class="flex items-center px-4">
-          <div class="flex-shrink-0">
-            <component :is="user.icon" class="h-10 w-10 text-gray-400 mr-2" aria-hidden="true" />
-          </div>
-          <div class="ml-3">
-            <div class="text-base font-medium text-gray-800">{{ user.name }}</div>
-          </div>
+        <div class="flex items-center px-5">
+          <div class="text-base font-medium text-gray-800">Logged in as: {{ userName }}</div>
         </div>
         <div class="mt-3 space-y-1 px-2">
           <DisclosureButton
@@ -173,7 +203,13 @@ const componentKey = ref(0)
             :key="item.name"
             as="a"
             :href="item.href"
-            class="block rounded-md px-3 py-2 text-base font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+            :class="[
+              item.name === 'Sign out'
+                ? 'text-red-600 hover:bg-red-100 font-semibold'
+                : 'text-gray-700 hover:bg-gray-100',
+              'block rounded-md px-3 py-2 text-base cursor-pointer'
+            ]"
+            @click="item.action"
           >
             {{ item.name }}
           </DisclosureButton>
