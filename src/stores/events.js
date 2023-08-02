@@ -62,6 +62,6 @@ export const useEventsStore = defineStore('events', () => {
     eventName.value = event.data.attributes.name
     return eventName.value
   }
-  
+
   return { userEvents, eventMicrolocations, getEvents, getEventMicrolocations, getEventName }
 })

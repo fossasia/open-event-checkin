@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { useApiStore } from '@/stores/api'
 
@@ -11,65 +11,93 @@ export const useTypeSelectorStore = defineStore('typeSelector', () => {
     { id: 'checkout', name: 'Session Checkout', href: 'scanner' }
   ]
 
-  const registrationStations = ref([])
-  const checkInDailyStations = ref([])
-  const checkInStations = ref([])
-  const checkOutStations = ref([])
+  const eventStations = ref([])
 
   async function getStations(eventId) {
-    // clear eventStations
-    registrationStations.value = []
-    checkInDailyStations.value = []
-    checkInStations.value = []
-    checkOutStations.value = []
-    // add create new option
-    const obj = {
-      id: 'create-new',
-      name: 'Create New'
-    }
-    registrationStations.value.push(obj)
-    checkInDailyStations.value.push(obj)
-
     await useApiStore()
       .get(true, `events/${eventId}/stations`)
       .then((res) => {
-        // remap data to new key
-        // types: registration | daily | check in | check out
-        res.data.forEach((station) => {
-          const stationType = station.attributes['station-type']
-          if (stationType === 'registration') {
-            registrationStations.value.push({
-              id: station.id,
-              name: station.attributes['station-name']
-            })
-          } else if (stationType === 'daily') {
-            checkInDailyStations.value.push({
-              id: station.id,
-              name: station.attributes['station-name']
-            })
-          } else if (stationType === 'check in') {
-            checkInStations.value.push({
-              id: station.id,
-              name: station.attributes['station-name'],
-              microlocationId: station.attributes['microlocation-id']
-            })
-          } else if (stationType === 'check out') {
-            checkOutStations.value.push({
-              id: station.id,
-              name: station.attributes['station-name'],
-              microlocationId: station.attributes['microlocation-id']
-            })
-          } else {
-            console.log('station type not found')
-          }
-        })
+        eventStations.value = res.data
       })
       .catch((error) => {
         throw error
       })
   }
 
+  const registrationStations = computed(() => {
+    let arr = [
+      {
+        id: 'create-new',
+        name: 'Create New'
+      }
+    ]
+
+    const d = eventStations.value
+      .filter((station) => {
+        return station.attributes['station-type'] === 'registration'
+      })
+      .map((station) => {
+        return {
+          id: station.id,
+          name: station.attributes['station-name']
+        }
+      })
+
+    return arr.concat(d)
+  })
+
+  const checkInDailyStations = computed(() => {
+    let arr = [
+      {
+        id: 'create-new',
+        name: 'Create New'
+      }
+    ]
+
+    const d = eventStations.value
+      .filter((station) => {
+        return station.attributes['station-type'] === 'daily'
+      })
+      .map((station) => {
+        return {
+          id: station.id,
+          name: station.attributes['station-name']
+        }
+      })
+
+    return arr.concat(d)
+  })
+
+  const checkInStations = computed(() => {
+    return eventStations.value
+      .filter((station) => {
+        return station.attributes['station-type'] === 'check in'
+      })
+      .map((station) => {
+        return {
+          id: station.id,
+          name: station.attributes['station-name'],
+          microlocationId: station.attributes['microlocation-id']
+        }
+      })
+  })
+
+  const checkOutStations = computed(() => {
+    return eventStations.value
+      .filter((station) => {
+        return station.attributes['station-type'] === 'check out'
+      })
+      .map((station) => {
+        return {
+          id: station.id,
+          name: station.attributes['station-name'],
+          microlocationId: station.attributes['microlocation-id']
+        }
+      })
+  })
+
   return {
+    eventStations,
     registrationStations,
     checkInDailyStations,
     checkInStations,

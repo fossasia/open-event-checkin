@@ -244,7 +244,6 @@ async function submitForm() {
         await createStation(payload)
       } else {
         // set first station as selected
-        console.log(typeSelectorStore.checkInStations)
         selectedStation.value.id = typeSelectorStore.checkInStations[0].id
         selectedStation.value.name = typeSelectorStore.checkInStations[0].name
       }
