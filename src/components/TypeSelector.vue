@@ -242,6 +242,11 @@ async function submitForm() {
       if (typeSelectorStore.checkInStations.length < 1) {
         // means station not created
         await createStation(payload)
+      } else {
+        // set first station as selected
+        console.log(typeSelectorStore.checkInStations)
+        selectedStation.value.id = typeSelectorStore.checkInStations[0].id
+        selectedStation.value.name = typeSelectorStore.checkInStations[0].name
       }
     }
 
@@ -249,13 +254,16 @@ async function submitForm() {
       if (typeSelectorStore.checkOutStations.length < 1) {
         // means station not created
         await createStation(payload)
+      } else {
+        // set first station as selected
+        selectedStation.value.id = typeSelectorStore.checkOutStations[0].id
+        selectedStation.value.name = typeSelectorStore.checkOutStations[0].name
       }
     }
     router.push({
       name: selectedType.value.href,
       params: {
         eventId: selectedEvent.value.id,
-        microlocationId: selectedMicrolocation.value.id,
         stationId: selectedStation.value.id,
         scannerType: selectedType.value.id
       }
