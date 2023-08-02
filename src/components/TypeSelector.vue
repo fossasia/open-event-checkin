@@ -255,7 +255,6 @@ async function submitForm() {
       name: selectedType.value.href,
       params: {
         eventId: selectedEvent.value.id,
-        microlocationId: selectedMicrolocation.value.id,
         stationId: selectedStation.value.id,
         scannerType: selectedType.value.id
       }
