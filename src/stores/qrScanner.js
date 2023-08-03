@@ -42,7 +42,7 @@ export const useQRScannerStore = defineStore('qrScanner', () => {
             station: {
               data: {
                 type: station.type,
-                id: 10 + ''
+                id: stationId + ''
               }
             },
             session: {
