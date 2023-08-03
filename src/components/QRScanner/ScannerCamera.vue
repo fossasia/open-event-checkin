@@ -53,7 +53,7 @@ async function logErrors(promise) {
           :camera="camera"
           @init="logErrors"
           @decode="
-            ;async () => {
+            async () => {
               showMessage = await qrScannerStore.checkInAttendeeScannerToRoom(stationId, eventId)
             }
           "
