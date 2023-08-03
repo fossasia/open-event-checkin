@@ -78,7 +78,7 @@ async function checkPassword() {
 
       <div class="fixed inset-0 z-10 overflow-y-auto">
         <div
-          class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0"
+          class="flex min-h-full items-center justify-center p-4 text-center sm:items-center sm:p-0"
         >
           <TransitionChild
             as="template"
@@ -90,7 +90,7 @@ async function checkPassword() {
             leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
             <DialogPanel
-              class="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6"
+              class="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all my-8 w-full max-w-sm p-6"
             >
               <div>
                 <div
@@ -98,18 +98,18 @@ async function checkPassword() {
                 >
                   <EllipsisHorizontalIcon class="h-6 w-6 text-gray-700" aria-hidden="true" />
                 </div>
-                <div class="mt-3 sm:mt-5 text-center">
+                <div class="mt-5 text-center">
                   <DialogTitle as="h3" class="text-base font-semibold leading-6 text-gray-900"
                     >Please Input Your Password</DialogTitle
                   >
-                  <div class="mt-5 sm:mt-6">
+                  <div class="mt-6">
                     <input
                       id="password"
                       v-model="passwordField"
                       type="password"
                       name="password"
                       autocomplete="password"
-                      class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+                      class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-inset focus:ring-blue-600 text-sm leading-6"
                     />
                   </div>
                   <p
@@ -120,7 +120,7 @@ async function checkPassword() {
                   </p>
                 </div>
               </div>
-              <div class="mt-5 sm:mt-6">
+              <div class="mt-6">
                 <StandardButton
                   text="Sign Out"
                   :disabled="disableButton"
