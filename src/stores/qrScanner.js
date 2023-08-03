@@ -1,9 +1,12 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { useApiStore } from '@/stores/api'
+import { useScannerStore } from '@/stores/scanner'
 
 export const useQRScannerStore = defineStore('qrScanner', () => {
   const QRCodeValue = ref('')
+  const name = ref('')
+  const errorString = ref('')
 
   const paintOutline = (detectedCodes, ctx) => {
     for (const detectedCode of detectedCodes) {
@@ -28,57 +31,86 @@ export const useQRScannerStore = defineStore('qrScanner', () => {
     value: paintOutline
   }
 
-  function isValidQRCode(str) {
-    const uuidRegex =
-      /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
-    return uuidRegex.test(str)
-  }
-
-  function stringModifier(str) {
-    const parts = str.split('-')
-    parts.pop() // Remove the last part (e.g., '-902', '-82', etc.)
-    return parts.join('-')
-  }
-
-  function extractId(str) {
-    const regex = /-(\d+)$/
-    const match = str.match(regex)
-    return match ? parseInt(match[1], 10) : null
-  }
-
-  async function checkInAttendeeToRoom(id) {
-    var attendeeRes = null
-    await useApiStore()
-      .get(true, `attendees/${id}`)
-      .then((res) => {
-        attendeeRes = res.data.attributes
-        attendee
-      })
-
-    const payload = {
-      data: {
-        attributes: {
-          'is-checked-in': 'true',
-          'checkin-times': getCurrentISO8601DateTime(),
-          'attendee-notes': null,
-          pdf_url: attendeeRes['pdf-url']
-        },
-        type: 'attendee',
-        id: `${id}`
+  async function checkInAttendeeToRoom(attendeeId, stationId, eventId) {
+    try {
+      const stations = await useApiStore().get(true, `events/${eventId}/stations`)
+      const sessions = await useApiStore().get(true, `events/${eventId}/sessions`)
+      const station = stations.data.find((station) => station.id == stationId)
+      const payload = {
+        data: {
+          relationships: {
+            station: {
+              data: {
+                type: station.type,
+                id: 10 + ''
+              }
+            },
+            session: {
+              data: {
+                type: sessions.data[0].type,
+                id: sessions.data[0].id + ''
+              }
+            },
+            ticket_holder: {
+              data: {
+                type: 'attendee',
+                id: attendeeId + ''
+              }
+            }
+          },
+          type: 'user_check_in'
+        }
+      }
+      const checkInRes = await useApiStore().post(true, 'user-check-in', payload, false)
+      console.log('check in success to room:', checkInRes)
+      name.value = await getAttendeeName(attendeeId) // assign attendee name
+    } catch (error) {
+      const errors = error.originalError.body.errors
+      if (errors.find((error) => error.detail === 'Attendee already checked in.')) {
+        errorString.value = (await getAttendeeName(attendeeId)) + ' already checked in' // set error message to show user
+        setTimeout(() => (errorString.value = ''), 3000)
+        throw new Error('Already checked in')
       }
     }
-    await useApiStore()
-      .patch(`attendees/${id}`, payload)
-      .then((res) => console.log(res.data.attributes))
   }
 
-  async function getAttendeeName(id) {
-    await useApiStore()
-      .get(true, `attendees/${id}`)
-      .then((res) => {
-        return res.data.attributes['firstname'] + ' ' + res.data.attributes['lastname']
-      })
+  async function checkInAttendeeScannerToRoom(stationId, eventId) {
+    if (useScannerStore().isValidQRCode(useScannerStore().stringModifier(QRCodeValue.value))) {
+      try {
+        await checkInAttendeeToRoom(
+          useScannerStore().extractId(QRCodeValue.value),
+          stationId,
+          eventId
+        )
+        return true
+      } catch (error) {
+        console.error(error)
+        return false
+      }
+    } else {
+      errorString.value = 'Invalid QR code'
+      setTimeout(() => (errorString.value = ''), 3000)
+      return false
+    }
   }
 
-  return { QRCodeValue, selected, paintOutline, isValidQRCode, stringModifier, extractId, checkInAttendeeToRoom, getAttendeeName }
+  async function getAttendeeName(attendeeId) {
+    try {
+      const attendee = await useApiStore().get(true, `attendees/${attendeeId}`)
+      return attendee.data.attributes['firstname'] + ' ' + attendee.data.attributes['lastname']
+    } catch (error) {
+      console.error(error)
+      return 'Attendee ' + attendeeId
+    }
+  }
+
+  return {
+    QRCodeValue,
+    name,
+    errorString,
+    selected,
+    paintOutline,
+    checkInAttendeeToRoom,
+    checkInAttendeeScannerToRoom
+  }
 })

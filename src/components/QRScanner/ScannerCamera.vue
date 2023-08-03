@@ -1,31 +1,32 @@
 <script setup>
 import { QrcodeStream } from 'vue-qrcode-reader'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { ArrowsRightLeftIcon } from '@heroicons/vue/20/solid'
 import StandardButton from '@/components/Shared/StandardButton.vue'
 import { useQRScannerStore } from '@/stores/qrScanner'
+import { useTypeSelectorStore } from '@/stores/typeSelector'
 
 const qrScannerStore = useQRScannerStore()
+const typeSelectorStore = useTypeSelectorStore()
 
 // get scanner type from vue router params
 const route = useRoute()
 const scannerType = route.params.scannerType
+const stationId = route.params.stationId
+const eventId = route.params.eventId
 
 const camera = ref('front')
 const validQRCode = ref(true)
 
-const name = ref('')
+const showMessage = ref(false)
 
-const decode = () => {
-  // check if QRCodeValue is valid and conforms to what is needed over here
-  const validQR = qrScannerStore.isValidQRCode(qrScannerStore.stringModifier(qrScannerStore.QRCodeValue))
-  validQRCode.value = validQR
-  if (validQR) {
-    console.log('checkin attendee', qrScannerStore.extractId(qrScannerStore.QRCodeValue)) // checks in to room
-    name.value = qrScannerStore.getAttendeeName(qrScannerStore.extractId(qrScannerStore.QRCodeValue))
-  }
-}
+const stationName = computed(() => {
+  const station = typeSelectorStore.eventStations.find(
+    (station) => station.id === parseInt(stationId)
+  )
+  return station.attributes['station-name']
+})
 
 async function logErrors(promise) {
   try {
@@ -48,10 +49,14 @@ async function logErrors(promise) {
       <div>
         <qrcode-stream
           class="!aspect-square !h-auto max-w-lg grid-cols-1 align-middle justify-center items-center"
-          :track="selected.value"
+          :track="qrScannerStore.selected.value"
           :camera="camera"
           @init="logErrors"
-          @decode="decode"
+          @decode="
+            ;async () => {
+              showMessage = await qrScannerStore.checkInAttendeeScannerToRoom(stationId, eventId)
+            }
+          "
         >
         </qrcode-stream>
         <StandardButton
@@ -62,8 +67,11 @@ async function logErrors(promise) {
         />
       </div>
     </div>
-    <div v-if="qrScannerStore.QRCodeValue != ''" class="text-green-500 font-bold mt-5 text-lg text-center">
-      {{ name }} has been checked into {{  }}
+    <div v-if="showMessage" class="text-green-500 font-bold mt-5 text-lg text-center">
+      {{ qrScannerStore.name }} has been checked into {{ stationName }}
+    </div>
+    <div v-else class="text-red-500 font-bold mt-5 text-lg text-center">
+      {{ qrScannerStore.errorString }}
     </div>
   </div>
 </template>

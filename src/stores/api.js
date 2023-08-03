@@ -39,31 +39,32 @@ export const useApiStore = defineStore('api', () => {
 
   async function post(requiresAuth, path, payload, hasBody) {
     newSession(requiresAuth)
-    if (hasBody) {
-      delete defaults.headers['Content-Type']
-      const options = instance.options
-      options['body'] = payload
-      try {
-        return await instance.post(path)
-      } catch (error) {
-        return await Promise.reject(error)
-      }
-    } else {
-      if (payload) {
-        instance.options.headers['Accept'] = 'application/vnd.api+json'
-        instance.options.headers['Content-Type'] = 'application/vnd.api+json'
-        try {
-          return await instance.post(path, payload)
-        } catch (error) {
-          return await Promise.reject(error)
-        }
+    try {
+      if (hasBody) {
+        delete defaults.headers['Content-Type']
+        const options = instance.options
+        options['body'] = payload
+        const response = await instance.post(path)
+        return response
       } else {
-        try {
-          return await instance.post(path)
-        } catch (error) {
-          return await Promise.reject(error)
+        if (payload) {
+          instance.options.headers['Accept'] = 'application/vnd.api+json'
+          instance.options.headers['Content-Type'] = 'application/vnd.api+json'
+          const response = await instance.post(path, payload)
+          return response
+        } else {
+          const response = await instance.post(path)
+          return response
         }
       }
+    } catch (error) {
+      const customError = {
+        message: 'An error occurred during the POST request',
+        status: error.response ? error.response.status : null,
+        data: error.response ? error.response.data : null,
+        originalError: error
+      }
+      return Promise.reject(customError)
     }
   }
 
