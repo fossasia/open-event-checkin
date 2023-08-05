@@ -21,9 +21,6 @@ import { useApiStore } from '@/stores/api'
 import { useTypeSelectorStore } from '@/stores/typeSelector'
 import { useEventsStore } from '@/stores/events'
 import PasswordModal from '@/components/Modals/PasswordModal.vue'
-import { useRouter } from 'vue-router'
-
-const router = useRouter()
 
 const route = useRoute()
 const router = useRouter()
@@ -77,21 +74,21 @@ const navigation = [
   { name: 'Statistics', href: '#', current: false, icon: ChartBarIcon },
   { name: 'Close', href: '#', current: false, icon: XMarkIcon }
 ]
-const userNavigation = [
-  { 
-    name: 'Stats', 
-    action: () => {
-      if (eventsStore.getEvent() !== null) {
-        router.push({ 
-          name: 'registerStats',
-        })
-      } else {
-        throw new Error('Please select an event')
-      }
-    }
-  },
-  { name: 'Sign out', action: () => (showPasswordModal.value = true) }
-]
+const userNavigation = computed(() => {
+  if (route.params.registrationType) {
+    return [
+      { name: 'Stats', action: () => router.push({ name: 'registerStats' }) },
+      { name: 'Sign out', action: () => (showPasswordModal.value = true) }
+    ]
+  } else if (route.params.scannerType) {
+    return [
+      { name: 'Stats', action: () => router.push({ name: 'scannerStats' }) },
+      { name: 'Sign out', action: () => (showPasswordModal.value = true) }
+    ]
+  } else {
+    return [{ name: 'Sign out', action: () => (showPasswordModal.value = true) }]
+  }
+})
 const showNavigation = ref(false)
 const showPasswordModal = ref(false)
 const componentKey = ref(0)
