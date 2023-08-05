@@ -170,7 +170,6 @@ async function createStation(payload) {
 }
 
 async function submitForm() {
-  localStorage.setItem('event_id', selectedEvent.value.id)
   loadingStore.show = true
   if (
     selectedType.value.id === 'registration-kiosk' ||
