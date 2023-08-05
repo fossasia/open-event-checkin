@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import {
   Disclosure,
   DisclosureButton,
@@ -26,6 +26,7 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 const route = useRoute()
+const router = useRouter()
 const apiStore = useApiStore()
 const typeSelectorStore = useTypeSelectorStore()
 const eventsStore = useEventsStore()
@@ -44,6 +45,12 @@ onMounted(() => {
       apiStore.get(true, `/users/${res.user_id}`).then((response) => {
         // get name
         userName.value = response.data.attributes['first-name']
+      })
+    })
+    .catch((err) => {
+      // if error, kick user to login page
+      router.replace({
+        name: 'userAuth'
       })
     })
 })
@@ -147,7 +154,7 @@ const componentKey = ref(0)
                 <MenuItem v-for="item in userNavigation" :key="item.name">
                   <button
                     :class="[
-                      item.name == 'Sign out'
+                      item.name === 'Sign out'
                         ? 'text-red-600 hover:bg-red-100 font-semibold'
                         : 'text-gray-700 hover:bg-gray-100',
                       'w-full text-left px-4 py-2 text-sm'
@@ -217,7 +224,13 @@ const componentKey = ref(0)
             :key="item.name"
             as="a"
             :href="item.href"
-            class="block rounded-md px-3 py-2 text-base font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+            :class="[
+              item.name === 'Sign out'
+                ? 'text-red-600 hover:bg-red-100 font-semibold'
+                : 'text-gray-700 hover:bg-gray-100',
+              'block rounded-md px-3 py-2 text-base cursor-pointer'
+            ]"
+            @click="item.action"
           >
             {{ item.name }}
           </DisclosureButton>
