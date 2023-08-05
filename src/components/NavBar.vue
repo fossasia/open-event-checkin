@@ -74,10 +74,21 @@ const navigation = [
   { name: 'Statistics', href: '#', current: false, icon: ChartBarIcon },
   { name: 'Close', href: '#', current: false, icon: XMarkIcon }
 ]
-const userNavigation = [
-  { name: 'Stats' },
-  { name: 'Sign out', action: () => (showPasswordModal.value = true) }
-]
+const userNavigation = computed(() => {
+  if (route.params.registrationType) {
+    return [
+      { name: 'Stats', action: () => router.push({ name: 'registerStats' }) },
+      { name: 'Sign out', action: () => (showPasswordModal.value = true) }
+    ]
+  } else if (route.params.scannerType) {
+    return [
+      { name: 'Stats', action: () => router.push({ name: 'scannerStats' }) },
+      { name: 'Sign out', action: () => (showPasswordModal.value = true) }
+    ]
+  } else {
+    return [{ name: 'Sign out', action: () => (showPasswordModal.value = true) }]
+  }
+})
 const showNavigation = ref(false)
 const showPasswordModal = ref(false)
 const componentKey = ref(0)
