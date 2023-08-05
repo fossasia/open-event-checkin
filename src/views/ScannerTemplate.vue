@@ -25,6 +25,7 @@ if (!scannerTypeIsValid) {
   router.replace({ name: 'NotFound' })
 }
 </script>
+
 <template>
   <div class="m-6">
     <RouterView />

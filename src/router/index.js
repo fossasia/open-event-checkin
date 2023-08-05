@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import UserAuth from '@/views/UserAuth.vue'
 import StationSelector from '@/views/StationSelector.vue'
-import Scanner from '@/views/Scanner.vue'
+import ScannerTemplate from '@/views/ScannerTemplate.vue'
 import QRScannerCamera from '@/components/QRScanner/ScannerCamera.vue'
 import ScannedStats from '@/components/QRScanner/ScannedStats.vue'
 import Registration from '@/views/Registration.vue'
@@ -56,7 +56,7 @@ const router = createRouter({
           path: ':eventId/:stationId/scanner/:scannerType',
           name: 'scanner',
           redirect: { name: 'scannerCamera' },
-          component: Scanner,
+          component: ScannerTemplate,
           children: [
             {
               path: 'camera',
