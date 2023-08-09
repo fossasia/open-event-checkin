@@ -1,17 +1,15 @@
 <script setup>
 import { ref } from 'vue'
-import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
-import { EllipsisHorizontalIcon } from '@heroicons/vue/24/outline'
+import { DialogTitle } from '@headlessui/vue'
+import ModalBaseTemplate from '@/components/Modals/ModalBaseTemplate.vue'
+import { KeyIcon } from '@heroicons/vue/24/outline'
 import StandardButton from '@/components/Shared/StandardButton.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useLoadingStore } from '@/stores/loading'
-import { useApiStore } from '@/stores/api'
 import { useRouter } from 'vue-router'
 
 const authStore = useAuthStore()
 const loadingStore = useLoadingStore()
-const apiStore = useApiStore()
-
 const router = useRouter()
 
 const props = defineProps({
@@ -22,10 +20,8 @@ const emit = defineEmits(['hidePasswordModal'])
 
 const passwordField = ref('')
 const validPassword = ref(null)
-const disableButton = ref(false)
 
 async function checkPassword() {
-  disableButton.value = true
   loadingStore.show = true
   const payload = { password: passwordField.value }
 
@@ -33,24 +29,21 @@ async function checkPassword() {
     const res = await authStore.verifyPassword(payload, 'auth/verify-password')
     if (res === true) {
       console.log('Password verified: correct')
-      await authStore.logout('auth/logout')
+      await authStore.logout()
       validPassword.value = true
       emit('hidePasswordModal', false)
       router.push({
         name: 'userAuth'
       })
-      loadingStore.show = false
     } else {
       console.log('Password verified: incorrect')
       loadingStore.show = false
-      disableButton.value = false
       validPassword.value = false
       passwordField.value = ''
     }
   } catch (error) {
     console.log(error)
     loadingStore.show = false
-    disableButton.value = false
     validPassword.value = false
     passwordField.value = ''
   }
@@ -58,83 +51,44 @@ async function checkPassword() {
 </script>
 
 <template>
-  <TransitionRoot
-    as="template"
-    :show="props.showPasswordModal"
-    @click="$emit('hidePasswordModal', false)"
-  >
-    <Dialog as="div" class="relative z-30">
-      <TransitionChild
-        as="template"
-        enter="ease-out duration-300"
-        enter-from="opacity-0"
-        enter-to="opacity-100"
-        leave="ease-in duration-200"
-        leave-from="opacity-100"
-        leave-to="opacity-0"
-      >
-        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-      </TransitionChild>
-
-      <div class="fixed inset-0 z-10 overflow-y-auto">
+  <ModalBaseTemplate :show="props.showPasswordModal">
+    <form @submit.prevent="checkPassword">
+      <div>
         <div
-          class="flex min-h-full items-center justify-center p-4 text-center sm:items-center sm:p-0"
+          class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-secondary-light"
         >
-          <TransitionChild
-            as="template"
-            enter="ease-out duration-300"
-            enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            enter-to="opacity-100 translate-y-0 sm:scale-100"
-            leave="ease-in duration-200"
-            leave-from="opacity-100 translate-y-0 sm:scale-100"
-            leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+          <KeyIcon class="h-6 w-6 text-info" aria-hidden="true" />
+        </div>
+        <div class="mt-5 text-center">
+          <DialogTitle as="h3" class="text-base font-semibold leading-6 text-body"
+            >Please Input Your Password</DialogTitle
           >
-            <DialogPanel
-              class="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all my-8 w-full max-w-sm p-6"
-            >
-              <div>
-                <div
-                  class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gray-100"
-                >
-                  <EllipsisHorizontalIcon class="h-6 w-6 text-gray-700" aria-hidden="true" />
-                </div>
-                <div class="mt-5 text-center">
-                  <DialogTitle as="h3" class="text-base font-semibold leading-6 text-gray-900"
-                    >Please Input Your Password</DialogTitle
-                  >
-                  <div class="mt-6">
-                    <input
-                      id="password"
-                      v-model="passwordField"
-                      type="password"
-                      name="password"
-                      autocomplete="password"
-                      class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-inset focus:ring-blue-600 text-sm leading-6"
-                    />
-                  </div>
-                  <p
-                    v-if="validPassword != true && validPassword != null"
-                    class="text-red-500 text-sm text-left mt-2"
-                  >
-                    Incorrect Password
-                  </p>
-                </div>
-              </div>
-              <div class="mt-6">
-                <StandardButton
-                  text="Sign Out"
-                  :disabled="disableButton"
-                  :class="[
-                    disableButton && 'cursor-not-allowed opacity-20',
-                    'bg-blue-600 text-white hover:bg-blue-500 w-full justify-center'
-                  ]"
-                  @click="checkPassword()"
-                />
-              </div>
-            </DialogPanel>
-          </TransitionChild>
+          <div class="mt-6">
+            <input
+              id="password"
+              v-model="passwordField"
+              type="password"
+              name="password"
+              autocomplete="password"
+              class="block w-full"
+            />
+          </div>
+          <p
+            v-if="validPassword != true && validPassword != null"
+            class="text-danger text-sm text-left mt-2"
+          >
+            Incorrect Password
+          </p>
         </div>
       </div>
-    </Dialog>
-  </TransitionRoot>
+      <div class="mt-6">
+        <StandardButton
+          type="submit"
+          text="Sign Out"
+          :disabled="passwordField === ''"
+          class="btn-primary w-full justify-center"
+        />
+      </div>
+    </form>
+  </ModalBaseTemplate>
 </template>

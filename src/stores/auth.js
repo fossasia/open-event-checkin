@@ -2,9 +2,9 @@ import { defineStore } from 'pinia'
 import { useApiStore } from '@/stores/api'
 
 export const useAuthStore = defineStore('auth', () => {
-  async function logout(route) {
+  async function logout() {
     try {
-      const res = await useApiStore().post(false, route)
+      const res = await useApiStore().post(false, 'auth/logout')
       localStorage.clear()
       useApiStore().clearToken()
       console.log('logout success')

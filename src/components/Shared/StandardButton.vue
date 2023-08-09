@@ -4,18 +4,20 @@ const props = defineProps({
     type: String,
     default: 'button'
   },
-  text: String,
-  icon: Function,
-  disabled: Boolean
+  text: {
+    type: String,
+    default: ''
+  },
+  disabled: {
+    type: Boolean,
+    default: false
+  },
+  icon: Function
 })
 </script>
 
 <template>
-  <button
-    :type="props.type"
-    :disabled="props.disabled"
-    class="inline-flex items-center rounded-md px-2.5 py-2 text-sm font-medium transition-all"
-  >
+  <button :type="props.type" :disabled="props.disabled">
     <component :is="props.icon" v-if="props.icon" class="h-5 mr-1" />
     <span>{{ props.text }}</span>
   </button>

@@ -27,7 +27,7 @@ watch(query, (newValue) => {
   <div class="mx-auto w-full overflow-visible">
     <div>
       <div class="flex justify-center">
-        <label for="search" class="text-2xl font-bold tracking-tight text-gray-900">
+        <label for="search" class="text-2xl font-bold tracking-tight text-body">
           Search by name or email
         </label>
       </div>
@@ -41,7 +41,7 @@ watch(query, (newValue) => {
                 v-model="query"
                 type="text"
                 name="search"
-                class="group block w-full rounded-none rounded-l-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+                class="group block w-full rounded-none rounded-l-md border-0 py-1.5 text-body ring-1 ring-inset ring-gray-300 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
               />
               <button
                 v-if="query !== ''"
@@ -50,7 +50,7 @@ watch(query, (newValue) => {
                 @click="query = ''"
               >
                 <XCircleIcon
-                  class="h-6 text-gray-400 group-hover:text-gray-400/70"
+                  class="h-6 text-secondary group-hover:text-secondary/70"
                   aria-hidden="true"
                 />
               </button>
@@ -61,13 +61,13 @@ watch(query, (newValue) => {
             type="button"
             :class="[
               menuOpen && 'bg-gray-50',
-              'relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-3 py-1.5 text-sm font-semibold text-gray-900 border border-gray-300 hover:bg-gray-50 group-focus:border-l-blue-600'
+              'relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-3 py-1.5 text-sm font-semibold text-body border border-gray-300 hover:bg-gray-50 group-focus:border-l-blue-600'
             ]"
             @click="menuOpen = !menuOpen"
           >
             <FunnelIcon
               v-if="!searchAttendeeStore.filterOptions.some((option) => option.show)"
-              class="-ml-0.5 h-5 w-5 text-gray-400"
+              class="-ml-0.5 h-5 w-5 text-secondary"
               aria-hidden="true"
             />
             <svg
@@ -113,7 +113,7 @@ watch(query, (newValue) => {
                   :checked="option.show"
                   @click="option.show = !option.show"
                 />
-                <label :for="option.id" class="ml-3 text-sm leading-6 font-medium text-gray-900">{{
+                <label :for="option.id" class="ml-3 text-sm leading-6 font-medium text-body">{{
                   option.name
                 }}</label>
               </div>
@@ -133,8 +133,8 @@ watch(query, (newValue) => {
           <div class="grid grid-cols-1 sm:grid-cols-2 items-center justify-between gap-2 sm:gap-8">
             <div class="flex flex-col sm:gap-3">
               <div class="flex flex-col gap-1">
-                <span class="text-gray-900 font-bold">{{ person.name }}</span>
-                <span class="text-gray-400 font-bold text-sm">{{ person.email }}</span>
+                <span class="text-body font-bold">{{ person.name }}</span>
+                <span class="text-secondary font-bold text-sm">{{ person.email }}</span>
               </div>
               <div
                 v-if="searchAttendeeStore.filterOptions.some((option) => option.show)"
@@ -164,8 +164,8 @@ watch(query, (newValue) => {
                 :text="person.checkedIn ? 'Checked-in' : 'Check-in'"
                 :class="[
                   person.checkedIn
-                    ? 'bg-blue-600/20 text-blue-700/70 w-1/2 sm:w-auto justify-center min-w-fit'
-                    : 'bg-blue-600 text-white hover:bg-blue-500 w-1/2 sm:w-auto justify-center'
+                    ? 'bg-primary/20 text-blue-700/70 w-1/2 sm:w-auto justify-center min-w-fit'
+                    : 'bg-primary text-white hover:bg-blue-500 w-1/2 sm:w-auto justify-center'
                 ]"
                 @click="
                   ;async () => {
@@ -178,7 +178,7 @@ watch(query, (newValue) => {
               <StandardButton
                 text="Print"
                 :icon="PrinterIcon"
-                class="bg-yellow-300 text-gray-900 hover:bg-yellow-200 w-1/2 sm:w-auto justify-center"
+                class="bg-yellow-300 text-body hover:bg-yellow-200 w-1/2 sm:w-auto justify-center"
                 @click="emit('print', person.name)"
               />
             </div>

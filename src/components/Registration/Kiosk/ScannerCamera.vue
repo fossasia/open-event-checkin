@@ -77,15 +77,15 @@ async function logErrors(promise) {
         <StandardButton
           text="Switch Camera"
           :icon="ArrowsRightLeftIcon"
-          class="bg-blue-600 text-white hover:bg-blue-500 mt-4"
+          class="bg-primary text-white hover:bg-blue-500 mt-4"
           @click="camera = camera === 'front' ? 'rear' : 'front'"
         />
       </div>
       <div class="w-full flex-auto text-center grid-cols-1">
-        <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+        <h2 class="text-3xl font-bold tracking-tight text-body sm:text-4xl">
           Scan QR on Ticket
         </h2>
-        <p class="mt-6 text-lg leading-8 text-gray-500">Kindly wait for your badge to print</p>
+        <p class="mt-6 text-lg leading-8 bg-secondary">Kindly wait for your badge to print</p>
       </div>
     </div>
   </div>

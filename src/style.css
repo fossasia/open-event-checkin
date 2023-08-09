@@ -1,3 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code&family=Ubuntu&family=Merriweather&display=swap');
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+
+@layer base {
+  html {
+    @apply text-body;
+  }
+  h2 {
+    @apply text-2xl font-bold leading-9 tracking-tight;
+  }
+  button {
+    @apply px-2.5 py-2 rounded-md font-medium text-white text-base disabled:bg-secondary disabled:hover:bg-secondary disabled:opacity-75 disabled:cursor-not-allowed transition;
+  }
+  label {
+    @apply block text-sm font-medium leading-6 text-secondary-dark;
+  }
+  input [type='text'],
+  [type='email'],
+  [type='url'],
+  [type='password'],
+  [type='number'],
+  [type='date'],
+  [type='datetime-local'],
+  [type='month'],
+  [type='search'],
+  [type='tel'],
+  [type='time'],
+  [type='week'],
+  [multiple],
+  textarea,
+  select {
+    @apply rounded-md border-0 px-2.5 py-1.5 shadow-sm ring-1 ring-secondary focus:ring-primary placeholder:text-secondary sm:text-sm sm:leading-6;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary hover:bg-primary-dark;
+  }
+  .btn-secondary {
+    @apply bg-secondary hover:bg-secondary-dark;
+  }
+  .btn-success {
+    @apply bg-success hover:bg-success-dark;
+  }
+  .btn-danger {
+    @apply bg-danger hover:bg-danger-dark;
+  }
+  .btn-warning {
+    @apply bg-warning hover:bg-warning-dark;
+  }
+  .btn-info {
+    @apply bg-info hover:bg-info-dark;
+  }
+}

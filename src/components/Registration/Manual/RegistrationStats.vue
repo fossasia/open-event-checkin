@@ -21,22 +21,22 @@ const overallStats = [
     </div>
     <div class="space-y-5">
       <div>
-        <h3 class="text-base font-semibold leading-6 text-gray-900">Overall</h3>
+        <h3 class="text-base font-semibold leading-6 text-body">Overall</h3>
         <dl class="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-5">
           <div
             v-for="item in overallStats"
             :key="item.name"
             class="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6"
           >
-            <dt class="truncate text-base font-medium text-gray-500">{{ item.name }}</dt>
-            <dd class="mt-1 text-3xl font-semibold tracking-tight text-gray-900">
+            <dt class="truncate text-base font-medium bg-secondary">{{ item.name }}</dt>
+            <dd class="mt-1 text-3xl font-semibold tracking-tight text-body">
               {{ item.stat }}
             </dd>
           </div>
         </dl>
       </div>
       <div>
-        <h3 class="text-base font-semibold leading-6 text-gray-900">
+        <h3 class="text-base font-semibold leading-6 text-body">
           Station Total: {{ stationName }}
         </h3>
         <dl class="mt-5 grid grid-cols-2 gap-5">
@@ -45,8 +45,8 @@ const overallStats = [
             :key="item.name"
             class="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6"
           >
-            <dt class="truncate text-base font-medium text-gray-500">{{ item.name }}</dt>
-            <dd class="mt-1 text-3xl font-semibold tracking-tight text-gray-900">
+            <dt class="truncate text-base font-medium bg-secondary">{{ item.name }}</dt>
+            <dd class="mt-1 text-3xl font-semibold tracking-tight text-body">
               {{ item.stat }}
             </dd>
           </div>

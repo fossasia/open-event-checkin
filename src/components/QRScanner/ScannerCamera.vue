@@ -53,7 +53,7 @@ async function logErrors(promise) {
           :camera="camera"
           @init="logErrors"
           @decode="
-            async () => {
+            ;async () => {
               showMessage = await qrScannerStore.checkInAttendeeScannerToRoom(stationId, eventId)
             }
           "
@@ -62,7 +62,7 @@ async function logErrors(promise) {
         <StandardButton
           text="Switch Camera"
           :icon="ArrowsRightLeftIcon"
-          class="bg-blue-600 text-white hover:bg-blue-500 mt-4"
+          class="bg-primary text-white hover:bg-blue-500 mt-4"
           @click="camera = camera === 'front' ? 'rear' : 'front'"
         />
       </div>

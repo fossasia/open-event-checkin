@@ -59,7 +59,7 @@ async function logErrors(promise) {
     />
     <div class="xl:flex-none xl:w-96 flex flex-col items-start">
       <div class="w-full flex justify-center">
-        <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-2xl">
+        <h2 class="text-3xl font-bold tracking-tight text-body sm:text-2xl">
           Scan QR on Ticket
         </h2>
       </div>
@@ -81,7 +81,7 @@ async function logErrors(promise) {
           <StandardButton
             text="Switch Camera"
             :icon="ArrowsRightLeftIcon"
-            class="bg-blue-600 text-white hover:bg-blue-500 mt-4"
+            class="bg-primary text-white hover:bg-blue-500 mt-4"
             @click="camera = camera === 'front' ? 'rear' : 'front'"
           />
         </div>
