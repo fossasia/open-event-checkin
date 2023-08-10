@@ -34,7 +34,6 @@ async function logErrors(promise) {
 </script>
 
 <template>
-  <button @click="sendnoti">testest</button>
   <div
     class="grid grid-cols-1 gap-6 lg:gap-0 lg:grid-cols-2 w-full align-middle justify-center items-center place-items-center"
   >
@@ -45,7 +44,7 @@ async function logErrors(promise) {
         :camera="camera"
         @init="logErrors"
         @decode="
-          async () => {
+          ;async () => {
             validQRCode = await scannerStore
               .checkInAttendeeScanner()
               .then(() => (showPrintModal = true))
@@ -73,7 +72,10 @@ async function logErrors(promise) {
     @hideModal="showPrintModal = false"
     @print="
       () => {
-        notificationStore.addNotification(['Successfully printed!', 'Please collect your ticket.'], 'success')
+        notificationStore.addNotification(
+          ['Successfully printed!', 'Please collect your ticket.'],
+          'success'
+        )
         // print user pass here
         console.log('Printing...')
         componentKey += 1

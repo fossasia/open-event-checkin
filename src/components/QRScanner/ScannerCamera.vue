@@ -17,7 +17,6 @@ const stationId = route.params.stationId
 const eventId = route.params.eventId
 
 const camera = ref('front')
-const validQRCode = ref(true)
 
 const showMessage = ref(false)
 
@@ -53,7 +52,7 @@ async function logErrors(promise) {
           :camera="camera"
           @init="logErrors"
           @decode="
-            ;async () => {
+            async () => {
               showMessage = await qrScannerStore.checkInAttendeeScannerToRoom(stationId, eventId)
             }
           "
@@ -67,11 +66,11 @@ async function logErrors(promise) {
         />
       </div>
     </div>
-    <div v-if="showMessage" class="text-green-500 font-bold mt-5 text-lg text-center">
-      {{ qrScannerStore.name }} has been checked into {{ stationName }}
-    </div>
-    <div v-else class="text-red-500 font-bold mt-5 text-lg text-center">
-      {{ qrScannerStore.errorString }}
-    </div>
+    <p class="text-bold mt-5 text-lg text-center">
+      <span v-if="showMessage" class="text-success"
+        >{{ qrScannerStore.name }} has been checked into {{ stationName }}</span
+      >
+      <span v-else class="text-danger">{{ qrScannerStore.errorString }} </span>
+    </p>
   </div>
 </template>

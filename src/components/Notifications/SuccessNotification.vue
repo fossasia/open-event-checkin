@@ -6,7 +6,7 @@ const props = defineProps({
   messages: {
     type: Array,
     default: ['']
-  },
+  }
 })
 </script>
 
