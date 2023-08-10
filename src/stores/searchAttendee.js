@@ -42,7 +42,7 @@ export const useSearchAttendeeStore = defineStore('searchAttendee', () => {
       id: attendee.id,
       name: attendee.firstname + ' ' + attendee.lastname,
       email: attendee.email,
-      checkedIn: ref(attendee.is_checked_in),
+      checkedIn: ref(attendee.is_registered),
       info: {
         role: null,
         memberType: null,
@@ -79,7 +79,7 @@ export const useSearchAttendeeStore = defineStore('searchAttendee', () => {
         }
       }
       const checkInRes = await useApiStore().post(true, 'user-check-in', payload, false)
-      console.log('check in success:', attendeeId, checkInRes)
+      console.log('register success:', attendeeId, checkInRes)
       return true
 
     } catch (error) {
