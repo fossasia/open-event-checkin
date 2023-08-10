@@ -1,14 +1,6 @@
-<script setup>
-import NavBar from '@/components/NavBar.vue'
-import { useLoadingStore } from '@/stores/loading'
-import LoadingView from '@/components/Utilities/LoadingView.vue'
-</script>
+<script setup></script>
 <template>
-  <div class="flex flex-col h-screen w-full">
-    <NavBar />
-    <div class="grow flex max-w-7xl px-2 sm:px-4 lg:px-8">
-      <RouterView />
-    </div>
+  <div class="max-w-7xl px-2 sm:px-4 lg:px-8">
+    <RouterView />
   </div>
-  <LoadingView v-if="useLoadingStore().show"></LoadingView>
 </template>

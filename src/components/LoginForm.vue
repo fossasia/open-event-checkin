@@ -44,8 +44,8 @@ async function submitLogin() {
 </script>
 
 <template>
-  <div class="flex flex-1 flex-col justify-center my-auto h-screen m-6">
-    <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+  <div class="flex flex-col justify-center h-screen -mt-16">
+    <div class="sm:mx-auto my-auto sm:w-full sm:max-w-sm">
       <h2 class="text-center">Sign in to your account</h2>
       <form class="space-y-3 mt-10" @submit.prevent="submitLogin">
         <div>

@@ -40,20 +40,21 @@ async function logErrors(promise) {
 
 <template>
   <div
-    class="grid grid-cols-1 gap-6 lg:gap-0 lg:grid-cols-2 w-full align-middle justify-center items-center place-items-center"
+    class="grid grid-cols-1 gap-6 w-full align-middle justify-center items-center place-items-center"
   >
-    <div class="text-center mt-5">
+    <!-- padding to counter camera in mobile view -->
+    <div class="text-center pt-24">
       <div class="space-y-3">
-        <h2 class="text-center">{{ scannerType }} Scan</h2>
+        <h2 class="text-center capitalize">{{ scannerType }} Scan</h2>
         <p class="text-center text-lg font-medium">Scan QR on badge</p>
       </div>
       <qrcode-stream
-        class="!aspect-square !h-auto max-w-lg grid-cols-1 align-middle justify-center items-center"
+        class="!aspect-square !h-auto max-w-sm"
         :track="qrScannerStore.selected.value"
         :camera="camera"
         @init="logErrors"
         @decode="
-          async () => {
+          async function() {
             showMessage = await qrScannerStore.checkInAttendeeScannerToRoom(stationId, eventId)
           }
         "
@@ -65,8 +66,6 @@ async function logErrors(promise) {
         class="bg-primary hover:bg-blue-500 mt-4"
         @click="camera = camera === 'front' ? 'rear' : 'front'"
       />
-    </div>
-    <div class="w-full text-center">
       <p class="text-bold mt-5 text-lg text-center">
         <span v-if="showMessage" class="text-success"
           >{{ qrScannerStore.name }} has been checked into {{ stationName }}</span

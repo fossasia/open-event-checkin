@@ -13,7 +13,10 @@ const loadingStore = useLoadingStore()
 const router = useRouter()
 
 const props = defineProps({
-  showPasswordModal: Boolean
+  showPasswordModal: {
+    type: Boolean,
+    default: false
+  }
 })
 
 const emit = defineEmits(['hidePasswordModal'])
@@ -77,12 +80,18 @@ async function checkPassword() {
           </p>
         </div>
       </div>
-      <div class="mt-6">
+      <div class="mt-6 space-y-3">
         <StandardButton
           :type="'submit'"
           :text="'Sign Out'"
           :disabled="passwordField === ''"
           class="btn-primary w-full justify-center"
+        />
+        <StandardButton
+          :type="'button'"
+          :text="'Cancel'"
+          class="btn-secondary w-full justify-center"
+          @click="emit('hidePasswordModal', false)"
         />
       </div>
     </form>

@@ -38,7 +38,7 @@ async function logErrors(promise) {
 
 <template>
   <div
-    class="grid grid-cols-1 gap-6 lg:gap-0 lg:grid-cols-2 w-full align-middle justify-center items-center place-items-center"
+    class="grid grid-cols-1 gap-6 lg:gap-0 lg:grid-cols-2 w-full align-middle justify-center items-center place-items-center h-screen -mt-16"
   >
     <div class="text-center mt-5">
       <h2 class="mb-3">Scan QR on Ticket</h2>
@@ -48,7 +48,7 @@ async function logErrors(promise) {
         :camera="camera"
         @init="logErrors"
         @decode="
-          ;async () => {
+          async function() {
             validQRCode = await scannerStore
               .checkInAttendeeScanner()
               .then(() => (showPrintModal = true))

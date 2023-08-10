@@ -276,8 +276,8 @@ async function submitForm() {
 </script>
 
 <template>
-  <div class="flex flex-1 flex-col justify-center my-auto">
-    <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+  <div class="flex flex-col justify-center h-screen -mt-16">
+    <div class="sm:mx-auto my-auto sm:w-full sm:max-w-sm">
       <h2 class="text-center">Select Event</h2>
       <form class="space-y-3 mt-10" @submit.prevent="submitForm">
         <ListboxSelector

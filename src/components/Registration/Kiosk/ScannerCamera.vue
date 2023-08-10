@@ -34,16 +34,17 @@ async function logErrors(promise) {
 
 <template>
   <div
-    class="grid grid-cols-1 gap-6 lg:gap-0 lg:grid-cols-2 w-full align-middle justify-center items-center place-items-center"
+    class="grid grid-cols-1 gap-6 lg:gap-0 lg:grid-cols-2 w-full align-middle justify-center items-center place-items-center h-screen -mt-16"
   >
-    <div class="text-center mt-5">
+    <!-- padding to counter camera in mobile view -->
+    <div class="text-center pt-24">
       <qrcode-stream
         class="!aspect-square !h-auto max-w-sm"
         :track="scannerStore.selected.value"
         :camera="camera"
         @init="logErrors"
         @decode="
-          ;async () => {
+          async function() {
             validQRCode = await scannerStore
               .checkInAttendeeScanner()
               .then(() => (showPrintModal = true))

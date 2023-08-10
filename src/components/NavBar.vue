@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import {
   Disclosure,
@@ -24,11 +24,6 @@ const eventsStore = useEventsStore()
 const userName = ref('')
 
 onMounted(() => {
-  if (route.params.eventId && route.params.stationId) {
-    eventsStore.getEvents()
-    typeSelectorStore.getStations(route.params.eventId)
-  }
-
   // get user name
   apiStore
     .get(true, 'users/user-details/get-user-id') // get user id
@@ -36,6 +31,10 @@ onMounted(() => {
       apiStore.get(true, `/users/${res.user_id}`).then((response) => {
         // get name
         userName.value = response.data.attributes['first-name']
+        if (route.params.eventId && route.params.stationId) {
+          eventsStore.getEvents()
+          typeSelectorStore.getStations(route.params.eventId)
+        }
       })
     })
     .catch((err) => {
@@ -62,8 +61,6 @@ const navbarTitle = computed(() => {
   }
   return ''
 })
-
-const showPasswordModal = ref(false)
 
 const userNavigation = computed(() => {
   return [
@@ -93,32 +90,18 @@ const userNavigation = computed(() => {
   ]
 })
 
-const componentKey = ref(0)
+const showPasswordModal = ref(false)
 </script>
 
 <template>
-  <PasswordModal
-    :key="componentKey"
-    :show-password-modal="showPasswordModal"
-    @hide-password-modal="
-      ($event) => {
-        showPasswordModal = $event
-        componentKey += 1
-      }
-    "
-  />
-  <Disclosure v-slot="{ open }" as="header" class="bg-white shadow sticky top-0">
+  <Disclosure v-slot="{ open }" as="header" class="bg-white shadow sticky top-0 z-10">
     <div class="mx-auto max-w-7xl px-2 sm:px-4 lg:divide-y lg:divide-secondary-light lg:px-8">
-      <div class="relative flex h-16 justify-between space-x-5">
-        <div class="relative flex">
-          <div class="flex flex-shrink-0 items-center">Eventyay</div>
+      <div class="flex h-16 justify-between space-x-5 items-center">
+        <div class="shrink">Eventyay</div>
+        <div class="shrink w-40 sm:w-auto lg:max-w-3xl">
+          <p class="text-lg truncate text-ellipsis">{{ navbarTitle }}</p>
         </div>
-        <div
-          class="flex flex-1 items-center justify-center max-w-xs sm:max-w-sm md:max-w-xl lg:max-w-3xl"
-        >
-          <p class="text-xl truncate">{{ navbarTitle }}</p>
-        </div>
-        <div class="relative flex items-center lg:hidden">
+        <div class="relative flex lg:hidden">
           <!-- Mobile menu button -->
           <DisclosureButton
             class="inline-flex items-center justify-center rounded-md p-2 text-body hover:bg-body-light"
@@ -191,4 +174,9 @@ const componentKey = ref(0)
       </div>
     </DisclosurePanel>
   </Disclosure>
+
+  <PasswordModal
+    :show-password-modal="showPasswordModal"
+    @hide-password-modal="showPasswordModal = false"
+  />
 </template>
