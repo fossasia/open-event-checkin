@@ -1,7 +1,6 @@
 <script setup>
 import { QrcodeStream } from 'vue-qrcode-reader'
-import { ref, computed } from 'vue'
-import NotificationHolder from '@/components/Notifications/NotificationHolder.vue'
+import { ref } from 'vue'
 import { useNotificationStore } from '@/stores/notification'
 import { useRoute } from 'vue-router'
 import { ArrowsRightLeftIcon } from '@heroicons/vue/20/solid'
@@ -53,7 +52,7 @@ async function logErrors(promise) {
       >
       </qrcode-stream>
       <StandardButton
-        text="Switch Camera"
+        :text="'Switch Camera'"
         :icon="ArrowsRightLeftIcon"
         class="bg-primary mt-4"
         @click="camera = camera === 'front' ? 'rear' : 'front'"
@@ -64,7 +63,6 @@ async function logErrors(promise) {
       <p class="my-6 text-lg leading-8">Kindly wait for your badge to print</p>
     </div>
   </div>
-  <NotificationHolder></NotificationHolder>
   <PrintModal
     :key="componentKey"
     :show-print-modal="showPrintModal"

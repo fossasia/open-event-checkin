@@ -3,15 +3,16 @@ import { QrcodeStream } from 'vue-qrcode-reader'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { ArrowsRightLeftIcon } from '@heroicons/vue/20/solid'
-
+import { useNotificationStore } from '@/stores/notification'
 import PrintModal from '@/components/Modals/PrintModal.vue'
 import SearchAttendee from '@/components/Registration/Manual/SearchAttendee.vue'
 import StandardButton from '@/components/Shared/StandardButton.vue'
-import SuccessNotification from '@/components/Notifications/SuccessNotification.vue'
 import { useScannerStore } from '@/stores/scanner'
 import { useSearchAttendeeStore } from '@/stores/searchAttendee'
 
 const scannerStore = useScannerStore()
+const notificationStore = useNotificationStore()
+
 const searchAttendeeStore = useSearchAttendeeStore()
 
 // get scanner type from vue router params
@@ -20,7 +21,6 @@ const scannerType = route.params.scannerType
 
 const camera = ref('front')
 const showPrintModal = ref(false)
-const showPrintedNotification = ref(false)
 const componentKey = ref(0)
 
 const validQRCode = ref(true)
@@ -37,57 +37,50 @@ async function logErrors(promise) {
 </script>
 
 <template>
-  <SuccessNotification
-    :show-printed-notification="showPrintedNotification"
-    :valid-q-r-code="validQRCode"
-    @hide-printed-notification="showPrintedNotification = false"
-  />
-  <div class="mx-auto grid grid-cols-1 xl:flex items-center gap-16 lg:w-3/4 h-full py-16">
-    <PrintModal
-      :key="componentKey"
-      :show-print-modal="showPrintModal"
-      :valid-q-r-code="validQRCode"
-      @hide-modal="showPrintModal = false"
-      @print="
-        () => {
-          showPrintedNotification = true
-          // print user pass here
-          console.log('Printing...')
-          componentKey += 1 // refresh print modal
-        }
-      "
-    />
-    <div class="xl:flex-none xl:w-96 flex flex-col items-start">
-      <div class="w-full flex justify-center">
-        <h2>Scan QR on Ticket</h2>
-      </div>
-      <div class="w-full">
-        <div class="mx-auto w-fit">
-          <qrcode-stream
-            class="!aspect-square !h-auto max-w-lg grid-cols-1 align-middle justify-center items-center mt-2"
-            :track="scannerStore.selected.value"
-            :camera="camera"
-            @init="logErrors"
-            @decode="
-              ;async () => {
-                validQRCode = await scannerStore
-                  .checkInAttendeeScanner()
-                  .then(() => (showPrintModal = true))
-              }
-            "
-          />
-          <StandardButton
-            text="Switch Camera"
-            :icon="ArrowsRightLeftIcon"
-            class="bg-primary text-white hover:bg-blue-500 mt-4"
-            @click="camera = camera === 'front' ? 'rear' : 'front'"
-          />
-        </div>
-      </div>
-      <div class="w-full"></div>
+  <div
+    class="grid grid-cols-1 gap-6 lg:gap-0 lg:grid-cols-2 w-full align-middle justify-center items-center place-items-center"
+  >
+    <div class="text-center mt-5">
+      <h2 class="mb-3">Scan QR on Ticket</h2>
+      <qrcode-stream
+        class="!aspect-square !h-auto max-w-sm"
+        :track="scannerStore.selected.value"
+        :camera="camera"
+        @init="logErrors"
+        @decode="
+          ;async () => {
+            validQRCode = await scannerStore
+              .checkInAttendeeScanner()
+              .then(() => (showPrintModal = true))
+          }
+        "
+      />
+      <StandardButton
+        :text="'Switch Camera'"
+        :icon="ArrowsRightLeftIcon"
+        class="bg-primary mt-4"
+        @click="camera = camera === 'front' ? 'rear' : 'front'"
+      />
     </div>
-    <div class="grow">
+    <div class="w-full">
       <SearchAttendee @print="showPrintModal = true" />
     </div>
   </div>
+  <PrintModal
+    :key="componentKey"
+    :show-print-modal="showPrintModal"
+    :valid-q-r-code="validQRCode"
+    @hide-modal="showPrintModal = false"
+    @print="
+      () => {
+        notificationStore.addNotification(
+          ['Successfully printed!', 'Please collect your ticket.'],
+          'success'
+        )
+        // print user pass here
+        console.log('Printing...')
+        componentKey += 1 // refresh print modal
+      }
+    "
+  />
 </template>

@@ -80,8 +80,8 @@ async function submitLogin() {
 
         <div>
           <StandardButton
-            type="submit"
-            text="Login"
+            :type="'submit'"
+            :text="'Login'"
             class="w-full mt-6 justify-center btn-primary"
           />
         </div>

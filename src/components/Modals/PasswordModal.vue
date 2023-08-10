@@ -79,8 +79,8 @@ async function checkPassword() {
       </div>
       <div class="mt-6">
         <StandardButton
-          type="submit"
-          text="Sign Out"
+          :type="'submit'"
+          :text="'Sign Out'"
           :disabled="passwordField === ''"
           class="btn-primary w-full justify-center"
         />

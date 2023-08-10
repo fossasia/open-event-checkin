@@ -174,6 +174,7 @@ async function createStation(payload) {
 
 async function submitForm() {
   loadingStore.show = true
+  console.log('ff')
   if (
     selectedType.value.id === 'registration-kiosk' ||
     selectedType.value.id === 'registration-hybrid' ||
@@ -317,7 +318,7 @@ async function submitForm() {
 
         <!-- display if create new booth is selected -->
         <div
-          v-show="
+          v-if="
             selectedStation.id == 'create-new' &&
             (selectedType.id == 'registration-kiosk' ||
               selectedType.id == 'registration-hybrid' ||
@@ -341,8 +342,8 @@ async function submitForm() {
         <div>
           <StandardButton
             :disabled="!allFieldsSelected"
-            type="submit"
-            text="Go"
+            :type="'submit'"
+            :text="'Go'"
             class="btn-primary w-full mt-6 justify-center"
           />
         </div>

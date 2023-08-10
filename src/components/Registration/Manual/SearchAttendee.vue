@@ -186,7 +186,7 @@ watch(query, (newValue) => {
                 "
               />
               <StandardButton
-                text="Print"
+                :text="'Print'"
                 :icon="PrinterIcon"
                 class="bg-yellow-300 text-body hover:bg-yellow-200 w-1/2 sm:w-auto justify-center"
                 @click="emit('print', person.name)"
