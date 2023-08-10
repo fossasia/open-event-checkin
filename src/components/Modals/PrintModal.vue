@@ -60,7 +60,7 @@ const print = () => {
 
         <!--Title-->
         <div class="mt-3 text-center sm:mt-5">
-          <DialogTitle as="h3" class="text-base font-semibold leading-6 text-body">
+          <DialogTitle as="h3">
             <span v-if="!printingText">{{ titleText }}</span>
             <span v-else>Printing...</span>
           </DialogTitle>

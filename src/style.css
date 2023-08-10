@@ -8,8 +8,16 @@
     @apply text-body;
   }
 
+  h1 {
+    @apply text-4xl sm:text-5xl font-bold leading-10  tracking-tight;
+  }
+
   h2 {
     @apply text-2xl sm:text-3xl font-bold leading-9 tracking-tight;
+  }
+
+  h3 {
+    @apply text-base font-semibold leading-6;
   }
 
   button {

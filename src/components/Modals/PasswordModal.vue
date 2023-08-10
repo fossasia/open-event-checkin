@@ -54,15 +54,11 @@ async function checkPassword() {
   <ModalBaseTemplate :show="props.showPasswordModal">
     <form @submit.prevent="checkPassword">
       <div>
-        <div
-          class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-secondary-light"
-        >
-          <KeyIcon class="h-6 w-6 text-info" aria-hidden="true" />
+        <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-info-light">
+          <KeyIcon class="h-6 w-6 text-info-dark" aria-hidden="true" />
         </div>
         <div class="mt-5 text-center">
-          <DialogTitle as="h3" class="text-base font-semibold leading-6 text-body"
-            >Please Input Your Password</DialogTitle
-          >
+          <DialogTitle as="h3">Please Input Your Password</DialogTitle>
           <div class="mt-6">
             <input
               id="password"

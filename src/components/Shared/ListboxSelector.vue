@@ -33,6 +33,13 @@ const emit = defineEmits(['updateSelected'])
 const mutateSelected = ref(props.selectedOption)
 
 watch(
+  () => props.selectedOption,
+  (val) => {
+    mutateSelected.value = val
+  }
+)
+
+watch(
   () => mutateSelected.value,
   (val) => {
     emit('updateSelected', val)

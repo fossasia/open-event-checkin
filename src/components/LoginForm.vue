@@ -14,7 +14,7 @@ const showError = ref(false)
 
 // stores
 const loadingStore = useLoadingStore()
-
+loadingStore.show = false
 // router
 const router = useRouter()
 

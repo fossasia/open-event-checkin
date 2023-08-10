@@ -69,7 +69,7 @@ async function logErrors(promise) {
     :key="componentKey"
     :show-print-modal="showPrintModal"
     :valid-q-r-code="validQRCode"
-    @hideModal="showPrintModal = false"
+    @hide-modal="showPrintModal = false"
     @print="
       () => {
         notificationStore.addNotification(

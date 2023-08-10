@@ -11,7 +11,10 @@ async function getSessions() {
 }
 
 async function getStats() {
-  const res = await apiStore.get(true, `user-check-in/stats/event/${eventsStore.getEvent().id}?session_ids=12`)
+  const res = await apiStore.get(
+    true,
+    `user-check-in/stats/event/${eventsStore.getEvent().id}?session_ids=12`
+  )
   overallStats.value[0].stat = res.total_attendee
   overallStats.value[1].stat = res.total_not_checked_in
   overallStats.value[2].stat = res.total_registered
@@ -40,7 +43,7 @@ const overallStats = ref([
   { name: 'Session Checked-In', stat: 0 },
   { name: 'Session Checked-Out', stat: 0 },
   { name: 'Track Checked-In', stat: 0 },
-  { name: 'Track Checked-Out', stat: 0 },
+  { name: 'Track Checked-Out', stat: 0 }
 ])
 </script>
 
@@ -51,7 +54,6 @@ const overallStats = ref([
     </div>
 
     <div class="space-y-5">
-
       <div>
         <h3 class="text-base font-semibold leading-6 text-body">Overall</h3>
         <dl class="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-5">
@@ -60,7 +62,7 @@ const overallStats = ref([
             :key="item.name"
             class="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6 border border-gray-300"
           >
-            <dt class="truncate text-base font-medium bg-secondary">{{ item.name }}</dt>
+            <dt class="truncate text-base font-medium">{{ item.name }}</dt>
             <dd class="mt-1 text-3xl font-semibold tracking-tight text-body">
               {{ item.stat }}
             </dd>
@@ -78,14 +80,13 @@ const overallStats = ref([
             :key="item.name"
             class="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6 border border-gray-300"
           >
-            <dt class="truncate text-base font-medium bg-secondary">{{ item.name }}</dt>
+            <dt class="truncate text-base font-medium">{{ item.name }}</dt>
             <dd class="mt-1 text-3xl font-semibold tracking-tight text-body">
               {{ item.stat }}
             </dd>
           </div>
         </dl>
       </div>
-      
     </div>
   </div>
 </template>

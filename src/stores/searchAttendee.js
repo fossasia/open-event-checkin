@@ -81,7 +81,6 @@ export const useSearchAttendeeStore = defineStore('searchAttendee', () => {
       const checkInRes = await useApiStore().post(true, 'user-check-in', payload, false)
       console.log('register success:', attendeeId, checkInRes)
       return true
-
     } catch (error) {
       const errors = error.originalError.body.errors
       if (errors.find((error) => error.detail === 'Attendee already checked in.')) {

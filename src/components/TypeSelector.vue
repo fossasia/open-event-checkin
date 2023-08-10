@@ -72,7 +72,6 @@ const isStationType = computed(() => {
 
 watch(selectedEvent, async (newValue) => {
   if (newValue.id !== null) {
-    eventsStore.setEvent(newValue)
     typeSelectorStore.getStations(newValue.id)
     eventsStore.getEventMicrolocations(newValue.id)
     // clear all fields after
@@ -93,15 +92,25 @@ watch(selectedEvent, async (newValue) => {
   }
 })
 
-watch(selectedType, async (newValue) => {
+watch(selectedType, async (newValue, oldValue) => {
   // type change so clear all fields after
   selectedMicrolocation.value = {
     id: null,
     name: ''
   }
-  selectedStation.value = {
-    id: null,
-    name: ''
+  if (oldValue) {
+    if (
+      (oldValue.id === 'registration-kiosk' || oldValue.id === 'registration-hybrid') &&
+      (newValue.id === 'registration-kiosk' || newValue.id === 'registration-hybrid')
+    ) {
+      // do nothing
+    } else {
+      // selected not registration so reset
+      selectedStation.value = {
+        id: null,
+        name: ''
+      }
+    }
   }
   newStationName.value = ''
 })
@@ -274,7 +283,7 @@ async function submitForm() {
           :select-text="'Select Event'"
           :label="'Event'"
           :data="eventsStore.userEvents"
-          :selectedOption="selectedEvent"
+          :selected-option="selectedEvent"
           @update-selected="(n) => (selectedEvent = n)"
         ></ListboxSelector>
         <!-- select booth type -->
@@ -282,7 +291,7 @@ async function submitForm() {
           :select-text="'Select Type'"
           :label="'Type'"
           :data="typeSelectorStore.stationTypes"
-          :selectedOption="selectedType"
+          :selected-option="selectedType"
           @update-selected="(n) => (selectedType = n)"
         ></ListboxSelector>
         <!-- allow user to select booth or give a new field to store booth -->
@@ -292,7 +301,7 @@ async function submitForm() {
           :select-text="'Select Station'"
           :label="'Station'"
           :data="availableStations"
-          :selectedOption="selectedStation"
+          :selected-option="selectedStation"
           @update-selected="(n) => (selectedStation = n)"
         ></ListboxSelector>
         <!-- allow user to select microlocation or give a new field to store microlocation -->
@@ -302,7 +311,7 @@ async function submitForm() {
           :select-text="'Select Microlocation'"
           :label="'Microlocation'"
           :data="eventsStore.eventMicrolocations"
-          :selectedOption="selectedMicrolocation"
+          :selected-option="selectedMicrolocation"
           @update-selected="(n) => (selectedMicrolocation = n)"
         ></ListboxSelector>
 

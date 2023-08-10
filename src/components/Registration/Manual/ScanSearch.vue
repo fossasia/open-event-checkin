@@ -40,14 +40,14 @@ async function logErrors(promise) {
   <SuccessNotification
     :show-printed-notification="showPrintedNotification"
     :valid-q-r-code="validQRCode"
-    @hidePrintedNotification="showPrintedNotification = false"
+    @hide-printed-notification="showPrintedNotification = false"
   />
   <div class="mx-auto grid grid-cols-1 xl:flex items-center gap-16 lg:w-3/4 h-full py-16">
     <PrintModal
       :key="componentKey"
       :show-print-modal="showPrintModal"
       :valid-q-r-code="validQRCode"
-      @hideModal="showPrintModal = false"
+      @hide-modal="showPrintModal = false"
       @print="
         () => {
           showPrintedNotification = true

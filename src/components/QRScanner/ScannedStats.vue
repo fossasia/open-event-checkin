@@ -36,7 +36,7 @@ const trackStats = [
             :key="item.name"
             class="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6"
           >
-            <dt class="truncate text-base font-medium bg-secondary">{{ item.name }}</dt>
+            <dt class="truncate text-base font-medium">{{ item.name }}</dt>
             <dd class="mt-1 text-3xl font-semibold tracking-tight text-body">
               {{ item.stat }}
             </dd>
@@ -51,7 +51,7 @@ const trackStats = [
             :key="item.name"
             class="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6"
           >
-            <dt class="truncate text-base font-medium bg-secondary">{{ item.name }}</dt>
+            <dt class="truncate text-base font-medium">{{ item.name }}</dt>
             <dd class="mt-1 text-3xl font-semibold tracking-tight text-body">
               {{ item.stat }}
             </dd>
@@ -68,7 +68,7 @@ const trackStats = [
             :key="item.name"
             class="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6"
           >
-            <dt class="truncate text-base font-medium bg-secondary">{{ item.name }}</dt>
+            <dt class="truncate text-base font-medium">{{ item.name }}</dt>
             <dd class="mt-1 text-3xl font-semibold tracking-tight text-body">
               {{ item.stat }}
             </dd>

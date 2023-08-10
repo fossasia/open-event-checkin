@@ -49,7 +49,7 @@ export default {
         dark: colors.yellow[400],
       },
       info: {
-        light: colors.indigo[400],
+        light: colors.indigo[200],
         DEFAULT: colors.indigo[500],
         dark: colors.indigo[700],
       },
