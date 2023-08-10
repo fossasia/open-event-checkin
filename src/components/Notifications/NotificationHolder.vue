@@ -17,10 +17,7 @@ const notificationStore = useNotificationStore()
           :messages="notification.messages"
         >
         </SuccessNotification>
-        <ErrorNotification
-          v-if="notification.type === 'error'"
-          :messages="notification.messages"
-        >
+        <ErrorNotification v-if="notification.type === 'error'" :messages="notification.messages">
         </ErrorNotification>
       </template>
     </div>

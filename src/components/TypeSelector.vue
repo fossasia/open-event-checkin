@@ -270,39 +270,39 @@ async function submitForm() {
       <h2 class="text-center">Select Event</h2>
       <form class="space-y-3 mt-10" @submit.prevent="submitForm">
         <ListboxSelector
-          :selectText="'Select Event'"
+          :select-text="'Select Event'"
           :label="'Event'"
           :data="eventsStore.userEvents"
-          @update-selected="(n) => (selectedEvent = n)"
           :selectedOption="selectedEvent"
+          @update-selected="(n) => (selectedEvent = n)"
         ></ListboxSelector>
         <!-- select booth type -->
         <ListboxSelector
-          :selectText="'Select Type'"
+          :select-text="'Select Type'"
           :label="'Type'"
           :data="typeSelectorStore.stationTypes"
-          @update-selected="(n) => (selectedType = n)"
           :selectedOption="selectedType"
+          @update-selected="(n) => (selectedType = n)"
         ></ListboxSelector>
         <!-- allow user to select booth or give a new field to store booth -->
         <!-- for session checkin and checkout, only retrieve locations from api and not able to create new -->
         <ListboxSelector
           v-if="isStationType"
-          :selectText="'Select Station'"
+          :select-text="'Select Station'"
           :label="'Station'"
           :data="availableStations"
-          @update-selected="(n) => (selectedStation = n)"
           :selectedOption="selectedStation"
+          @update-selected="(n) => (selectedStation = n)"
         ></ListboxSelector>
         <!-- allow user to select microlocation or give a new field to store microlocation -->
         <!-- for microlocation checkin and checkout, only retrieve locations from api and not able to create new -->
         <ListboxSelector
           v-if="!isStationType && isStationType !== undefined"
-          :selectText="'Select Microlocation'"
+          :select-text="'Select Microlocation'"
           :label="'Microlocation'"
           :data="eventsStore.eventMicrolocations"
-          @update-selected="(n) => (selectedMicrolocation = n)"
           :selectedOption="selectedMicrolocation"
+          @update-selected="(n) => (selectedMicrolocation = n)"
         ></ListboxSelector>
 
         <!-- display if create new booth is selected -->

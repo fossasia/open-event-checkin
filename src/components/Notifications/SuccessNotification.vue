@@ -5,7 +5,7 @@ import NotificationBaseTemplate from '@/components/Notifications/NotificationBas
 const props = defineProps({
   messages: {
     type: Array,
-    default: ['']
+    default: () => []
   }
 })
 </script>
@@ -16,7 +16,7 @@ const props = defineProps({
       <CheckCircleIcon class="h-6 w-6 text-success" aria-hidden="true" />
     </template>
     <template #messages>
-      <p v-for="msg in messages" class="text-sm font-medium">{{ msg }}</p>
+      <p v-for="(msg, index) in messages" :key="index" class="text-sm font-medium">{{ msg }}</p>
     </template>
   </NotificationBaseTemplate>
 </template>

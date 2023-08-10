@@ -5,7 +5,7 @@ import NotificationBaseTemplate from '@/components/Notifications/NotificationBas
 const props = defineProps({
   messages: {
     type: Array,
-    default: ['']
+    default: () => []
   }
 })
 </script>

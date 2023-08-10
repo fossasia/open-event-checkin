@@ -7,15 +7,19 @@
   html {
     @apply text-body;
   }
+
   h2 {
     @apply text-2xl sm:text-3xl font-bold leading-9 tracking-tight;
   }
+
   button {
     @apply px-2.5 py-2 rounded-md font-medium text-white text-base disabled:bg-secondary disabled:hover:bg-secondary disabled:opacity-75 disabled:cursor-not-allowed transition;
   }
+
   label {
     @apply block text-sm font-medium leading-6 text-secondary-dark;
   }
+
   [type='text'],
   [type='email'],
   [type='url'],
@@ -39,18 +43,23 @@
   .btn-primary {
     @apply bg-primary hover:bg-primary-dark;
   }
+
   .btn-secondary {
     @apply bg-secondary hover:bg-secondary-dark;
   }
+
   .btn-success {
     @apply bg-success hover:bg-success-dark;
   }
+
   .btn-danger {
     @apply bg-danger hover:bg-danger-dark;
   }
+
   .btn-warning {
     @apply bg-warning hover:bg-warning-dark;
   }
+
   .btn-info {
     @apply bg-info hover:bg-info-dark;
   }

@@ -12,7 +12,10 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
-  icon: Function
+  icon: {
+    type: Function,
+    default: () => null
+  }
 })
 </script>
 

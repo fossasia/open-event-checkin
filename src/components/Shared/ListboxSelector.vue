@@ -20,11 +20,11 @@ const props = defineProps({
   },
   data: {
     type: Array,
-    default: []
+    default: () => []
   },
   selectedOption: {
     type: Object,
-    default: { id: undefined, name: '' }
+    default: () => ({ id: undefined, name: '' })
   }
 })
 
