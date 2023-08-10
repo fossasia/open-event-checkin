@@ -58,7 +58,7 @@ async function submitLogin() {
               type="email"
               autocomplete="email"
               required="true"
-              class="block pl-2 w-full"
+              class="block w-full"
             />
           </div>
         </div>
@@ -73,7 +73,7 @@ async function submitLogin() {
               type="password"
               autocomplete="current-password"
               required="true"
-              class="block pl-2 w-full"
+              class="block w-full"
             />
           </div>
         </div>

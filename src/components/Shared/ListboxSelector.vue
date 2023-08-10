@@ -35,7 +35,6 @@ const mutateSelected = ref(props.selectedOption)
 watch(
   () => mutateSelected.value,
   (val) => {
-    console.log(val)
     emit('updateSelected', val)
   }
 )

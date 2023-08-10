@@ -17,7 +17,7 @@ const overallStats = [
 <template>
   <div class="grow">
     <div class="py-2">
-      <h2 class="text-center text-xl font-bold capitalize">Stats</h2>
+      <h2 class="text-center">Stats</h2>
     </div>
     <div class="space-y-5">
       <div>

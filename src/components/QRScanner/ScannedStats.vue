@@ -23,7 +23,7 @@ const trackStats = [
 <template>
   <div class="grow">
     <div class="py-2 space-y-3">
-      <h2 class="text-center text-xl font-bold capitalize">Stats</h2>
+      <h2 class="text-center">Stats</h2>
     </div>
     <div class="space-y-5">
       <div>
@@ -44,9 +44,7 @@ const trackStats = [
         </dl>
       </div>
       <div>
-        <h3 class="text-base font-semibold leading-6 text-body">
-          Current Track: {{ trackName }}
-        </h3>
+        <h3 class="text-base font-semibold leading-6 text-body">Current Track: {{ trackName }}</h3>
         <dl class="mt-5 grid grid-cols-2 gap-5">
           <div
             v-for="item in trackStats"

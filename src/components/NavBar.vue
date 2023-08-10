@@ -110,7 +110,7 @@ const componentKey = ref(0)
   <Disclosure v-slot="{ open }" as="header" class="bg-white shadow sticky top-0">
     <div class="mx-auto max-w-7xl px-2 sm:px-4 lg:divide-y lg:divide-secondary-light lg:px-8">
       <div class="relative flex h-16 justify-between space-x-5">
-        <div class="relative flex pl-2">
+        <div class="relative flex">
           <div class="flex flex-shrink-0 items-center">Eventyay</div>
         </div>
         <div

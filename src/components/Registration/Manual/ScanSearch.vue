@@ -7,7 +7,7 @@ import { ArrowsRightLeftIcon } from '@heroicons/vue/20/solid'
 import PrintModal from '@/components/Modals/PrintModal.vue'
 import SearchAttendee from '@/components/Registration/Manual/SearchAttendee.vue'
 import StandardButton from '@/components/Shared/StandardButton.vue'
-import SuccessNotification from '@/components/Shared/SuccessNotification.vue'
+import SuccessNotification from '@/components/Notifications/SuccessNotification.vue'
 import { useScannerStore } from '@/stores/scanner'
 import { useSearchAttendeeStore } from '@/stores/searchAttendee'
 
@@ -59,9 +59,7 @@ async function logErrors(promise) {
     />
     <div class="xl:flex-none xl:w-96 flex flex-col items-start">
       <div class="w-full flex justify-center">
-        <h2 class="text-3xl font-bold tracking-tight text-body sm:text-2xl">
-          Scan QR on Ticket
-        </h2>
+        <h2>Scan QR on Ticket</h2>
       </div>
       <div class="w-full">
         <div class="mx-auto w-fit">

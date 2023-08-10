@@ -17,7 +17,11 @@ const props = defineProps({
 </script>
 
 <template>
-  <button :type="props.type" :disabled="props.disabled">
+  <button
+    :type="props.type"
+    :disabled="props.disabled"
+    :class="[props.icon ? 'inline-flex items-center gap-x-1.5' : '']"
+  >
     <component :is="props.icon" v-if="props.icon" class="h-5 mr-1" />
     <span>{{ props.text }}</span>
   </button>

@@ -27,7 +27,5 @@ if (!scannerTypeIsValid) {
 </script>
 
 <template>
-  <div class="m-6">
-    <RouterView />
-  </div>
+  <RouterView />
 </template>

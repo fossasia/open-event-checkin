@@ -1,13 +1,5 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue'
-import { CheckIcon, ChevronUpDownIcon } from '@heroicons/vue/20/solid'
-import {
-  Listbox,
-  ListboxButton,
-  ListboxLabel,
-  ListboxOption,
-  ListboxOptions
-} from '@headlessui/vue'
 import { useApiStore } from '@/stores/api'
 import { useEventsStore } from '@/stores/events'
 import { useTypeSelectorStore } from '@/stores/typeSelector'
@@ -275,9 +267,7 @@ async function submitForm() {
 <template>
   <div class="flex flex-1 flex-col justify-center my-auto">
     <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-      <h2 class="text-center text-2xl font-bold leading-9 tracking-tight text-body">
-        Select Event
-      </h2>
+      <h2 class="text-center">Select Event</h2>
       <form class="space-y-3 mt-10" @submit.prevent="submitForm">
         <ListboxSelector
           :selectText="'Select Event'"
@@ -317,7 +307,7 @@ async function submitForm() {
 
         <!-- display if create new booth is selected -->
         <div
-          v-if="
+          v-show="
             selectedStation.id == 'create-new' &&
             (selectedType.id == 'registration-kiosk' ||
               selectedType.id == 'registration-hybrid' ||
@@ -333,7 +323,7 @@ async function submitForm() {
               type="text"
               required="true"
               placeholder="Enter station name"
-              class="block pl-2 w-full"
+              class="block w-full"
             />
           </div>
         </div>

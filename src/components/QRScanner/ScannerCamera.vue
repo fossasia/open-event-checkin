@@ -42,7 +42,7 @@ async function logErrors(promise) {
 <template>
   <div class="grow">
     <div class="py-2 space-y-3">
-      <h2 class="text-center text-xl font-bold capitalize">{{ scannerType }} Scan</h2>
+      <h2 class="text-center">{{ scannerType }} Scan</h2>
       <p class="text-center text-lg font-medium">Scan QR on badge</p>
     </div>
     <div class="w-full items-center flex justify-center">
@@ -62,7 +62,7 @@ async function logErrors(promise) {
         <StandardButton
           text="Switch Camera"
           :icon="ArrowsRightLeftIcon"
-          class="bg-primary text-white hover:bg-blue-500 mt-4"
+          class="bg-primary hover:bg-blue-500 mt-4"
           @click="camera = camera === 'front' ? 'rear' : 'front'"
         />
       </div>
