@@ -36,25 +36,12 @@ export const useSearchAttendeeStore = defineStore('searchAttendee', () => {
       id: attendee.id,
       name: attendee.firstname + ' ' + attendee.lastname,
       email: attendee.email,
-      checkedIn: ref(attendee.is_checked_in),
-      ticketId: attendee.ticket_id,
-      info: filterOptions.value
-        .filter((option) => option.id !== 'email')
-        .map((option) => {
-          if (option.id === 0) {
-            return {
-              name: option.name,
-              ticket: null,
-              value: ticketTypes.value.find((ticket) => ticket.id == attendee.ticket_id).name
-            }
-          } else {
-            return { 
-              name: option.name, 
-              ticket: option.ticket, 
-              value: attendee[option.id] 
-            }
-          }
-        })
+      checkedIn: ref(attendee.is_registered),
+      info: {
+        role: null,
+        memberType: null,
+        organisation: attendee.company
+      }
     }))
   }
 
@@ -86,7 +73,7 @@ export const useSearchAttendeeStore = defineStore('searchAttendee', () => {
         }
       }
       const checkInRes = await useApiStore().post(true, 'user-check-in', payload, false)
-      console.log('check in success:', attendeeId, checkInRes)
+      console.log('register success:', attendeeId, checkInRes)
       return true
 
     } catch (error) {
