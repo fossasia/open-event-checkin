@@ -10,7 +10,6 @@ import RegistrationManual from '@/components/Registration/Manual/ScanSearch.vue'
 import RegistrationStats from '@/components/Registration/Manual/RegistrationStats.vue'
 import NotFound from '@/views/NotFound.vue'
 import AuthTemplate from '@/AuthTemplate.vue'
-import RegistrationStats from '@/components/Registration/Manual/RegistrationStats.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

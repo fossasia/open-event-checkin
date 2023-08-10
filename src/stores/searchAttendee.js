@@ -1,28 +1,21 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { useApiStore } from '@/stores/api'
-import dayjs from 'dayjs'
 
 export const useSearchAttendeeStore = defineStore('searchAttendee', () => {
   const people = ref([])
 
-  const filterOptions = [
+  const ticketTypes = ref([])
+
+  const filterOptions = ref([
+    // default filter option
     {
-      id: 'filterRole',
-      name: 'Role',
+      id: 0,
+      name: 'Ticket Type',
+      ticket: null,
       show: ref(false)
     },
-    {
-      id: 'filterMem',
-      name: 'Member type',
-      show: ref(false)
-    },
-    {
-      id: 'filterOrg',
-      name: 'Organisation',
-      show: ref(false)
-    }
-  ]
+  ])
 
   async function getAttendee(value, eventId) {
     try {
@@ -33,21 +26,35 @@ export const useSearchAttendeeStore = defineStore('searchAttendee', () => {
       const searchedAttendees = await fetchAttendees(`name=&email=${value}`, eventId)
       people.value = searchedAttendees
     }
+    //console.log(people.value)
   }
 
   async function fetchAttendees(path, eventId) {
     const attendees = await useApiStore().get(true, `events/${eventId}/attendees/search?${path}`)
-    console.log(attendees)
+    //console.log(attendees)
     return attendees.attendees.map((attendee) => ({
       id: attendee.id,
       name: attendee.firstname + ' ' + attendee.lastname,
       email: attendee.email,
       checkedIn: ref(attendee.is_checked_in),
-      info: {
-        role: null,
-        memberType: null,
-        organisation: attendee.company
-      }
+      ticketId: attendee.ticket_id,
+      info: filterOptions.value
+        .filter((option) => option.id !== 'email')
+        .map((option) => {
+          if (option.id === 0) {
+            return {
+              name: option.name,
+              ticket: null,
+              value: ticketTypes.value.find((ticket) => ticket.id == attendee.ticket_id).name
+            }
+          } else {
+            return { 
+              name: option.name, 
+              ticket: option.ticket, 
+              value: attendee[option.id] 
+            }
+          }
+        })
     }))
   }
 
@@ -84,12 +91,44 @@ export const useSearchAttendeeStore = defineStore('searchAttendee', () => {
 
     } catch (error) {
       const errors = error.originalError.body.errors
-      if (errors.find((error) => error.detail === 'Attendee already checked in.')) {
+      if (errors.find((error) => error.detail === 'Attendee already registered.')) {
         throw new Error('Already checked in')
-        return false
       }
     }
   }
 
-  return { people, filterOptions, getAttendee, clearAttendees, checkInAttendee }
+  async function getTicketDetails(eventId) {
+    try {
+      const ticketsDetails = await useApiStore().get(true, `events/${eventId}/tickets`)
+      const tickets = ticketsDetails.data.map((ticket) => {
+        return {
+          id: ticket.id,
+          type: ticket.type,
+          name: ticket.attributes.name
+        }
+      })
+      ticketTypes.value = tickets
+      // set filter options based on badge fields of all ticket types
+      tickets.forEach((ticket) => {
+        useApiStore().get(true, `tickets/${ticket.id}/badge-forms`)
+          .then((res) => {
+            res.filter((field) => field.field_identifier !== 'QR' && field.field_identifier !== 'email') // remove QR code and email
+              .forEach((option) => {
+                filterOptions.value.push({
+                  id: option.field_identifier,
+                  name: option.custom_field,
+                  ticket: ticket.name,
+                  show: ref(false)
+                })
+            })
+          })
+          //console.log(filterOptions.value)
+      })
+
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  return { people, filterOptions, getAttendee, clearAttendees, checkInAttendee, getTicketDetails }
 })

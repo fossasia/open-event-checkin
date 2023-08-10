@@ -30,10 +30,11 @@ const printDelay = (delayHideModal, delayPrint) => {
 
 const print = () => {
   if (props.validQRCode) {
-    printModalStore.printOptions.forEach((element) => (element.disabled = true))
+    printModalStore.printOptions.forEach((option) => (option.disabled = true))
     printingText.value = true
     disableButton.value = true
-    console.log(printModalStore.selectedOptions)
+    
+    printModalStore.getPDF()
     printDelay(3000, 3200)
   } else {
     printDelay(0, 200)

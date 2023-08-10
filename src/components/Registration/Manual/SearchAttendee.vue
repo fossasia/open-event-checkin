@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { XCircleIcon, PrinterIcon, MagnifyingGlassIcon } from '@heroicons/vue/20/solid'
 import { FunnelIcon } from '@heroicons/vue/24/outline'
 
@@ -25,6 +25,10 @@ watch(query, (newValue) => {
   } else {
     searchAttendeeStore.getAttendee(newValue, route.params.eventId)
   }
+})
+
+onMounted(() => {
+  searchAttendeeStore.getTicketDetails(eventId)
 })
 </script>
 
@@ -147,19 +151,16 @@ watch(query, (newValue) => {
                 class="flex flex-wrap text-normal gap-1 mt-1 sm:mt-0"
               >
                 <span
-                  v-if="searchAttendeeStore.filterOptions[0].show"
-                  class="text-center rounded-md px-2 py-1 text-xs text-gray-600 ring-1 ring-inset ring-gray-500/10"
-                  >{{ person.info.role }}</span
-                >
-                <span
-                  v-if="searchAttendeeStore.filterOptions[1].show"
-                  class="text-center rounded-md px-2 bg-yellow-50 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20"
-                  >{{ person.info.memberType }}</span
-                >
-                <span
-                  v-if="searchAttendeeStore.filterOptions[2].show"
-                  class="text-center rounded-md px-2 bg-gray-50 py-1 text-xs font-bold text-gray-600 ring-1 ring-inset ring-gray-500/10"
-                  >{{ person.info.organisation }}</span
+                  v-for="(option, index) in searchAttendeeStore.filterOptions"
+                  :key="index"
+                  v-show="searchAttendeeStore.filterOptions[index].show && person.info[index].value !== null"
+                  :class="[
+                    person.info[index].name === 'Ticket Type' 
+                      ? 'text-yellow-600 font-semibold ring-yellow-600/20'
+                      : 'text-gray-600 ring-gray-500/10',
+                    'text-center rounded-md px-2 py-1 text-xs ring-1 ring-inset'
+                  ]"
+                  >{{ person.info[index].value }}</span
                 >
               </div>
             </div>
@@ -185,7 +186,7 @@ watch(query, (newValue) => {
                 text="Print"
                 :icon="PrinterIcon"
                 class="bg-yellow-300 text-gray-900 hover:bg-yellow-200 w-1/2 sm:w-auto justify-center"
-                @click="emit('print', person.name)"
+                @click="emit('print', { attendeeId: person.id, ticketId: person.ticketId})"
               />
             </div>
           </div>

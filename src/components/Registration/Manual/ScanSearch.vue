@@ -10,13 +10,16 @@ import StandardButton from '@/components/Shared/StandardButton.vue'
 import SuccessNotification from '@/components/Shared/SuccessNotification.vue'
 import { useScannerStore } from '@/stores/scanner'
 import { useSearchAttendeeStore } from '@/stores/searchAttendee'
+import { usePrintModalStore } from '@/stores/printModal'
 
 const scannerStore = useScannerStore()
 const searchAttendeeStore = useSearchAttendeeStore()
+const printModalStore = usePrintModalStore()
 
 // get scanner type from vue router params
 const route = useRoute()
 const scannerType = route.params.scannerType
+const eventId = route.params.eventId
 
 const camera = ref('front')
 const showPrintModal = ref(false)
@@ -71,7 +74,7 @@ async function logErrors(promise) {
             :camera="camera"
             @init="logErrors"
             @decode="
-              ;async () => {
+              async () => {
                 validQRCode = await scannerStore
                   .checkInAttendeeScanner()
                   .then(() => (showPrintModal = true))
@@ -89,7 +92,11 @@ async function logErrors(promise) {
       <div class="w-full"></div>
     </div>
     <div class="grow">
-      <SearchAttendee @print="showPrintModal = true" />
+      <SearchAttendee @print="
+        async ($event) => {
+          await printModalStore.getBadgeFields($event)
+          showPrintModal = true
+        }" />
     </div>
   </div>
 </template>
