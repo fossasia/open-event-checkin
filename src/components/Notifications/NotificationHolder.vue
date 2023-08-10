@@ -1,6 +1,7 @@
 <script setup>
 import { useNotificationStore } from '@/stores/notification'
 import SuccessNotification from '@/components/Notifications/SuccessNotification.vue'
+import ErrorNotification from '@/components/Notifications/ErrorNotification.vue'
 
 const notificationStore = useNotificationStore()
 </script>
@@ -16,6 +17,11 @@ const notificationStore = useNotificationStore()
           :messages="notification.messages"
         >
         </SuccessNotification>
+        <ErrorNotification
+          v-if="notification.type === 'error'"
+          :messages="notification.messages"
+        >
+        </ErrorNotification>
       </template>
     </div>
   </div>
