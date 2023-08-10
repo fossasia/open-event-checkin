@@ -31,7 +31,6 @@ export const useSearchAttendeeStore = defineStore('searchAttendee', () => {
 
   async function fetchAttendees(path, eventId) {
     const attendees = await useApiStore().get(true, `events/${eventId}/attendees/search?${path}`)
-    //console.log(attendees)
     return attendees.attendees.map((attendee) => ({
       id: attendee.id,
       name: attendee.firstname + ' ' + attendee.lastname,
