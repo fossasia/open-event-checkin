@@ -5,8 +5,14 @@ import { FunnelIcon } from '@heroicons/vue/24/outline'
 
 import StandardButton from '@/components/Shared/StandardButton.vue'
 import { useSearchAttendeeStore } from '@/stores/searchAttendee'
+import { useRoute } from 'vue-router'
 
 const searchAttendeeStore = useSearchAttendeeStore()
+
+const route = useRoute()
+
+const stationId = route.params.stationId
+const eventId = route.params.eventId
 
 const emit = defineEmits(['print'])
 
@@ -17,7 +23,7 @@ watch(query, (newValue) => {
   if (newValue === '') {
     setTimeout(() => searchAttendeeStore.clearAttendees(), 700)
   } else {
-    searchAttendeeStore.getAttendee(newValue)
+    searchAttendeeStore.getAttendee(newValue, route.params.eventId)
   }
 })
 </script>
@@ -168,8 +174,8 @@ watch(query, (newValue) => {
                     : 'bg-primary text-white hover:bg-blue-500 w-1/2 sm:w-auto justify-center'
                 ]"
                 @click="
-                  ;async () => {
-                    const checkedIn = await searchAttendeeStore.checkInAttendee(person.id) // Patch API to check-in
+                  async () => {
+                    const checkedIn = await searchAttendeeStore.checkInAttendee(person.id, stationId, eventId) // Patch API to check-in
                     if (checkedIn) person.checkedIn = true
                     else console.log('check in failed')
                   }
