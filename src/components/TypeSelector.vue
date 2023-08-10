@@ -79,7 +79,6 @@ const isStationType = computed(() => {
 
 watch(selectedEvent, async (newValue) => {
   if (newValue.id !== null) {
-    eventsStore.setEvent(newValue)
     typeSelectorStore.getStations(newValue.id)
     eventsStore.getEventMicrolocations(newValue.id)
     // clear all fields after

@@ -36,6 +36,7 @@ export const useSearchAttendeeStore = defineStore('searchAttendee', () => {
       id: attendee.id,
       name: attendee.firstname + ' ' + attendee.lastname,
       email: attendee.email,
+      ticketId: attendee.ticket_id,
       checkedIn: ref(attendee.is_registered),
       info: {
         role: null,
