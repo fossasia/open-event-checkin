@@ -33,7 +33,8 @@ const print = () => {
     printModalStore.printOptions.forEach((element) => (element.disabled = true))
     printingText.value = true
     disableButton.value = true
-    console.log(printModalStore.selectedOptions)
+    
+    printModalStore.getPDF()
     printDelay(3000, 3200)
   } else {
     printDelay(0, 200)

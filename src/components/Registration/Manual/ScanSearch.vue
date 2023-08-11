@@ -13,6 +13,7 @@ const printModalStore = usePrintModalStore()
 // get scanner type from vue router params
 const route = useRoute()
 const scannerType = route.params.scannerType
+const eventId = route.params.eventId
 
 const camera = ref('front')
 
