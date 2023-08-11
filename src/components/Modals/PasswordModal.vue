@@ -54,7 +54,7 @@ async function checkPassword() {
 </script>
 
 <template>
-  <ModalBaseTemplate :show="props.showPasswordModal">
+  <ModalBaseTemplate :showModal="props.showPasswordModal">
     <form @submit.prevent="checkPassword">
       <div>
         <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-info-light">

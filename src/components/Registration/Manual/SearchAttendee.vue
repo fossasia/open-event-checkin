@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useSearchAttendeeStore } from '@/stores/searchAttendee'
 import { usePrintModalStore } from '@/stores/printModal'

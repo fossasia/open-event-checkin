@@ -111,5 +111,5 @@ export const useSearchAttendeeStore = defineStore('searchAttendee', () => {
     }
   }
 
-  return { people, filterOptions, getAttendee, clearAttendees, checkInAttendee, getTicketDetails }
+  return { people, filterOptions, clearAttendees, fetchAttendees, checkInAttendee, getTicketDetails }
 })
