@@ -44,7 +44,7 @@ const print = () => {
 </script>
 
 <template>
-  <ModalBaseTemplate :showModal="printModalStore.showPrintModal">
+  <ModalBaseTemplate :show="printModalStore.showPrintModal">
       <div>
         <!--Icons-->
         <div
