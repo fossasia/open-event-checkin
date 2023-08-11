@@ -1,206 +1,302 @@
 <script setup>
-import { onMounted, ref, watch } from 'vue'
-import { XCircleIcon, PrinterIcon, MagnifyingGlassIcon } from '@heroicons/vue/20/solid'
-import { FunnelIcon } from '@heroicons/vue/24/outline'
-
-import StandardButton from '@/components/Shared/StandardButton.vue'
-import { useSearchAttendeeStore } from '@/stores/searchAttendee'
+import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { useSearchAttendeeStore } from '@/stores/searchAttendee'
+import { usePrintModalStore } from '@/stores/printModal'
+import StandardButton from '@/components/Shared/StandardButton.vue'
+import {
+  CheckIcon,
+  ArrowUturnLeftIcon,
+  FunnelIcon,
+  ArrowRightOnRectangleIcon,
+  XMarkIcon,
+  MagnifyingGlassIcon,
+  ChevronDownIcon,
+  PrinterIcon
+} from '@heroicons/vue/20/solid'
+import { ExclamationCircleIcon, UserIcon } from '@heroicons/vue/24/outline'
+import {
+  Combobox,
+  ComboboxInput,
+  ComboboxOptions,
+  ComboboxOption,
+  Listbox,
+  ListboxButton,
+  ListboxOptions,
+  ListboxOption
+} from '@headlessui/vue'
 
 const searchAttendeeStore = useSearchAttendeeStore()
-
+const printModalStore = usePrintModalStore()
 const route = useRoute()
-
+const isLoading = ref(false)
+const query = ref('')
 const stationId = route.params.stationId
 const eventId = route.params.eventId
 
-const emit = defineEmits(['print'])
+const displayMenuOpen = ref(false)
+const searchByType = [
+  { id: 'email', name: 'Email' },
+  { id: 'name', name: 'Name' }
+]
 
-const menuOpen = ref(false)
-const query = ref('')
+const selectedSearchBy = ref(searchByType[0])
+const selectedFields = ref([searchAttendeeStore.filterOptions[0]])
 
-watch(query, (newValue) => {
+watch(query, async (newValue) => {
   if (newValue === '') {
     setTimeout(() => searchAttendeeStore.clearAttendees(), 700)
   } else {
-    searchAttendeeStore.getAttendee(newValue, route.params.eventId)
+    isLoading.value = true
+    await searchAttendeeStore.fetchAttendees(
+      route.params.eventId,
+      selectedSearchBy.value.id,
+      newValue.toLowerCase()
+    )
+    isLoading.value = false
   }
 })
 
 onMounted(() => {
   searchAttendeeStore.getTicketDetails(eventId)
 })
+
+const filteredAttendees = computed(() => {
+  // check within info object and remove object key value if selected by search by type
+  const selectedFieldsIds = selectedFields.value.map((f) => f.id)
+  return searchAttendeeStore.people.map((a) => {
+    const info = a.info
+    // check if key is in selected fields
+    // if false, remove the key value pair
+    Object.keys(info).forEach((key) => {
+      if (!selectedFieldsIds.includes(key)) {
+        delete info[key]
+      }
+    })
+    return a
+  })
+})
+
+async function checkin(id) {
+  const checkedIn = await searchAttendeeStore.checkInAttendee(id, stationId, eventId) // Patch API to check-in
+  // find attendee swith id and set checkedIn to true
+  if (checkedIn) {
+    const person = searchAttendeeStore.people.find((a) => a.id === id)
+    person.checkedIn = true
+  } else console.log('check in failed')
+}
 </script>
 
 <template>
-  <div v-if="menuOpen" class="fixed top-0 left-0 w-full h-full" @click="menuOpen = !menuOpen" />
-  <div class="mx-auto w-full overflow-visible">
-    <div>
-      <div class="flex justify-center">
-        <label for="search" class="text-2xl font-bold tracking-tight text-gray-900">
-          Search by name or email
-        </label>
-      </div>
-
-      <div class="mt-2">
-        <div class="flex">
-          <div class="flex flex-1 rounded-md shadow-sm">
-            <div class="relative h-9 flex flex-grow items-stretch focus-within:z-10">
-              <input
-                id="search"
-                v-model="query"
-                type="text"
-                name="search"
-                class="group block w-full rounded-none rounded-l-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+  <div>
+    <Combobox>
+      <div class="relative mb-auto rounded-md shadow-sm">
+        <div class="absolute inset-y-0 left-0 flex items-center">
+          <Listbox v-model="selectedSearchBy" as="div">
+            <ListboxButton as="template">
+              <StandardButton
+                :text="'Search by ' + selectedSearchBy.name"
+                class="btn-white"
+                :icon="MagnifyingGlassIcon"
+                :icon-after="ChevronDownIcon"
+                @click="displayMenuOpen = !displayMenuOpen"
               />
-              <button
-                v-if="query !== ''"
-                type="button"
-                class="group absolute inset-y-0 right-0 flex items-center pr-3 z-0"
-                @click="query = ''"
-              >
-                <XCircleIcon
-                  class="h-6 text-gray-400 group-hover:text-gray-400/70"
-                  aria-hidden="true"
-                />
-              </button>
-            </div>
-          </div>
-
-          <button
-            type="button"
-            :class="[
-              menuOpen && 'bg-gray-50',
-              'relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-3 py-1.5 text-sm font-semibold text-gray-900 border border-gray-300 hover:bg-gray-50 group-focus:border-l-blue-600'
-            ]"
-            @click="menuOpen = !menuOpen"
-          >
-            <FunnelIcon
-              v-if="!searchAttendeeStore.filterOptions.some((option) => option.show)"
-              class="-ml-0.5 h-5 w-5 text-gray-400"
-              aria-hidden="true"
-            />
-            <svg
-              v-else
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              class="-ml-0.5 w-5 h-5"
+            </ListboxButton>
+            <transition
+              enter-active-class="transition ease-out duration-100"
+              enter-from-class="transform opacity-0 scale-95"
+              enter-to-class="transform opacity-100 scale-100"
+              leave-active-class="transition ease-in duration-75"
+              leave-from-class="transform opacity-100 scale-100"
+              leave-to-class="transform opacity-0 scale-95"
             >
-              <path
-                fill-rule="evenodd"
-                d="M3.792 2.938A49.069 49.069 0 0112 2.25c2.797 0 5.54.236 8.209.688a1.857 1.857 0 011.541 1.836v1.044a3 3 0 01-.879 2.121l-6.182 6.182a1.5 1.5 0 00-.439 1.061v2.927a3 3 0 01-1.658 2.684l-1.757.878A.75.75 0 019.75 21v-5.818a1.5 1.5 0 00-.44-1.06L3.13 7.938a3 3 0 01-.879-2.121V4.774c0-.897.64-1.683 1.542-1.836z"
-                clip-rule="evenodd"
-              />
-            </svg>
-            <span class="hidden sm:block">Filter</span>
-          </button>
-        </div>
-
-        <div class="flex justify-end">
-          <transition
-            enter-active-class="transition ease-out duration-100"
-            enter-from-class="transform opacity-0 scale-95"
-            enter-to-class="transform opacity-100 scale-100"
-            leave-active-class="transition ease-in duration-75"
-            leave-from-class="transform opacity-100 scale-100"
-            leave-to-class="transform opacity-0 scale-95"
-          >
-            <div
-              v-if="menuOpen"
-              class="w-40 absolute ring-1 ring-black/5 bg-white rounded-md pl-3 py-3 mt-2 space-y-3 shadow-lg"
-            >
-              <div
-                v-for="(option, index) in searchAttendeeStore.filterOptions"
-                :key="index"
-                as="div"
-                class="flex items-center"
+              <ListboxOptions
+                class="absolute z-10 mt-1 w-full max-h-60 rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-secondary ring-opacity-30 focus:outline-none sm:text-sm"
               >
-                <input
-                  :id="option.id"
-                  type="checkbox"
-                  class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
-                  :checked="option.show"
-                  @click="option.show = !option.show"
-                />
-                <label :for="option.id" class="ml-3 text-sm leading-6 font-medium text-gray-900">{{
-                  option.name
-                }}</label>
-              </div>
-            </div>
-          </transition>
-        </div>
-      </div>
-    </div>
-
-    <div v-if="searchAttendeeStore.people.length > 0" class="mt-5 h-96 overflow-y-scroll">
-      <ul role="list" class="flex flex-col gap-3">
-        <li
-          v-for="person in searchAttendeeStore.people"
-          :key="person.id"
-          class="rounded-md bg-white px-3 sm:px-6 py-3 sm:py-4 shadow border border-gray-300 last:mb-1"
-        >
-          <div class="grid grid-cols-1 sm:grid-cols-2 items-center justify-between gap-2 sm:gap-8">
-            <div class="flex flex-col sm:gap-3">
-              <div class="flex flex-col gap-1">
-                <span class="text-gray-900 font-bold">{{ person.name }}</span>
-                <span class="text-gray-400 font-bold text-sm">{{ person.email }}</span>
-              </div>
-              <div
-                v-if="searchAttendeeStore.filterOptions.some((option) => option.show)"
-                class="flex flex-wrap text-normal gap-1 mt-1 sm:mt-0"
-              >
-                <span
-                  v-show="searchAttendeeStore.filterOptions[index].show && person.info[index].value !== null"
-                  v-for="(option, index) in searchAttendeeStore.filterOptions"
-                  :key="index"
-                  :class="[
-                    person.info[index].name === 'Ticket Type' 
-                      ? 'text-yellow-600 font-semibold ring-yellow-600/20'
-                      : 'text-gray-600 ring-gray-500/10',
-                    'text-center rounded-md px-2 py-1 text-xs ring-1 ring-inset'
-                  ]"
-                  >{{ person.info[index].value }}</span
+                <ListboxOption
+                  v-for="d in searchByType"
+                  :key="d.id"
+                  v-slot="{ active, selected }"
+                  as="template"
+                  :value="d"
                 >
+                  <li
+                    :class="[
+                      active ? 'bg-primary text-white' : 'text-body',
+                      'relative cursor-default select-none py-2 pl-10 pr-4'
+                    ]"
+                  >
+                    <span :class="[active ? 'font-semibold' : 'font-normal', 'block truncate']">{{
+                      d.name
+                    }}</span>
+                    <span
+                      v-if="selected"
+                      :class="[
+                        active ? 'text-white bg-primary' : 'text-body',
+                        'absolute inset-y-0 left-0 flex items-center pl-3 text-primary'
+                      ]"
+                    >
+                      <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                    </span>
+                  </li>
+                </ListboxOption>
+              </ListboxOptions>
+            </transition>
+          </Listbox>
+        </div>
+        <ComboboxInput
+          id="query"
+          type="text"
+          name="query"
+          class="block inset-y-0 w-full pl-44 pr-32"
+          @change="query = $event.target.value"
+        />
+        <div class="absolute inset-y-0 right-0 flex items-stretch">
+          <StandardButton
+            v-if="query !== ''"
+            :icon="XMarkIcon"
+            class="text-secondary"
+            @click="query = ''"
+          />
+          <Listbox v-model="selectedFields" multiple as="div">
+            <ListboxButton as="template">
+              <StandardButton
+                :text="'Display'"
+                :class="[selectedFields.length > 0 ? 'btn-info' : 'btn-white']"
+                :icon="FunnelIcon"
+                @click="displayMenuOpen = !displayMenuOpen"
+              />
+            </ListboxButton>
+            <transition
+              enter-active-class="transition ease-out duration-100"
+              enter-from-class="transform opacity-0 scale-95"
+              enter-to-class="transform opacity-100 scale-100"
+              leave-active-class="transition ease-in duration-75"
+              leave-from-class="transform opacity-100 scale-100"
+              leave-to-class="transform opacity-0 scale-95"
+            >
+              <ListboxOptions
+                class="absolute z-10 w-40 mt-1 max-h-60 rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-secondary ring-opacity-30 focus:outline-none sm:text-sm"
+              >
+                <ListboxOption
+                  v-for="d in searchAttendeeStore.filterOptions"
+                  :key="d.id"
+                  v-slot="{ active, selected }"
+                  as="template"
+                  :value="d"
+                >
+                  <li
+                    :class="[
+                      active ? 'bg-primary text-white' : 'text-body',
+                      'relative cursor-default select-none py-2 pl-10 pr-4'
+                    ]"
+                  >
+                    <span :class="[active ? 'font-semibold' : 'font-normal', 'block truncate']">{{
+                      d.name
+                    }}</span>
+                    <span
+                      v-if="selected"
+                      :class="[
+                        active ? 'text-white bg-primary' : 'text-body',
+                        'absolute inset-y-0 left-0 flex items-center pl-3 text-primary'
+                      ]"
+                    >
+                      <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                    </span>
+                  </li>
+                </ListboxOption>
+                <ListboxOption as="div" class="p-2 text-center">
+                  <StandardButton
+                    :text="'Reset'"
+                    :icon="ArrowUturnLeftIcon"
+                    class="justify-center w-full btn-secondary"
+                    @click="selectedFields = [false]"
+                  />
+                </ListboxOption>
+              </ListboxOptions>
+            </transition>
+          </Listbox>
+        </div>
+      </div>
+
+      <ComboboxOptions
+        v-if="filteredAttendees.length > 0"
+        static
+        class="max-h-96 scroll-py-3 overflow-y-auto p-3 ring-1 ring-secondary rounded-md mt-5 divide-y divide-secondary"
+      >
+        <ComboboxOption
+          v-for="attendee in filteredAttendees"
+          :key="attendee.id"
+          :value="attendee"
+          as="template"
+        >
+          <li class="flex cursor-default select-none p-3">
+            <div
+              class="flex h-12 w-12 flex-none items-center justify-center rounded-full bg-secondary-light"
+            >
+              <UserIcon class="h-6 w-6" aria-hidden="true" />
+            </div>
+            <div class="ml-4 flex-auto">
+              <p class="text-base">
+                {{ attendee.name }}
+              </p>
+              <p class="text-base">
+                {{ attendee.email }}
+              </p>
+              <div v-if="attendee.info" class="mt-3">
+                <template v-for="(info, key) in attendee.info" :key="key">
+                  <span
+                    v-if="info"
+                    class="inline-block align-middle rounded-full bg-secondary-light px-2 py-1 my-1 mr-1 text-xs font-medium text-secondary-dark"
+                    >{{ info }}</span
+                  >
+                </template>
+              </div>
+              <div class="flex items-center justify-end gap-2 mt-3">
+                <StandardButton
+                  :icon="ArrowRightOnRectangleIcon"
+                  :disabled="attendee.checkedIn"
+                  :text="attendee.checkedIn ? 'Checked-in' : 'Check-in'"
+                  :class="[attendee.checkedIn ? 'btn-secondary' : 'btn-success']"
+                  @click="checkin(attendee.id)"
+                />
+                <StandardButton
+                  :text="'Print'"
+                  :icon="PrinterIcon"
+                  class="btn-info"
+                  @click="printModalStore.showPrintModal = true"
+                />
               </div>
             </div>
-
-            <div class="flex items-center justify-end gap-2">
-              <StandardButton
-                :disabled="person.checkedIn"
-                :text="person.checkedIn ? 'Checked-in' : 'Check-in'"
-                :class="[
-                  person.checkedIn
-                    ? 'bg-blue-600/20 text-blue-700/70 w-1/2 sm:w-auto justify-center min-w-fit'
-                    : 'bg-blue-600 text-white hover:bg-blue-500 w-1/2 sm:w-auto justify-center'
-                ]"
-                @click="
-                  async () => {
-                    const checkedIn = await searchAttendeeStore.checkInAttendee(person.id, stationId, eventId) // Patch API to check-in
-                    if (checkedIn) person.checkedIn = true
-                    else console.log('check in failed')
-                  }
-                "
-              />
-              <StandardButton
-                text="Print"
-                :icon="PrinterIcon"
-                class="bg-yellow-300 text-gray-900 hover:bg-yellow-200 w-1/2 sm:w-auto justify-center"
-                @click="emit('print', { attendeeId: person.id, ticketId: person.ticketId})"
-              />
+          </li>
+        </ComboboxOption>
+      </ComboboxOptions>
+      <div
+        v-if="query !== '' && filteredAttendees.length === 0 && !isLoading"
+        class="px-6 py-14 text-center text-sm sm:px-14 ring-1 ring-secondary rounded-md mt-5"
+      >
+        <ExclamationCircleIcon name="exclamation-circle" class="mx-auto h-10 w-10 text-info" />
+        <p class="mt-4 font-semibold">No attendees found. Please try again.</p>
+      </div>
+      <div
+        v-if="query !== '' && isLoading"
+        class="py-14 text-center text-sm ring-1 ring-secondary rounded-md mt-5 flex flex-col justify-start"
+      >
+        <div class="flex p-3 animate-pulse">
+          <div class="h-12 w-12 rounded-full bg-secondary-light"></div>
+          <div class="ml-4 flex-auto space-y-3">
+            <div class="h-4 bg-secondary-light rounded"></div>
+            <div class="h-4 bg-secondary-light rounded"></div>
+            <div class="mt-3 text-left">
+              <span
+                v-for="n in 4" :key="n"
+                class="inline-block rounded-full bg-secondary-light my-1 mr-1 h-4 w-16"
+              ></span>
             </div>
           </div>
-        </li>
-      </ul>
-    </div>
-    <div
-      v-else
-      class="mt-5 h-96 rounded-lg bg-gray-50 border border-gray-300 flex items-center justify-center"
-    >
-      <div class="flex flex-col items-center gap-4">
-        <MagnifyingGlassIcon class="h-12 text-gray-300" />
-        <span class="text-2xl font-bold text-gray-300">No Search Results</span>
+        </div>
+        <p class="mt-4 font-semibold">Fetching attendees. Please wait...</p>
       </div>
-    </div>
+    </Combobox>
   </div>
 </template>

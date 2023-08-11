@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import {
   Disclosure,
@@ -10,13 +10,7 @@ import {
   MenuItem,
   MenuItems
 } from '@headlessui/vue'
-import {
-  Bars3Icon,
-  XMarkIcon,
-  HomeIcon,
-  ChartBarIcon,
-  ChevronDownIcon
-} from '@heroicons/vue/24/outline'
+import { Bars3Icon, XMarkIcon, ChevronDownIcon } from '@heroicons/vue/24/outline'
 import { useApiStore } from '@/stores/api'
 import { useTypeSelectorStore } from '@/stores/typeSelector'
 import { useEventsStore } from '@/stores/events'
@@ -30,11 +24,6 @@ const eventsStore = useEventsStore()
 const userName = ref('')
 
 onMounted(() => {
-  if (route.params.eventId && route.params.stationId) {
-    eventsStore.getEvents()
-    typeSelectorStore.getStations(route.params.eventId)
-  }
-
   // get user name
   apiStore
     .get(true, 'users/user-details/get-user-id') // get user id
@@ -42,6 +31,10 @@ onMounted(() => {
       apiStore.get(true, `/users/${res.user_id}`).then((response) => {
         // get name
         userName.value = response.data.attributes['first-name']
+        if (route.params.eventId && route.params.stationId) {
+          eventsStore.getEvents()
+          typeSelectorStore.getStations(route.params.eventId)
+        }
       })
     })
     .catch((err) => {
@@ -69,72 +62,62 @@ const navbarTitle = computed(() => {
   return ''
 })
 
-const navigation = [
-  { name: 'Main', href: '#', current: true, icon: HomeIcon },
-  { name: 'Statistics', href: '#', current: false, icon: ChartBarIcon },
-  { name: 'Close', href: '#', current: false, icon: XMarkIcon }
-]
 const userNavigation = computed(() => {
-  if (route.params.registrationType) {
-    return [
-      { name: 'Stats', action: () => router.push({ name: 'registerStats' }) },
-      { name: 'Sign out', action: () => (showPasswordModal.value = true) }
-    ]
-  } else if (route.params.scannerType) {
-    return [
-      { name: 'Stats', action: () => router.push({ name: 'scannerStats' }) },
-      { name: 'Sign out', action: () => (showPasswordModal.value = true) }
-    ]
-  } else {
-    return [{ name: 'Sign out', action: () => (showPasswordModal.value = true) }]
-  }
+  return [
+    {
+      name: 'Stats',
+      customClass: 'text-body hover:bg-body-light',
+      action: () => {
+        if (route.params.registrationType) {
+          router.push({ name: 'registerStats' })
+        }
+        if (route.params.scannerType) {
+          router.push({ name: 'scannerStats' })
+        }
+      }
+    },
+    {
+      name: 'Sign out',
+      customClass: 'text-danger hover:bg-danger-light font-semibold',
+      action: () => {
+        if (route.params.registrationType || route.params.scannerType) {
+          showPasswordModal.value = true
+        } else {
+          router.push({ name: 'userAuth' })
+        }
+      }
+    }
+  ]
 })
-const showNavigation = ref(false)
+
 const showPasswordModal = ref(false)
-const componentKey = ref(0)
 </script>
 
 <template>
-  <PasswordModal
-    :key="componentKey"
-    :show-password-modal="showPasswordModal"
-    @hide-password-modal="
-      ($event) => {
-        showPasswordModal = $event
-        componentKey += 1
-      }
-    "
-  />
-  <Disclosure v-slot="{ open }" as="header" class="bg-white shadow sticky top-0 z-20">
-    <div class="mx-auto max-w-7xl px-2 sm:px-4 lg:divide-y lg:divide-gray-200 lg:px-8">
-      <div class="relative flex h-16 justify-between space-x-5">
-        <div class="relative z-10 flex pl-2">
-          <div class="flex flex-shrink-0 items-center">Eventyay</div>
+  <Disclosure v-slot="{ open }" as="header" class="bg-white shadow sticky top-0 z-10">
+    <div class="mx-auto max-w-7xl px-2 sm:px-4 lg:divide-y lg:divide-secondary-light lg:px-8">
+      <div class="flex h-16 justify-between space-x-5 items-center">
+        <div class="shrink">Eventyay</div>
+        <div class="shrink w-40 sm:w-auto lg:max-w-3xl">
+          <p class="text-lg truncate text-ellipsis">{{ navbarTitle }}</p>
         </div>
-        <div
-          class="z-0 flex flex-1 items-center justify-center max-w-xs sm:max-w-sm md:max-w-xl lg:max-w-3xl"
-        >
-          <p class="font-bold text-xl truncate">{{ navbarTitle }}</p>
-        </div>
-        <div class="relative z-10 flex items-center lg:hidden">
+        <div class="relative flex lg:hidden">
           <!-- Mobile menu button -->
           <DisclosureButton
-            class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+            class="inline-flex items-center justify-center rounded-md p-2 text-body hover:bg-body-light"
           >
             <span class="sr-only">Open menu</span>
             <Bars3Icon v-if="!open" class="block h-6 w-6" aria-hidden="true" />
             <XMarkIcon v-else class="block h-6 w-6" aria-hidden="true" />
           </DisclosureButton>
         </div>
-        <div class="hidden lg:relative lg:z-10 lg:ml-4 lg:flex lg:items-center">
+        <div class="hidden lg:relative lg:ml-4 lg:flex lg:items-center">
           <!-- Profile dropdown -->
           <Menu as="div" class="relative ml-4 flex-shrink-0">
             <div>
-              <MenuButton
-                class="flex items-center rounded-full bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-              >
+              <MenuButton class="flex items-center rounded-full bg-white">
                 <span class="sr-only">Open user menu</span>
-                <ChevronDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                <ChevronDownIcon class="h-5 w-5 text-body" aria-hidden="true" />
               </MenuButton>
             </div>
             <transition
@@ -150,17 +133,12 @@ const componentKey = ref(0)
               >
                 <MenuItem v-for="item in userNavigation" :key="item.name">
                   <button
-                    :class="[
-                      item.name === 'Sign out'
-                        ? 'text-red-600 hover:bg-red-100 font-semibold'
-                        : 'text-gray-700 hover:bg-gray-100',
-                      'w-full text-left px-4 py-2 text-sm'
-                    ]"
+                    :class="[item.customClass, 'w-full text-left px-4 py-2 text-sm']"
                     @click="item.action"
                   >
                     <component
                       :is="item.icon"
-                      class="h-6 w-6 flex-none text-gray-400 mr-2"
+                      class="h-6 w-6 flex-none text-secondary mr-2"
                       aria-hidden="true"
                     />
                     {{ item.name }}
@@ -171,49 +149,12 @@ const componentKey = ref(0)
           </Menu>
         </div>
       </div>
-      <nav v-if="showNavigation" class="hidden lg:flex lg:space-x-8 lg:py-2" aria-label="Global">
-        <a
-          v-for="item in navigation"
-          :key="item.name"
-          :href="item.href"
-          :class="[
-            item.current
-              ? 'bg-gray-100 text-gray-900'
-              : 'text-gray-900 hover:bg-gray-50 hover:text-gray-900',
-            'inline-flex items-center rounded-md py-2 px-3 text-sm font-medium'
-          ]"
-          :aria-current="item.current ? 'page' : undefined"
-        >
-          <component
-            :is="item.icon"
-            class="h-6 w-6 flex-none text-gray-400 mr-2"
-            aria-hidden="true"
-          />
-          {{ item.name }}
-        </a>
-      </nav>
     </div>
 
     <DisclosurePanel as="nav" class="lg:hidden" aria-label="Global">
-      <div v-if="showNavigation" class="space-y-1 px-2 pb-3 pt-2">
-        <DisclosureButton
-          v-for="item in navigation"
-          :key="item.name"
-          as="a"
-          :href="item.href"
-          :class="[
-            item.current
-              ? 'bg-gray-100 text-gray-900'
-              : 'text-gray-900 hover:bg-gray-50 hover:text-gray-900',
-            'block rounded-md py-2 px-3 text-base font-medium'
-          ]"
-          :aria-current="item.current ? 'page' : undefined"
-          >{{ item.name }}</DisclosureButton
-        >
-      </div>
-      <div class="border-t border-gray-200 pb-3 pt-4">
+      <div class="border-t border-secondary-light pb-3 pt-4">
         <div class="flex items-center px-5">
-          <div class="text-base font-medium text-gray-800">Logged in as: {{ userName }}</div>
+          <div class="text-base font-medium">Logged in as: {{ userName }}</div>
         </div>
         <div class="mt-3 space-y-1 px-2">
           <DisclosureButton
@@ -222,10 +163,8 @@ const componentKey = ref(0)
             as="a"
             :href="item.href"
             :class="[
-              item.name === 'Sign out'
-                ? 'text-red-600 hover:bg-red-100 font-semibold'
-                : 'text-gray-700 hover:bg-gray-100',
-              'block rounded-md px-3 py-2 text-base cursor-pointer'
+              item.customClass,
+              'block rounded-md px-3 py-2 text-base cursor-pointer transition'
             ]"
             @click="item.action"
           >
@@ -235,4 +174,9 @@ const componentKey = ref(0)
       </div>
     </DisclosurePanel>
   </Disclosure>
+
+  <PasswordModal
+    :show-password-modal="showPasswordModal"
+    @hide-password-modal="showPasswordModal = false"
+  />
 </template>

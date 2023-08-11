@@ -4,7 +4,7 @@ import StationSelector from '@/views/StationSelector.vue'
 import ScannerTemplate from '@/views/ScannerTemplate.vue'
 import QRScannerCamera from '@/components/QRScanner/ScannerCamera.vue'
 import ScannedStats from '@/components/QRScanner/ScannedStats.vue'
-import Registration from '@/views/Registration.vue'
+import RegistrationStation from '@/views/RegistrationStation.vue'
 import RegistrationKiosk from '@/components/Registration/Kiosk/ScannerCamera.vue'
 import RegistrationManual from '@/components/Registration/Manual/ScanSearch.vue'
 import RegistrationStats from '@/components/Registration/Manual/RegistrationStats.vue'
@@ -33,7 +33,7 @@ const router = createRouter({
           path: ':eventId/registration/:registrationType/:stationId',
           name: 'registration',
           redirect: { name: 'registerKiosk' },
-          component: Registration,
+          component: RegistrationStation,
           children: [
             {
               path: 'kiosk',

@@ -10,36 +10,31 @@ export const useSearchAttendeeStore = defineStore('searchAttendee', () => {
   const filterOptions = ref([
     // default filter option
     {
-      id: 0,
+      id: 'ticketType',
       name: 'Ticket Type',
       ticket: null,
       show: ref(false)
     },
   ])
 
-  async function getAttendee(value, eventId) {
-    try {
-      const searchedAttendees = await fetchAttendees(`name=${value}&email=`, eventId)
-      if (searchedAttendees.length === 0) throw new Error('No search results')
-      people.value = searchedAttendees
-    } catch {
-      const searchedAttendees = await fetchAttendees(`name=&email=${value}`, eventId)
-      people.value = searchedAttendees
+  async function fetchAttendees(eventId, fieldType, value) {
+    let route = `events/${eventId}/attendees/search?`
+    if (fieldType === 'name') {
+      route += `name=${value}`
     }
-    //console.log(people.value)
-  }
 
-  async function fetchAttendees(path, eventId) {
-    const attendees = await useApiStore().get(true, `events/${eventId}/attendees/search?${path}`)
-    return attendees.attendees.map((attendee) => ({
+    if (fieldType === 'email') {
+      route += `email=${value}`
+    }
+
+    let attendees = await useApiStore().get(true, `events/${eventId}/attendees/search?${route}`)
+    people.value = attendees.attendees.map((attendee) => ({
       id: attendee.id,
       name: attendee.firstname + ' ' + attendee.lastname,
       email: attendee.email,
       ticketId: attendee.ticket_id,
       checkedIn: ref(attendee.is_registered),
       info: {
-        role: null,
-        memberType: null,
         organisation: attendee.company
       }
     }))
@@ -75,7 +70,6 @@ export const useSearchAttendeeStore = defineStore('searchAttendee', () => {
       const checkInRes = await useApiStore().post(true, 'user-check-in', payload, false)
       console.log('register success:', attendeeId, checkInRes)
       return true
-
     } catch (error) {
       const errors = error.originalError.body.errors
       if (errors.find((error) => error.detail === 'Attendee already registered.')) {
