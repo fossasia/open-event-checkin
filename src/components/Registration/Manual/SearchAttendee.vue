@@ -151,9 +151,9 @@ onMounted(() => {
                 class="flex flex-wrap text-normal gap-1 mt-1 sm:mt-0"
               >
                 <span
+                  v-show="searchAttendeeStore.filterOptions[index].show && person.info[index].value !== null"
                   v-for="(option, index) in searchAttendeeStore.filterOptions"
                   :key="index"
-                  v-show="searchAttendeeStore.filterOptions[index].show && person.info[index].value !== null"
                   :class="[
                     person.info[index].name === 'Ticket Type' 
                       ? 'text-yellow-600 font-semibold ring-yellow-600/20'

@@ -92,11 +92,13 @@ async function logErrors(promise) {
       <div class="w-full"></div>
     </div>
     <div class="grow">
-      <SearchAttendee @print="
-        async ($event) => {
-          await printModalStore.getBadgeFields($event)
-          showPrintModal = true
-        }" />
+      <SearchAttendee 
+        @print="
+          async ($event) => {
+            await printModalStore.getBadgeFields($event)
+            showPrintModal = true
+        }"
+      />
     </div>
   </div>
 </template>

@@ -85,60 +85,9 @@ export const usePrintModalStore = defineStore('printModal', () => {
     }
   }
 
-  async function displayAndPrintPDF(pdf) {
-    try {
-      const pdfBlob = pdf
-      const pdfUrl = URL.createObjectURL(pdfBlob);
-      // Create an iframe to display the PDF
-      const pdfIframe = document.createElement('iframe');
-      pdfIframe.style.display = 'none';
-      pdfIframe.src = pdfUrl;
-      // Append the iframe to the document
-      document.body.appendChild(pdfIframe);
-      // Wait for the iframe to load
-      await new Promise((resolve) => pdfIframe.onload = resolve);
-      // Print the PDF using the print function of the browser
-      pdfIframe.contentWindow.print();
-      // Clean up: remove the iframe after printing
-      document.body.removeChild(pdfIframe);
-    } catch (error) {
-      console.error('Error displaying or printing the PDF:', error);
-    }
-  }
-
   async function getPDF() {
-    console.log(selectedOptions.value)
-    try {
-      const fieldNames = selectedOptions.value.map((option) => option.fieldIdentifier)
-      const payload = {
-        attendee_id: attendeeId.value,
-        list_field_show: fieldNames
-      }
-      console.log(payload)
-      await useApiStore().post(true, 'badge-forms/print-badge-pdf', payload, false)
-        .then((res) => res.blob())
-        .then((blob) => {
-          var url = window.URL.createObjectURL('a');
-            var a = document.createElement('a');
-            a.href = url;
-            a.download = "filename.xlsx";
-            document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
-            a.click();    
-            a.remove();  //after
-        })
-
-      // Convert raw string to Uint8Array
-      const uint8Array = new TextEncoder().encode(pdf);
-      console.log(pdf)
-      console.log(uint8Array)
-
-      // Create a Blob from the Uint8Array
-      const blob = new Blob(uint8Array, { type: 'application/pdf' });
-      displayAndPrintPDF(blob)
-
-    } catch (error) {
-      console.error(error)
-    }
+    // get pdf api here
+    // return pdf url
   }
 
   return { printOptions, selectedOptions, selectOption, selectOrDeselectAll, reset, getBadgeFields, getPDF }
