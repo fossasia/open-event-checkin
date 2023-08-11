@@ -36,6 +36,10 @@ async function logErrors(promise) {
     }
   }
 }
+
+async function decodeQR() {
+  showMessage = await qrScannerStore.checkInAttendeeScannerToRoom(stationId, eventId)
+}
 </script>
 
 <template>
@@ -53,11 +57,7 @@ async function logErrors(promise) {
         :track="qrScannerStore.selected.value"
         :camera="camera"
         @init="logErrors"
-        @decode="
-          async function() {
-            showMessage = await qrScannerStore.checkInAttendeeScannerToRoom(stationId, eventId)
-          }
-        "
+        @decode="decodeQR"
       >
       </qrcode-stream>
       <StandardButton

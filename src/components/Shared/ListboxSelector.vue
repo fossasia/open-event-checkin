@@ -48,8 +48,10 @@ watch(
 </script>
 <template>
   <Listbox v-model="mutateSelected" as="div">
-    <ListboxLabel class="block text-sm font-medium leading-6">{{ label }}</ListboxLabel>
-    <div class="relative mt-2">
+    <ListboxLabel v-if="label !== ''" class="block text-sm font-medium leading-6">{{
+      label
+    }}</ListboxLabel>
+    <div :class="[label !== 'mt-2', 'relative']">
       <ListboxButton
         class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-body shadow-sm ring-1 ring-inset ring-secondary focus:outline-none focus:ring-2 focus:ring-primary sm:text-sm sm:leading-6"
       >

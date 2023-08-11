@@ -34,26 +34,24 @@ async function logErrors(promise) {
     }
   }
 }
+
+async function decodeQR() {
+  validQRCode = await scannerStore.checkInAttendeeScanner().then(() => (showPrintModal = true))
+}
 </script>
 
 <template>
   <div
-    class="grid grid-cols-1 gap-6 lg:gap-0 lg:grid-cols-2 w-full align-middle justify-center items-center place-items-center h-screen -mt-16"
+    class="grid grid-cols-1 lg:grid-cols-2 w-full align-middle justify-center items-center place-items-center h-screen -mt-16"
   >
-    <div class="text-center mt-5">
+    <div class="text-center pt-24">
       <h2 class="mb-3">Scan QR on Ticket</h2>
       <qrcode-stream
         class="!aspect-square !h-auto max-w-sm"
         :track="scannerStore.selected.value"
         :camera="camera"
         @init="logErrors"
-        @decode="
-          async function() {
-            validQRCode = await scannerStore
-              .checkInAttendeeScanner()
-              .then(() => (showPrintModal = true))
-          }
-        "
+        @decode="decodeQR"
       />
       <StandardButton
         :text="'Switch Camera'"
@@ -62,7 +60,8 @@ async function logErrors(promise) {
         @click="camera = camera === 'front' ? 'rear' : 'front'"
       />
     </div>
-    <div class="w-full">
+    <div class="w-full h-full py-24">
+      <h2 class="mb-3 text-center">Search by name or email</h2>
       <SearchAttendee @print="showPrintModal = true" />
     </div>
   </div>

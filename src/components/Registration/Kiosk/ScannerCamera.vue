@@ -30,11 +30,15 @@ async function logErrors(promise) {
     }
   }
 }
+
+async function decodeQR() {
+  validQRCode = await scannerStore.checkInAttendeeScanner().then(() => (showPrintModal = true))
+}
 </script>
 
 <template>
   <div
-    class="grid grid-cols-1 gap-6 lg:gap-0 lg:grid-cols-2 w-full align-middle justify-center items-center place-items-center h-screen -mt-16"
+    class="grid grid-cols-1 lg:grid-cols-2 w-full align-middle justify-center items-center place-items-center h-screen -mt-16"
   >
     <!-- padding to counter camera in mobile view -->
     <div class="text-center pt-24">
@@ -43,13 +47,7 @@ async function logErrors(promise) {
         :track="scannerStore.selected.value"
         :camera="camera"
         @init="logErrors"
-        @decode="
-          async function() {
-            validQRCode = await scannerStore
-              .checkInAttendeeScanner()
-              .then(() => (showPrintModal = true))
-          }
-        "
+        @decode="decodeQR"
       >
       </qrcode-stream>
       <StandardButton
