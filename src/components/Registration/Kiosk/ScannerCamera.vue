@@ -1,24 +1,21 @@
 <script setup>
 import { QrcodeStream } from 'vue-qrcode-reader'
 import { ref } from 'vue'
-import { useNotificationStore } from '@/stores/notification'
 import { useRoute } from 'vue-router'
 import { ArrowsRightLeftIcon } from '@heroicons/vue/20/solid'
 import PrintModal from '@/components/Modals/PrintModal.vue'
 import StandardButton from '@/components/Shared/StandardButton.vue'
 import { useScannerStore } from '@/stores/scanner'
+import { usePrintModalStore } from '@/stores/printModal'
 
 const scannerStore = useScannerStore()
-const notificationStore = useNotificationStore()
+const printModalStore = usePrintModalStore()
 
 // get scanner type from vue router params
 const route = useRoute()
 const scannerType = route.params.scannerType
 
 const camera = ref('front')
-const showPrintModal = ref(false)
-const showPrintedNotification = ref(false)
-const componentKey = ref(0)
 const validQRCode = ref(true)
 
 async function logErrors(promise) {
@@ -32,7 +29,7 @@ async function logErrors(promise) {
 }
 
 async function decodeQR() {
-  validQRCode = await scannerStore.checkInAttendeeScanner().then(() => (showPrintModal = true))
+  validQRCode.value = await scannerStore.checkInAttendeeScanner().then(() => printModalStore.showPrintModal.value = true)
 }
 </script>
 
@@ -63,20 +60,6 @@ async function decodeQR() {
     </div>
   </div>
   <PrintModal
-    :key="componentKey"
-    :show-print-modal="showPrintModal"
     :valid-q-r-code="validQRCode"
-    @hide-modal="showPrintModal = false"
-    @print="
-      () => {
-        notificationStore.addNotification(
-          ['Successfully printed!', 'Please collect your ticket.'],
-          'success'
-        )
-        // print user pass here
-        console.log('Printing...')
-        componentKey += 1
-      }
-    "
   />
 </template>

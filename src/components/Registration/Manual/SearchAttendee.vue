@@ -2,6 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useSearchAttendeeStore } from '@/stores/searchAttendee'
+import { usePrintModalStore } from '@/stores/printModal'
 import StandardButton from '@/components/Shared/StandardButton.vue'
 import {
   CheckIcon,
@@ -25,8 +26,8 @@ import {
   ListboxOption
 } from '@headlessui/vue'
 
-const emit = defineEmits(['print'])
 const searchAttendeeStore = useSearchAttendeeStore()
+const printModalStore = usePrintModalStore()
 const route = useRoute()
 const isLoading = ref(false)
 const query = ref('')
@@ -140,17 +141,17 @@ async function checkin(id) {
           </Listbox>
         </div>
         <ComboboxInput
+          id="query"
           type="text"
           name="query"
-          id="query"
           class="block inset-y-0 w-full pl-44 pr-32"
           @change="query = $event.target.value"
         />
         <div class="absolute inset-y-0 right-0 flex items-stretch">
           <StandardButton
+            v-if="query !== ''"
             :icon="XMarkIcon"
             class="text-secondary"
-            v-if="query !== ''"
             @click="query = ''"
           />
           <Listbox v-model="selectedFields" multiple as="div">
@@ -238,7 +239,7 @@ async function checkin(id) {
               <p class="text-base">
                 {{ attendee.email }}
               </p>
-              <div class="mt-3" v-if="attendee.info">
+              <div v-if="attendee.info" class="mt-3">
                 <template v-for="(info, key) in attendee.info" :key="key">
                   <span
                     v-if="info"
@@ -259,7 +260,7 @@ async function checkin(id) {
                   :text="'Print'"
                   :icon="PrinterIcon"
                   class="btn-info"
-                  @click="emit('print', attendee.name)"
+                  @click="printModalStore.showPrintModal = true"
                 />
               </div>
             </div>
@@ -284,7 +285,7 @@ async function checkin(id) {
             <div class="h-4 bg-secondary-light rounded"></div>
             <div class="mt-3 text-left">
               <span
-                v-for="n in 4"
+                v-for="n in 4" :key="n"
                 class="inline-block rounded-full bg-secondary-light my-1 mr-1 h-4 w-16"
               ></span>
             </div>

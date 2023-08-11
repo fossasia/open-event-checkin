@@ -38,7 +38,7 @@ async function logErrors(promise) {
 }
 
 async function decodeQR() {
-  showMessage = await qrScannerStore.checkInAttendeeScannerToRoom(stationId, eventId)
+  showMessage.value = await qrScannerStore.checkInAttendeeScannerToRoom(stationId, eventId)
 }
 </script>
 

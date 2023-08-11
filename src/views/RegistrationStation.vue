@@ -1,6 +1,7 @@
 <script setup>
 import { useRouter, useRoute } from 'vue-router'
 import { useTypeSelectorStore } from '@/stores/typeSelector'
+import PrintModal from '@/components/Modals/PrintModal.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -27,4 +28,5 @@ if (!registrationTypeIsValid) {
 </script>
 <template>
   <RouterView />
+  <PrintModal />
 </template>

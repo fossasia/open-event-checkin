@@ -6,31 +6,30 @@ import { PrinterIcon } from '@heroicons/vue/24/outline'
 import { ExclamationCircleIcon } from '@heroicons/vue/24/outline'
 import StandardButton from '@/components/Shared/StandardButton.vue'
 import { usePrintModalStore } from '@/stores/printModal'
+import { useNotificationStore } from '@/stores/notification'
 
 const printModalStore = usePrintModalStore()
-
-const props = defineProps({
-  showPrintModal: Boolean,
-  validQRCode: Boolean
-})
-const emit = defineEmits(['hideModal', 'print'])
+const notificationStore = useNotificationStore()
 
 const disableButton = ref(false)
 const printingText = ref(false)
 
-const titleText = computed(() => (props.validQRCode ? 'Select items to print' : 'Error!'))
-const messageText = computed(() => (!props.validQRCode ? 'Please scan a valid QR code' : ''))
+const titleText = computed(() => (printModalStore.validQRCode.value ? 'Select items to print' : 'Error!'))
+const messageText = computed(() => (!printModalStore.validQRCode.value ? 'Please scan a valid QR code' : ''))
 
 const printDelay = (delayHideModal, delayPrint) => {
-  setTimeout(() => emit('hideModal'), delayHideModal)
+  setTimeout(() => printModalStore.showPrintModal.value = false, delayHideModal)
   setTimeout(() => {
-    emit('print')
+    notificationStore.addNotification(
+          ['Successfully printed!', 'Please collect your ticket.'],
+          'success'
+        )
     printModalStore.reset()
   }, delayPrint)
 }
 
 const print = () => {
-  if (props.validQRCode) {
+  if (printModalStore.validQRCode.value) {
     printModalStore.printOptions.forEach((element) => (element.disabled = true))
     printingText.value = true
     disableButton.value = true
@@ -44,17 +43,14 @@ const print = () => {
 </script>
 
 <template>
-  <ModalBaseTemplate :show="props.showPrintModal">
-    <div
-      class="relative transform overflow-hidden rounded-lg bg-white px-4 mx-6 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 w-full sm:max-w-sm sm:p-6"
-    >
+  <ModalBaseTemplate :show="printModalStore.showPrintModal">
       <div>
         <!--Icons-->
         <div
-          :class="[props.validQRCode ? 'bg-success-light' : 'bg-danger-light']"
+          :class="[printModalStore.validQRCode.value ? 'bg-success-light' : 'bg-danger-light']"
           class="mx-auto flex h-12 w-12 items-center justify-center rounded-full"
         >
-          <PrinterIcon v-if="validQRCode" class="h-6 w-6 text-success" aria-hidden="true" />
+          <PrinterIcon v-if="printModalStore.validQRCode.value" class="h-6 w-6 text-success" aria-hidden="true" />
           <ExclamationCircleIcon v-else class="h-6 w-6 text-danger" aria-hidden="true" />
         </div>
 
@@ -66,7 +62,7 @@ const print = () => {
           </DialogTitle>
 
           <!--Checklist-->
-          <fieldset v-if="props.validQRCode">
+          <fieldset v-if="printModalStore.validQRCode.value">
             <div class="space-y-5 mt-6 sm:mt-5 flex flex-col items-start">
               <div
                 v-for="(printOption, index) in printModalStore.printOptions"
@@ -121,7 +117,7 @@ const print = () => {
       <!--Print button-->
       <div class="mt-6 sm:mt-5 mx-6 sm:mx-0">
         <StandardButton
-          :text="props.validQRCode ? 'Print' : 'Try Again'"
+          :text="printModalStore.validQRCode.value ? 'Print' : 'Try Again'"
           :disabled="disableButton"
           :class="[
             disableButton && 'cursor-not-allowed opacity-20',
@@ -130,6 +126,5 @@ const print = () => {
           @click="print"
         />
       </div>
-    </div>
   </ModalBaseTemplate>
 </template>
