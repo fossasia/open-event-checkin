@@ -1,6 +1,7 @@
 <script setup>
 import { useRouter, useRoute } from 'vue-router'
 import { useTypeSelectorStore } from '@/stores/typeSelector'
+import PrintModal from '@/components/Modals/PrintModal.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -27,7 +28,6 @@ if (!scannerTypeIsValid) {
 </script>
 
 <template>
-  <div class="m-6">
-    <RouterView />
-  </div>
+  <RouterView />
+  <PrintModal />
 </template>

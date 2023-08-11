@@ -8,44 +8,28 @@ export const useSearchAttendeeStore = defineStore('searchAttendee', () => {
 
   const filterOptions = [
     {
-      id: 'filterRole',
-      name: 'Role',
-      show: ref(false)
-    },
-    {
-      id: 'filterMem',
-      name: 'Member type',
-      show: ref(false)
-    },
-    {
-      id: 'filterOrg',
-      name: 'Organisation',
-      show: ref(false)
+      id: 'organisation',
+      name: 'Organisation'
     }
   ]
 
-  async function getAttendee(value, eventId) {
-    try {
-      const searchedAttendees = await fetchAttendees(`name=${value}&email=`, eventId)
-      if (searchedAttendees.length === 0) throw new Error('No search results')
-      people.value = searchedAttendees
-    } catch {
-      const searchedAttendees = await fetchAttendees(`name=&email=${value}`, eventId)
-      people.value = searchedAttendees
+  async function fetchAttendees(eventId, fieldType, value) {
+    let route = `events/${eventId}/attendees/search?`
+    if (fieldType === 'name') {
+      route += `name=${value}`
     }
-  }
 
-  async function fetchAttendees(path, eventId) {
-    const attendees = await useApiStore().get(true, `events/${eventId}/attendees/search?${path}`)
-    console.log(attendees)
-    return attendees.attendees.map((attendee) => ({
+    if (fieldType === 'email') {
+      route += `email=${value}`
+    }
+
+    let attendees = await useApiStore().get(true, `events/${eventId}/attendees/search?${route}`)
+    people.value = attendees.attendees.map((attendee) => ({
       id: attendee.id,
       name: attendee.firstname + ' ' + attendee.lastname,
       email: attendee.email,
       checkedIn: ref(attendee.is_registered),
       info: {
-        role: null,
-        memberType: null,
         organisation: attendee.company
       }
     }))
@@ -81,7 +65,6 @@ export const useSearchAttendeeStore = defineStore('searchAttendee', () => {
       const checkInRes = await useApiStore().post(true, 'user-check-in', payload, false)
       console.log('register success:', attendeeId, checkInRes)
       return true
-
     } catch (error) {
       const errors = error.originalError.body.errors
       if (errors.find((error) => error.detail === 'Attendee already checked in.')) {
@@ -91,5 +74,5 @@ export const useSearchAttendeeStore = defineStore('searchAttendee', () => {
     }
   }
 
-  return { people, filterOptions, getAttendee, clearAttendees, checkInAttendee }
+  return { people, filterOptions, fetchAttendees, clearAttendees, checkInAttendee }
 })

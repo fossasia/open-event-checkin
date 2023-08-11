@@ -17,7 +17,6 @@ const stationId = route.params.stationId
 const eventId = route.params.eventId
 
 const camera = ref('front')
-const validQRCode = ref(true)
 
 const showMessage = ref(false)
 
@@ -37,41 +36,42 @@ async function logErrors(promise) {
     }
   }
 }
+
+async function decodeQR() {
+  showMessage.value = await qrScannerStore.checkInAttendeeScannerToRoom(stationId, eventId)
+}
 </script>
 
 <template>
-  <div class="grow">
-    <div class="py-2 space-y-3">
-      <h2 class="text-center text-xl font-bold capitalize">{{ scannerType }} Scan</h2>
-      <p class="text-center text-lg font-medium">Scan QR on badge</p>
-    </div>
-    <div class="w-full items-center flex justify-center">
-      <div>
-        <qrcode-stream
-          class="!aspect-square !h-auto max-w-lg grid-cols-1 align-middle justify-center items-center"
-          :track="qrScannerStore.selected.value"
-          :camera="camera"
-          @init="logErrors"
-          @decode="
-            async () => {
-              showMessage = await qrScannerStore.checkInAttendeeScannerToRoom(stationId, eventId)
-            }
-          "
-        >
-        </qrcode-stream>
-        <StandardButton
-          text="Switch Camera"
-          :icon="ArrowsRightLeftIcon"
-          class="bg-blue-600 text-white hover:bg-blue-500 mt-4"
-          @click="camera = camera === 'front' ? 'rear' : 'front'"
-        />
+  <div
+    class="grid grid-cols-1 gap-6 w-full align-middle justify-center items-center place-items-center"
+  >
+    <!-- padding to counter camera in mobile view -->
+    <div class="text-center pt-24">
+      <div class="space-y-3">
+        <h2 class="text-center capitalize">{{ scannerType }} Scan</h2>
+        <p class="text-center text-lg font-medium">Scan QR on badge</p>
       </div>
-    </div>
-    <div v-if="showMessage" class="text-green-500 font-bold mt-5 text-lg text-center">
-      {{ qrScannerStore.name }} has been checked into {{ stationName }}
-    </div>
-    <div v-else class="text-red-500 font-bold mt-5 text-lg text-center">
-      {{ qrScannerStore.errorString }}
+      <qrcode-stream
+        class="!aspect-square !h-auto max-w-sm"
+        :track="qrScannerStore.selected.value"
+        :camera="camera"
+        @init="logErrors"
+        @decode="decodeQR"
+      >
+      </qrcode-stream>
+      <StandardButton
+        :text="'Switch Camera'"
+        :icon="ArrowsRightLeftIcon"
+        class="bg-primary hover:bg-blue-500 mt-4"
+        @click="camera = camera === 'front' ? 'rear' : 'front'"
+      />
+      <p class="text-bold mt-5 text-lg text-center">
+        <span v-if="showMessage" class="text-success"
+          >{{ qrScannerStore.name }} has been checked into {{ stationName }}</span
+        >
+        <span v-else class="text-danger">{{ qrScannerStore.errorString }} </span>
+      </p>
     </div>
   </div>
 </template>

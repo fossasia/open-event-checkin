@@ -3,25 +3,19 @@ import { QrcodeStream } from 'vue-qrcode-reader'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { ArrowsRightLeftIcon } from '@heroicons/vue/20/solid'
-
 import PrintModal from '@/components/Modals/PrintModal.vue'
 import StandardButton from '@/components/Shared/StandardButton.vue'
-import SuccessNotification from '@/components/Shared/SuccessNotification.vue'
 import { useScannerStore } from '@/stores/scanner'
-import { useSearchAttendeeStore } from '@/stores/searchAttendee'
+import { usePrintModalStore } from '@/stores/printModal'
 
 const scannerStore = useScannerStore()
-const searchAttendeeStore = useSearchAttendeeStore()
+const printModalStore = usePrintModalStore()
 
 // get scanner type from vue router params
 const route = useRoute()
 const scannerType = route.params.scannerType
 
 const camera = ref('front')
-const showPrintModal = ref(false)
-const showPrintedNotification = ref(false)
-const componentKey = ref(0)
-
 const validQRCode = ref(true)
 
 async function logErrors(promise) {
@@ -33,60 +27,39 @@ async function logErrors(promise) {
     }
   }
 }
+
+async function decodeQR() {
+  validQRCode.value = await scannerStore.checkInAttendeeScanner().then(() => printModalStore.showPrintModal.value = true)
+}
 </script>
 
 <template>
-  <SuccessNotification
-    :show-printed-notification="showPrintedNotification"
-    :valid-q-r-code="validQRCode"
-    @hidePrintedNotification="showPrintedNotification = false"
-  />
-  <div class="h-full mx-auto max-w-7xl flex">
-    <PrintModal
-      :key="componentKey"
-      :show-print-modal="showPrintModal"
-      :valid-q-r-code="validQRCode"
-      @hideModal="showPrintModal = false"
-      @print="
-        () => {
-          showPrintedNotification = true
-          // print user pass here
-          console.log('Printing...')
-          componentKey += 1
-        }
-      "
-    />
-    <div
-      class="grid grid-cols-1 h-3/4 lg:h-auto gap-12 lg:gap-0 lg:grid-cols-2 w-full align-middle justify-center items-center place-items-center"
-    >
-      <div>
-        <qrcode-stream
-          class="!aspect-square !h-auto max-w-lg grid-cols-1 align-middle justify-center items-center"
-          :track="scannerStore.selected.value"
-          :camera="camera"
-          @init="logErrors"
-          @decode="
-            ;async () => {
-              validQRCode = await scannerStore
-                .checkInAttendeeScanner()
-                .then(() => (showPrintModal = true))
-            }
-          "
-        >
-        </qrcode-stream>
-        <StandardButton
-          text="Switch Camera"
-          :icon="ArrowsRightLeftIcon"
-          class="bg-blue-600 text-white hover:bg-blue-500 mt-4"
-          @click="camera = camera === 'front' ? 'rear' : 'front'"
-        />
-      </div>
-      <div class="w-full flex-auto text-center grid-cols-1">
-        <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-          Scan QR on Ticket
-        </h2>
-        <p class="mt-6 text-lg leading-8 text-gray-500">Kindly wait for your badge to print</p>
-      </div>
+  <div
+    class="grid grid-cols-1 lg:grid-cols-2 w-full align-middle justify-center items-center place-items-center h-screen -mt-16"
+  >
+    <!-- padding to counter camera in mobile view -->
+    <div class="text-center pt-24">
+      <qrcode-stream
+        class="!aspect-square !h-auto max-w-sm"
+        :track="scannerStore.selected.value"
+        :camera="camera"
+        @init="logErrors"
+        @decode="decodeQR"
+      >
+      </qrcode-stream>
+      <StandardButton
+        :text="'Switch Camera'"
+        :icon="ArrowsRightLeftIcon"
+        class="bg-primary mt-4"
+        @click="camera = camera === 'front' ? 'rear' : 'front'"
+      />
+    </div>
+    <div class="w-full text-center">
+      <h2>Scan QR on Ticket</h2>
+      <p class="my-6 text-lg leading-8">Kindly wait for your badge to print</p>
     </div>
   </div>
+  <PrintModal
+    :valid-q-r-code="validQRCode"
+  />
 </template>
