@@ -2,6 +2,9 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
 export const usePrintModalStore = defineStore('printModal', () => {
+  const showPrintModal = ref(false)
+  const validQRCode = ref(true)
+
   const printOptions = [
     {
       id: 'code',
@@ -78,5 +81,5 @@ export const usePrintModalStore = defineStore('printModal', () => {
     })
   }
 
-  return { printOptions, selectedOptions, selectOption, selectOrDeselectAll, reset }
+  return { showPrintModal, validQRCode, printOptions, selectedOptions, selectOption, selectOrDeselectAll, reset }
 })

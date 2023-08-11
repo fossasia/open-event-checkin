@@ -14,7 +14,7 @@ const showError = ref(false)
 
 // stores
 const loadingStore = useLoadingStore()
-
+loadingStore.show = false
 // router
 const router = useRouter()
 
@@ -44,16 +44,12 @@ async function submitLogin() {
 </script>
 
 <template>
-  <div class="flex flex-1 flex-col justify-center my-auto h-screen m-6">
-    <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-      <h2 class="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-        Sign in to your account
-      </h2>
+  <div class="flex flex-col justify-center h-screen -mt-16">
+    <div class="sm:mx-auto my-auto sm:w-full sm:max-w-sm">
+      <h2 class="text-center">Sign in to your account</h2>
       <form class="space-y-3 mt-10" @submit.prevent="submitLogin">
         <div>
-          <label for="email" class="block text-sm font-medium leading-6 text-gray-900"
-            >Email address</label
-          >
+          <label for="email">Email address</label>
           <div class="mt-2">
             <input
               id="email"
@@ -62,15 +58,13 @@ async function submitLogin() {
               type="email"
               autocomplete="email"
               required="true"
-              class="block pl-2 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-blue-600 sm:text-sm sm:leading-6"
+              class="block w-full"
             />
           </div>
         </div>
 
         <div>
-          <label for="password" class="block text-sm font-medium leading-6 text-gray-900"
-            >Password</label
-          >
+          <label for="password">Password</label>
           <div class="mt-2">
             <input
               id="password"
@@ -79,28 +73,28 @@ async function submitLogin() {
               type="password"
               autocomplete="current-password"
               required="true"
-              class="block pl-2 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-blue-600 sm:text-sm sm:leading-6"
+              class="block w-full"
             />
           </div>
         </div>
 
         <div>
           <StandardButton
-            type="submit"
-            text="Login"
-            class="w-full mt-6 justify-center bg-blue-600 text-white hover:bg-blue-500"
+            :type="'submit'"
+            :text="'Login'"
+            class="w-full mt-6 justify-center btn-primary"
           />
         </div>
 
         <div v-if="showError">
-          <p class="text-sm text-red-500">Wrong credentials or account does not exist</p>
+          <p class="text-sm text-danger">Wrong credentials or account does not exist</p>
         </div>
       </form>
 
-      <p class="mt-10 text-center text-sm text-gray-500">
-        <span class="font-semibold">Forgot password?</span>
+      <p class="mt-10 text-center text-sm">
+        <span>Forgot password?</span>
         {{ ' ' }}
-        <a href="https://eventyay.com/reset-password" class="font-semibold leading-6 text-blue-500"
+        <a href="https://eventyay.com/reset-password" class="font-medium leading-6 text-primary"
           >Click here to reset password</a
         >
       </p>

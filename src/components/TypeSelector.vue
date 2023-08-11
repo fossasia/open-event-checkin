@@ -1,18 +1,11 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue'
-import { CheckIcon, ChevronUpDownIcon } from '@heroicons/vue/20/solid'
-import {
-  Listbox,
-  ListboxButton,
-  ListboxLabel,
-  ListboxOption,
-  ListboxOptions
-} from '@headlessui/vue'
 import { useApiStore } from '@/stores/api'
 import { useEventsStore } from '@/stores/events'
 import { useTypeSelectorStore } from '@/stores/typeSelector'
 import { useRouter } from 'vue-router'
 import { useLoadingStore } from '@/stores/loading'
+import ListboxSelector from '@/components/Shared/ListboxSelector.vue'
 import StandardButton from '@/components/Shared/StandardButton.vue'
 
 // stores
@@ -99,15 +92,25 @@ watch(selectedEvent, async (newValue) => {
   }
 })
 
-watch(selectedType, async (newValue) => {
+watch(selectedType, async (newValue, oldValue) => {
   // type change so clear all fields after
   selectedMicrolocation.value = {
     id: null,
     name: ''
   }
-  selectedStation.value = {
-    id: null,
-    name: ''
+  if (oldValue) {
+    if (
+      (oldValue.id === 'registration-kiosk' || oldValue.id === 'registration-hybrid') &&
+      (newValue.id === 'registration-kiosk' || newValue.id === 'registration-hybrid')
+    ) {
+      // do nothing
+    } else {
+      // selected not registration so reset
+      selectedStation.value = {
+        id: null,
+        name: ''
+      }
+    }
   }
   newStationName.value = ''
 })
@@ -171,6 +174,7 @@ async function createStation(payload) {
 
 async function submitForm() {
   loadingStore.show = true
+  console.log('ff')
   if (
     selectedType.value.id === 'registration-kiosk' ||
     selectedType.value.id === 'registration-hybrid' ||
@@ -272,222 +276,45 @@ async function submitForm() {
 </script>
 
 <template>
-  <div class="flex flex-1 flex-col justify-center my-auto">
-    <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-      <h2 class="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-        Select Event
-      </h2>
+  <div class="flex flex-col justify-center h-screen -mt-16">
+    <div class="sm:mx-auto my-auto sm:w-full sm:max-w-sm">
+      <h2 class="text-center">Select Event</h2>
       <form class="space-y-3 mt-10" @submit.prevent="submitForm">
-        <Listbox v-model="selectedEvent" as="div">
-          <ListboxLabel class="block text-sm font-medium leading-6 text-gray-900"
-            >Event</ListboxLabel
-          >
-          <div class="relative mt-2">
-            <ListboxButton
-              class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600 sm:text-sm sm:leading-6"
-            >
-              <span v-if="selectedEvent.name == ''" class="block truncate text-gray-400"
-                >Select Event</span
-              >
-              <span class="block truncate">{{ selectedEvent.name }}</span>
-              <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                <ChevronUpDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
-              </span>
-            </ListboxButton>
-            <ListboxOptions
-              class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
-            >
-              <ListboxOption
-                v-for="event in eventsStore.userEvents"
-                :key="event.id"
-                v-slot="{ active, selected }"
-                as="template"
-                :value="event"
-              >
-                <li
-                  :class="[
-                    active ? 'bg-blue-600 text-white' : 'text-gray-900',
-                    'relative cursor-default select-none py-2 pl-3 pr-9'
-                  ]"
-                >
-                  <span :class="[active ? 'font-semibold' : 'font-normal', 'block truncate']">{{
-                    event.name
-                  }}</span>
-
-                  <span
-                    v-if="selected"
-                    :class="[
-                      active ? 'text-white' : 'text-blue-600',
-                      'absolute inset-y-0 right-0 flex items-center pr-4'
-                    ]"
-                  >
-                    <CheckIcon class="h-5 w-5" aria-hidden="true" />
-                  </span>
-                </li>
-              </ListboxOption>
-            </ListboxOptions>
-          </div>
-        </Listbox>
+        <ListboxSelector
+          :select-text="'Select Event'"
+          :label="'Event'"
+          :data="eventsStore.userEvents"
+          :selected-option="selectedEvent"
+          @update-selected="(n) => (selectedEvent = n)"
+        ></ListboxSelector>
         <!-- select booth type -->
-        <Listbox v-model="selectedType" as="div">
-          <ListboxLabel class="block text-sm font-medium leading-6 text-gray-900"
-            >Type</ListboxLabel
-          >
-          <div class="relative mt-2">
-            <ListboxButton
-              class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600 sm:text-sm sm:leading-6"
-            >
-              <span v-if="selectedType.name == ''" class="block truncate text-gray-400"
-                >Select Type</span
-              >
-              <span class="block truncate">{{ selectedType.name }}</span>
-              <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                <ChevronUpDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
-              </span>
-            </ListboxButton>
-            <ListboxOptions
-              class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
-            >
-              <ListboxOption
-                v-for="stationType in typeSelectorStore.stationTypes"
-                :key="stationType.id"
-                v-slot="{ active, selected }"
-                :value="stationType"
-                as="template"
-              >
-                <li
-                  :class="[
-                    active ? 'bg-blue-600 text-white' : 'text-gray-900',
-                    'relative cursor-default select-none py-2 pl-3 pr-9'
-                  ]"
-                >
-                  <span :class="[active ? 'font-semibold' : 'font-normal', 'block truncate']">{{
-                    stationType.name
-                  }}</span>
-
-                  <span
-                    v-if="selected"
-                    :class="[
-                      active ? 'text-white' : 'text-blue-600',
-                      'absolute inset-y-0 right-0 flex items-center pr-4'
-                    ]"
-                  >
-                    <CheckIcon class="h-5 w-5" aria-hidden="true" />
-                  </span>
-                </li>
-              </ListboxOption>
-            </ListboxOptions>
-          </div>
-        </Listbox>
+        <ListboxSelector
+          :select-text="'Select Type'"
+          :label="'Type'"
+          :data="typeSelectorStore.stationTypes"
+          :selected-option="selectedType"
+          @update-selected="(n) => (selectedType = n)"
+        ></ListboxSelector>
         <!-- allow user to select booth or give a new field to store booth -->
         <!-- for session checkin and checkout, only retrieve locations from api and not able to create new -->
-        <Listbox v-if="isStationType" v-model="selectedStation" as="div">
-          <ListboxLabel class="block text-sm font-medium leading-6 text-gray-900"
-            >Selected Station</ListboxLabel
-          >
-          <div class="relative mt-2">
-            <ListboxButton
-              class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600 sm:text-sm sm:leading-6"
-            >
-              <span v-if="selectedStation.name == ''" class="block truncate text-gray-400"
-                >Select Station</span
-              >
-              <span class="block truncate">{{ selectedStation.name }}</span>
-              <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                <ChevronUpDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
-              </span>
-            </ListboxButton>
-            <ListboxOptions
-              class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
-            >
-              <ListboxOption
-                v-for="station in availableStations"
-                :key="station.id"
-                v-slot="{ active, selected }"
-                as="template"
-                :value="station"
-              >
-                <li
-                  :class="[
-                    active ? 'bg-blue-600 text-white' : 'text-gray-900',
-                    'relative cursor-default select-none py-2 pl-3 pr-9'
-                  ]"
-                >
-                  <span :class="[active ? 'font-semibold' : 'font-normal', 'block truncate']">{{
-                    station.name
-                  }}</span>
-
-                  <span
-                    v-if="selected"
-                    :class="[
-                      active ? 'text-white' : 'text-blue-600',
-                      'absolute inset-y-0 right-0 flex items-center pr-4'
-                    ]"
-                  >
-                    <CheckIcon class="h-5 w-5" aria-hidden="true" />
-                  </span>
-                </li>
-              </ListboxOption>
-            </ListboxOptions>
-          </div>
-        </Listbox>
-
+        <ListboxSelector
+          v-if="isStationType"
+          :select-text="'Select Station'"
+          :label="'Station'"
+          :data="availableStations"
+          :selected-option="selectedStation"
+          @update-selected="(n) => (selectedStation = n)"
+        ></ListboxSelector>
         <!-- allow user to select microlocation or give a new field to store microlocation -->
         <!-- for microlocation checkin and checkout, only retrieve locations from api and not able to create new -->
-        <Listbox
+        <ListboxSelector
           v-if="!isStationType && isStationType !== undefined"
-          v-model="selectedMicrolocation"
-          as="div"
-        >
-          <ListboxLabel class="block text-sm font-medium leading-6 text-gray-900"
-            >Selected Microlocation</ListboxLabel
-          >
-          <div class="relative mt-2">
-            <ListboxButton
-              class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600 sm:text-sm sm:leading-6"
-            >
-              <span v-if="selectedMicrolocation.name == ''" class="block truncate text-gray-400"
-                >Select Microlocation</span
-              >
-              <span class="block truncate">{{ selectedMicrolocation.name }}</span>
-              <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                <ChevronUpDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
-              </span>
-            </ListboxButton>
-            <ListboxOptions
-              class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
-            >
-              <ListboxOption
-                v-for="microlocation in eventsStore.eventMicrolocations"
-                :key="microlocation.id"
-                v-slot="{ active, selected }"
-                :value="microlocation"
-                as="template"
-              >
-                <li
-                  :class="[
-                    active ? 'bg-blue-600 text-white' : 'text-gray-900',
-                    'relative cursor-default select-none py-2 pl-3 pr-9'
-                  ]"
-                >
-                  <span :class="[active ? 'font-semibold' : 'font-normal', 'block truncate']">{{
-                    microlocation.name
-                  }}</span>
-
-                  <span
-                    v-if="selected"
-                    :class="[
-                      active ? 'text-white' : 'text-blue-600',
-                      'absolute inset-y-0 right-0 flex items-center pr-4'
-                    ]"
-                  >
-                    <CheckIcon class="h-5 w-5" aria-hidden="true" />
-                  </span>
-                </li>
-              </ListboxOption>
-            </ListboxOptions>
-          </div>
-        </Listbox>
+          :select-text="'Select Microlocation'"
+          :label="'Microlocation'"
+          :data="eventsStore.eventMicrolocations"
+          :selected-option="selectedMicrolocation"
+          @update-selected="(n) => (selectedMicrolocation = n)"
+        ></ListboxSelector>
 
         <!-- display if create new booth is selected -->
         <div
@@ -498,9 +325,7 @@ async function submitForm() {
               selectedType.id == 'check-in-daily')
           "
         >
-          <label for="station" class="block text-sm font-medium leading-6 text-gray-900"
-            >Station Name</label
-          >
+          <label for="station">Station Name</label>
           <div class="mt-2">
             <input
               id="station"
@@ -509,7 +334,7 @@ async function submitForm() {
               type="text"
               required="true"
               placeholder="Enter station name"
-              class="block pl-2 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-blue-600 sm:text-sm sm:leading-6"
+              class="block w-full"
             />
           </div>
         </div>
@@ -517,9 +342,9 @@ async function submitForm() {
         <div>
           <StandardButton
             :disabled="!allFieldsSelected"
-            type="submit"
-            text="Go"
-            class="bg-blue-600 text-white hover:bg-blue-500 w-full mt-6 justify-center disabled:bg-gray-400 disabled:cursor-not-allowed"
+            :type="'submit'"
+            :text="'Go'"
+            class="btn-primary w-full mt-6 justify-center"
           />
         </div>
       </form>

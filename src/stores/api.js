@@ -2,7 +2,9 @@ import { mande, defaults } from 'mande'
 import { defineStore } from 'pinia'
 
 export const useApiStore = defineStore('api', () => {
-  const apiUrl = import.meta.env.PROD ? import.meta.env.VITE_PROD_API_URL : import.meta.env.VITE_TEST_API_URL
+  const apiUrl = import.meta.env.PROD
+    ? import.meta.env.VITE_PROD_API_URL
+    : import.meta.env.VITE_TEST_API_URL
   let instance = mande(apiUrl)
 
   function setToken() {
