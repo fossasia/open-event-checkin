@@ -3,7 +3,8 @@ import { ref } from 'vue'
 import { useApiStore } from '@/stores/api'
 
 export const usePrintModalStore = defineStore('printModal', () => {
-  const attendeeId = ref(null)
+  const showPrintModal = ref(false)
+  const ticketId = ref(null)
   //for user interaction
   const printOptions = ref([])
 
@@ -47,10 +48,9 @@ export const usePrintModalStore = defineStore('printModal', () => {
     })
   }
 
-  async function getBadgeFields(response) {
+  async function getBadgeFields() {
     try {
-      attendeeId.value = response.attendeeId
-      const fields = await useApiStore().get(true, `tickets/${response.ticketId}/badge-forms`)
+      const fields = await useApiStore().get(true, `tickets/${ticketId.value}/badge-forms`)
       printOptions.value = fields.map((field) => {
         if (field.field_identifier === 'QR') {
           return {
@@ -90,5 +90,5 @@ export const usePrintModalStore = defineStore('printModal', () => {
     // return pdf url
   }
 
-  return { printOptions, selectedOptions, selectOption, selectOrDeselectAll, reset, getBadgeFields, getPDF }
+  return { showPrintModal, ticketId, printOptions, selectedOptions, selectOption, selectOrDeselectAll, reset, getBadgeFields, getPDF }
 })

@@ -85,6 +85,12 @@ async function checkin(id) {
     person.checkedIn = true
   } else console.log('check in failed')
 }
+
+function printBadge(id) {
+  printModalStore.ticketId = id
+  printModalStore.getBadgeFields()
+  printModalStore.showPrintModal = true
+}
 </script>
 
 <template>
@@ -264,7 +270,7 @@ async function checkin(id) {
                   :text="'Print'"
                   :icon="PrinterIcon"
                   class="btn-info"
-                  @click="printModalStore.showPrintModal = true"
+                  @click="printBadge(attendee.ticketId)"
                 />
               </div>
             </div>

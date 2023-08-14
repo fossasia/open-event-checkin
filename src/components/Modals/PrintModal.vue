@@ -14,10 +14,9 @@ const notificationStore = useNotificationStore()
 const disableButton = ref(false)
 const printingText = ref(false)
 
-const titleText = computed(() => (printModalStore.validQRCode.value ? 'Select items to print' : 'Error!'))
-const messageText = computed(() => (!printModalStore.validQRCode.value ? 'Please scan a valid QR code' : ''))
+const titleText = 'Select items to print'
 
-const printDelay = (delayHideModal, delayPrint) => {
+function printDelay(delayHideModal, delayPrint) {
   setTimeout(() => printModalStore.showPrintModal.value = false, delayHideModal)
   setTimeout(() => {
     notificationStore.addNotification(
@@ -28,19 +27,14 @@ const printDelay = (delayHideModal, delayPrint) => {
   }, delayPrint)
 }
 
-const print = () => {
-  if (printModalStore.validQRCode.value) {
+function print() {
     printModalStore.printOptions.forEach((element) => (element.disabled = true))
     printingText.value = true
     disableButton.value = true
     
     printModalStore.getPDF()
     printDelay(3000, 3200)
-  } else {
-    printDelay(0, 200)
-    console.log('Rescan')
   }
-}
 </script>
 
 <template>
@@ -48,11 +42,9 @@ const print = () => {
       <div>
         <!--Icons-->
         <div
-          :class="[printModalStore.validQRCode.value ? 'bg-success-light' : 'bg-danger-light']"
-          class="mx-auto flex h-12 w-12 items-center justify-center rounded-full"
+          class="bg-info-light mx-auto flex h-12 w-12 items-center justify-center rounded-full"
         >
-          <PrinterIcon v-if="printModalStore.validQRCode.value" class="h-6 w-6 text-success" aria-hidden="true" />
-          <ExclamationCircleIcon v-else class="h-6 w-6 text-danger" aria-hidden="true" />
+          <PrinterIcon class="h-6 w-6 text-info" aria-hidden="true" />
         </div>
 
         <!--Title-->
@@ -63,7 +55,7 @@ const print = () => {
           </DialogTitle>
 
           <!--Checklist-->
-          <fieldset v-if="printModalStore.validQRCode.value">
+          <fieldset>
             <div class="space-y-5 mt-6 sm:mt-5 flex flex-col items-start">
               <div
                 v-for="(printOption, index) in printModalStore.printOptions"
@@ -100,15 +92,7 @@ const print = () => {
                 @click="printModalStore.selectOrDeselectAll"
               />
             </div>
-
-            <!--DIVIDER-->
-            <div class="mt-5">
-              <div class="border-0 border-b mx-6 sm:m-0" />
-            </div>
           </fieldset>
-          <p v-if="messageText !== ''" class="text-sm bg-secondary mt-3">
-            {{ messageText }}
-          </p>
           <p v-if="printingText" class="text-sm bg-secondary mt-3">
             Please wait while we print your pass.
           </p>
@@ -116,15 +100,21 @@ const print = () => {
       </div>
 
       <!--Print button-->
-      <div class="mt-6 sm:mt-5 mx-6 sm:mx-0">
+      <div class="mt-6 space-y-3">
         <StandardButton
-          :text="printModalStore.validQRCode.value ? 'Print' : 'Try Again'"
+          :text="'Print'"
           :disabled="disableButton"
           :class="[
             disableButton && 'cursor-not-allowed opacity-20',
             'bg-primary text-white hover:bg-blue-500 w-full justify-center'
           ]"
           @click="print"
+        />
+        <StandardButton
+          :type="'button'"
+          :text="'Cancel'"
+          class="btn-secondary w-full justify-center"
+          @click="printModalStore.showPrintModal.value = false"
         />
       </div>
   </ModalBaseTemplate>

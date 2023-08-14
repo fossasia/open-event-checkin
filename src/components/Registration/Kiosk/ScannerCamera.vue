@@ -16,7 +16,6 @@ const route = useRoute()
 const scannerType = route.params.scannerType
 
 const camera = ref('front')
-const validQRCode = ref(true)
 
 async function logErrors(promise) {
   try {
@@ -29,7 +28,8 @@ async function logErrors(promise) {
 }
 
 async function decodeQR() {
-  validQRCode.value = await scannerStore.checkInAttendeeScanner().then(() => printModalStore.showPrintModal.value = true)
+  await scannerStore.checkInAttendeeScanner().then(() => {
+    printModalStore.showPrintModal.value = true})
 }
 </script>
 
@@ -59,7 +59,5 @@ async function decodeQR() {
       <p class="my-6 text-lg leading-8">Kindly wait for your badge to print</p>
     </div>
   </div>
-  <PrintModal
-    :valid-q-r-code="validQRCode"
-  />
+  <PrintModal />
 </template>

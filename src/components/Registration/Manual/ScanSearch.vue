@@ -7,9 +7,11 @@ import SearchAttendee from '@/components/Registration/Manual/SearchAttendee.vue'
 import StandardButton from '@/components/Shared/StandardButton.vue'
 import { useScannerStore } from '@/stores/scanner'
 import { usePrintModalStore } from '@/stores/printModal'
+import { useNotificationStore } from '@/stores/notification'
 
 const scannerStore = useScannerStore()
 const printModalStore = usePrintModalStore()
+const notificationStore = useNotificationStore()
 // get scanner type from vue router params
 const route = useRoute()
 const scannerType = route.params.scannerType
@@ -28,7 +30,7 @@ async function logErrors(promise) {
 }
 
 async function decodeQR() {
-  printModalStore.validQRCode.value = await scannerStore.checkInAttendeeScanner().then(() => printModalStore.value = true)
+  await scannerStore.checkInAttendeeScanner().then(() => printModalStore.value = true).catch(() => notificationStore.addNotification({ type: 'error', message: 'Attendee not found' }))
 }
 </script>
 
