@@ -35,25 +35,24 @@ export const useSearchAttendeeStore = defineStore('searchAttendee', () => {
       ticketId: attendee.ticket_id,
       checkedIn: ref(attendee.is_registered),
       info: {
-        organisation: attendee.company
+        attendee
       }
     }))
+    console.log(people.value)
   }
 
   function clearAttendees() {
     people.value = []
   }
 
-  async function checkInAttendee(attendeeId, stationId, eventId) {
+  async function checkInAttendee(attendeeId, stationId) {
     try {
-      const stations = await useApiStore().get(true, `events/${eventId}/stations`)
-      const station = stations.data.find((station) => station.id == stationId)
       const payload = {
         data: {
           relationships: {
             station: {
               data: {
-                type: station.type,
+                type: 'station',
                 id: stationId + ''
               }
             },
@@ -71,10 +70,7 @@ export const useSearchAttendeeStore = defineStore('searchAttendee', () => {
       console.log('register success:', attendeeId, checkInRes)
       return true
     } catch (error) {
-      const errors = error.originalError.body.errors
-      if (errors.find((error) => error.detail === 'Attendee already registered.')) {
-        throw new Error('Already checked in')
-      }
+      console.error(error)
     }
   }
 

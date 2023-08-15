@@ -86,8 +86,9 @@ async function checkin(id) {
   } else console.log('check in failed')
 }
 
-function printBadge(id) {
-  printModalStore.ticketId = id
+function printBadge(ticketId, attendeeId) {
+  printModalStore.ticketId = ticketId
+  printModalStore.attendeeId = attendeeId
   printModalStore.getBadgeFields()
   printModalStore.showPrintModal = true
 }
@@ -270,7 +271,7 @@ function printBadge(id) {
                   :text="'Print'"
                   :icon="PrinterIcon"
                   class="btn-info"
-                  @click="printBadge(attendee.ticketId)"
+                  @click="printBadge(attendee.ticketId, attendee.id)"
                 />
               </div>
             </div>
