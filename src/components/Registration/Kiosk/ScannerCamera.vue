@@ -14,6 +14,7 @@ const printModalStore = usePrintModalStore()
 // get scanner type from vue router params
 const route = useRoute()
 const scannerType = route.params.scannerType
+const stationId = route.params.stationId
 
 const camera = ref('front')
 
@@ -28,8 +29,9 @@ async function logErrors(promise) {
 }
 
 async function decodeQR() {
-  await scannerStore.checkInAttendeeScanner().then(() => {
-    printModalStore.showPrintModal.value = true})
+  await scannerStore.checkInAttendeeScanner(stationId).then(() => {
+    printModalStore.showPrintModal = true
+  })
 }
 </script>
 

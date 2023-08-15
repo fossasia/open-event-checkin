@@ -1,6 +1,8 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { useSearchAttendeeStore } from '@/stores/searchAttendee'
+import { usePrintModalStore } from '@/stores/printModal'
+import { useApiStore } from '@/stores/api'
 
 export const useScannerStore = defineStore('scanner', () => {
   const QRCodeValue = ref('')
@@ -46,10 +48,14 @@ export const useScannerStore = defineStore('scanner', () => {
     return match ? parseInt(match[1], 10) : null
   }
 
-  async function checkInAttendeeScanner() {
+  async function checkInAttendeeScanner(stationId) {
     if (isValidQRCode(stringModifier(QRCodeValue.value))) {
-      const checkedIn = await useSearchAttendeeStore().checkInAttendee(extractId(QRCodeValue.value)) // Patch API to check-in
+      const checkedIn = await useSearchAttendeeStore().checkInAttendee(extractId(QRCodeValue.value), stationId) // Patch API to check-in
       if (checkedIn) {
+        const ticketId = await useApiStore().get(true, `attendees/${extractId(QRCodeValue.value)}`)
+        usePrintModalStore().ticketId = ticketId.data.attributes['ticket-id']
+        usePrintModalStore().attendeeId = extractId(QRCodeValue.value)
+        usePrintModalStore().getBadgeFields()
         return true
       } else {
         console.log('Error: Check in failed')

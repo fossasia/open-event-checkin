@@ -91,8 +91,8 @@ function print() {
                 :class="[
                   disableButton
                     ? 'cursor-not-allowed opacity-20'
-                    : 'hover:bg-blue-500 hover:border-blue-500 hover:text-white',
-                  'text-blue-600 border border-blue-600 ml-6'
+                    : 'hover:opacity-75',
+                  'text-primary border border-primary ml-6'
                 ]"
                 @click="printModalStore.selectOrDeselectAll"
               />

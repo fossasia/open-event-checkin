@@ -15,7 +15,7 @@ const notificationStore = useNotificationStore()
 // get scanner type from vue router params
 const route = useRoute()
 const scannerType = route.params.scannerType
-const eventId = route.params.eventId
+const stationId = route.params.stationId
 
 const camera = ref('front')
 
@@ -30,7 +30,9 @@ async function logErrors(promise) {
 }
 
 async function decodeQR() {
-  await scannerStore.checkInAttendeeScanner().then(() => printModalStore.value = true).catch(() => notificationStore.addNotification({ type: 'error', message: 'Attendee not found' }))
+  await scannerStore.checkInAttendeeScanner(stationId)
+    .then(() => printModalStore.showPrintModal = true)
+    .catch(() => notificationStore.addNotification({ type: 'error', message: 'Attendee not found' }))
 }
 </script>
 
