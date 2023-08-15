@@ -24,6 +24,8 @@ function printDelay(delayHideModal, delayPrint) {
           'success'
         )
     printModalStore.reset()
+    disableButton.value = false
+    printingText.value = false
   }, delayPrint)
 }
 
@@ -31,8 +33,11 @@ function print() {
     printModalStore.printOptions.forEach((element) => (element.disabled = true))
     printingText.value = true
     disableButton.value = true
+    const stringFields = printModalStore.selectedOptions
+      .map((element) => element.fieldIdentifier)
+      .join(',')
     
-    printModalStore.getPDF()
+    printModalStore.getPDF(stringFields)
     printDelay(3000, 3200)
   }
 </script>
@@ -86,8 +91,8 @@ function print() {
                 :class="[
                   disableButton
                     ? 'cursor-not-allowed opacity-20'
-                    : 'hover:bg-blue-500 hover:border-blue-500 hover:text-white',
-                  'text-blue-600 border border-blue-600 ml-6'
+                    : 'hover:opacity-75',
+                  'text-primary border border-primary ml-6'
                 ]"
                 @click="printModalStore.selectOrDeselectAll"
               />
