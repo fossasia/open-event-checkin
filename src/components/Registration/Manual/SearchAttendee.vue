@@ -86,6 +86,7 @@ async function checkin(id) {
   } else console.log('check in failed')
 }
 
+
 function printBadge(ticketId, attendeeId) {
   printModalStore.ticketId = ticketId
   printModalStore.attendeeId = attendeeId

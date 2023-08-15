@@ -122,4 +122,5 @@ export const usePrintModalStore = defineStore('printModal', () => {
   }
 
   return { showPrintModal, ticketId, attendeeId, printOptions, selectedOptions, selectOption, selectOrDeselectAll, reset, getBadgeFields, getPDF }
+
 })

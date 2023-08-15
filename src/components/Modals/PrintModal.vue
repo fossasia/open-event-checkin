@@ -17,7 +17,7 @@ const printingText = ref(false)
 const titleText = 'Select items to print'
 
 function printDelay(delayHideModal, delayPrint) {
-  setTimeout(() => printModalStore.showPrintModal = false, delayHideModal)
+  setTimeout(() => printModalStore.showPrintModal.value = false, delayHideModal)
   setTimeout(() => {
     notificationStore.addNotification(
           ['Successfully printed!', 'Please collect your ticket.'],
