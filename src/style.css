@@ -24,10 +24,6 @@
     @apply px-2.5 py-2 rounded-md font-medium text-white text-sm disabled:bg-secondary disabled:hover:bg-secondary disabled:opacity-75 disabled:cursor-not-allowed transition;
   }
 
-  ul:target-within {
-    @apply transition;
-  }
-
   label {
     @apply block text-sm font-medium leading-6 text-secondary-dark;
   }

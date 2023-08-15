@@ -1,50 +1,17 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { useApiStore } from '@/stores/api'
 
 export const usePrintModalStore = defineStore('printModal', () => {
   const showPrintModal = ref(false)
-  const validQRCode = ref(true)
+  const ticketId = ref(null)
+  //for user interaction
+  const printOptions = ref([])
 
-  const printOptions = [
-    {
-      id: 'code',
-      name: 'code',
-      label: 'QR Code',
-      checked: ref(true),
-      disabled: true
-    },
-    {
-      id: 'name',
-      name: 'name',
-      label: 'Name',
-      checked: ref(true),
-      disabled: false
-    },
-    {
-      id: 'email',
-      name: 'email',
-      label: 'Email',
-      checked: ref(true),
-      disabled: false
-    },
-    {
-      id: 'org',
-      name: 'org',
-      label: 'Organisation',
-      checked: ref(true),
-      disabled: false
-    },
-    {
-      id: 'role',
-      name: 'role',
-      label: 'Role',
-      checked: ref(true),
-      disabled: false
-    }
-  ]
-
+  //id of all options
+  const allOptions = ref([])
   //updates when checked
-  const selectedOptions = ref(['code', 'name', 'email', 'org', 'role'])
+  const selectedOptions = ref([])
 
   function selectOption(option) {
     option.checked = !option.checked
@@ -57,29 +24,71 @@ export const usePrintModalStore = defineStore('printModal', () => {
 
   function selectOrDeselectAll() {
     if (selectedOptions.value.length === 5) {
-      printOptions.forEach((option) => {
-        if (option.id !== 'code') {
-          option.checked.value = false
-          selectedOptions.value = ['code']
+      printOptions.value.forEach((option) => {
+        if (option.name !== 'code') {
+          option.checked = false
+          selectedOptions.value = allOptions.value.find((option) => option.name === 'code')
         }
       })
     } else {
-      printOptions.forEach((option) => {
-        option.checked.value = true
-        selectedOptions.value = ['code', 'name', 'email', 'org', 'role']
+      printOptions.value.forEach((option) => {
+        option.checked = true
+        selectedOptions.value = allOptions.value
       })
     }
   }
 
   function reset() {
-    selectedOptions.value = ['code', 'name', 'email', 'org', 'role']
-    printOptions.forEach((option) => {
-      if (option.id !== 'code') {
+    selectedOptions.value = allOptions.value
+    printOptions.value.forEach((option) => {
+      if (option.name !== 'code') {
         option.disabled = false
-        option.checked.value = true
+        option.checked = true
       }
     })
   }
 
-  return { showPrintModal, validQRCode, printOptions, selectedOptions, selectOption, selectOrDeselectAll, reset }
+  async function getBadgeFields() {
+    try {
+      const fields = await useApiStore().get(true, `tickets/${ticketId.value}/badge-forms`)
+      printOptions.value = fields.map((field) => {
+        if (field.field_identifier === 'QR') {
+          return {
+            id: field.id,
+            name: 'code',
+            label: 'QR Code',
+            fieldIdentifier: field.field_identifier,
+            checked: ref(true),
+            disabled: true
+          }
+        } else {
+          return {
+            id: field.id,
+            name: field.custom_field,
+            label: field.custom_field,
+            fieldIdentifier: field.field_identifier,
+            checked: ref(true),
+            disabled: false
+          }
+        }
+      })
+      allOptions.value = printOptions.value.map((option) => {
+        return {
+          name: option.name,
+          id: option.id,
+          fieldIdentifier: option.fieldIdentifier
+        }
+      })
+      selectedOptions.value = allOptions.value
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  async function getPDF() {
+    // get pdf api here
+    // return pdf url
+  }
+
+  return { showPrintModal, ticketId, printOptions, selectedOptions, selectOption, selectOrDeselectAll, reset, getBadgeFields, getPDF }
 })

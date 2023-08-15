@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useSearchAttendeeStore } from '@/stores/searchAttendee'
 import { usePrintModalStore } from '@/stores/printModal'
@@ -57,6 +57,10 @@ watch(query, async (newValue) => {
   }
 })
 
+onMounted(() => {
+  searchAttendeeStore.getTicketDetails(eventId)
+})
+
 const filteredAttendees = computed(() => {
   // check within info object and remove object key value if selected by search by type
   const selectedFieldsIds = selectedFields.value.map((f) => f.id)
@@ -80,6 +84,12 @@ async function checkin(id) {
     const person = searchAttendeeStore.people.find((a) => a.id === id)
     person.checkedIn = true
   } else console.log('check in failed')
+}
+
+function printBadge(id) {
+  printModalStore.ticketId = id
+  printModalStore.getBadgeFields()
+  printModalStore.showPrintModal = true
 }
 </script>
 
@@ -260,7 +270,7 @@ async function checkin(id) {
                   :text="'Print'"
                   :icon="PrinterIcon"
                   class="btn-info"
-                  @click="printModalStore.showPrintModal = true"
+                  @click="printBadge(attendee.ticketId)"
                 />
               </div>
             </div>
