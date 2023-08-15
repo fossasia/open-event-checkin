@@ -17,13 +17,15 @@ const printingText = ref(false)
 const titleText = 'Select items to print'
 
 function printDelay(delayHideModal, delayPrint) {
-  setTimeout(() => printModalStore.showPrintModal.value = false, delayHideModal)
+  setTimeout(() => printModalStore.showPrintModal = false, delayHideModal)
   setTimeout(() => {
     notificationStore.addNotification(
           ['Successfully printed!', 'Please collect your ticket.'],
           'success'
         )
     printModalStore.reset()
+    disableButton.value = false
+    printingText.value = false
   }, delayPrint)
 }
 
@@ -31,8 +33,11 @@ function print() {
     printModalStore.printOptions.forEach((element) => (element.disabled = true))
     printingText.value = true
     disableButton.value = true
+    const stringFields = printModalStore.selectedOptions
+      .map((element) => element.fieldIdentifier)
+      .join(',')
     
-    printModalStore.getPDF()
+    printModalStore.getPDF(stringFields)
     printDelay(3000, 3200)
   }
 </script>
