@@ -1,39 +1,33 @@
 <script setup>
 import { ref, onBeforeMount, nextTick } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
 import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'
 import { useLoadingStore } from '@/stores/loading'
 import { useNavbarStore } from '@/stores/navbar'
 import { useUserStore } from '@/stores/user'
-import { useStationsStore } from '@/stores/stations'
 import PasswordModal from '@/components/Modals/PasswordModal.vue'
 
-const route = useRoute()
 const router = useRouter()
 const loadingStore = useLoadingStore()
 const navbarStore = useNavbarStore()
 const userStore = useUserStore()
-const stationsStore = useStationsStore()
-const userName = ref('')
 
 loadingStore.navbarLoading()
 
 onBeforeMount(async () => {
-  await userStore
-    .getUserId() // get user id
-    .then(async (res) => {
-      await userStore.getUserDetails(res).then(async (response) => {
-        // get name
-        userName.value = response.data.attributes['first-name']
+  // this is for if loading the page directly
+  // check if user details is empty
+  if (!userStore.userDetails) {
+    await userStore
+      .getUserDetails()
+      .catch((err) => {
+        // if error, kick user to login page
+        router.replace({
+          name: 'userAuth'
+        })
       })
-    })
-    .catch((err) => {
-      // if error, kick user to login page
-      router.replace({
-        name: 'userAuth'
-      })
-    })
+  }
   nextTick(() => {
     loadingStore.navbarLoaded()
   })
@@ -73,7 +67,7 @@ onBeforeMount(async () => {
               {{ item.name }}
             </button>
           </template>
-          <span class="ml-2 text-sm">Logged in as: {{ userName }}</span>
+          <span class="ml-2 text-sm">Logged in as: {{ userStore.userName }}</span>
         </div>
       </div>
     </div>

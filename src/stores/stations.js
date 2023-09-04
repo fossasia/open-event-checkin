@@ -6,8 +6,8 @@ export const useStationsStore = defineStore('stations', () => {
   const apiStore = useApiStore()
 
   const stationTypes = [
-    { id: 'registration-kiosk', name: 'Registration (via scan)', href: 'registerKiosk' },
-    { id: 'registration-hybrid', name: 'Registration (hybrid)', href: 'registerHybrid' },
+    { id: 'registration-kiosk', name: 'Registration Kiosk (with Scan only)', href: 'registerKiosk' },
+    { id: 'registration-hybrid', name: 'Registration Station (with Scan & Search)', href: 'registerStation' },
     { id: 'check-in-daily', name: 'Daily Check-In', href: 'scanner' },
     { id: 'check-in', name: 'Session Check-In', href: 'scanner' },
     { id: 'checkout', name: 'Session Checkout', href: 'scanner' }

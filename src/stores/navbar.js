@@ -59,7 +59,7 @@ export const useNavbarStore = defineStore('navbar', () => {
         customClass: 'text-body hover:bg-body-light',
         action: () => {
           if (route.params.registrationType) {
-            router.push({ name: 'registerHybrid' })
+            router.push({ name: 'registerStation' })
           }
         }
       }
@@ -74,7 +74,7 @@ export const useNavbarStore = defineStore('navbar', () => {
               router.push({ name: 'registerKiosk' })
             }
             if (route.params.scannerType) {
-              router.push({ name: 'scannerCamera' })
+              router.push({ name: 'checkInCamera' })
             }
           }
         },
@@ -87,7 +87,7 @@ export const useNavbarStore = defineStore('navbar', () => {
               router.push({ name: 'registerStats' })
             }
             if (route.params.scannerType) {
-              router.push({ name: 'scannerStats' })
+              router.push({ name: 'checkInStats' })
             }
           }
         }
