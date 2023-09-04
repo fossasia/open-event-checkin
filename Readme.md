@@ -14,7 +14,7 @@ Please join our [Mailing list](https://groups.google.com/forum/#!forum/open-even
 
 Easily deployed on a variety of platforms. Detailed platform specific instructions have been provided below.
 ### Local
-Clone or Fork the codebase and following instructions [below](https://github.com/fossasia/open-event-checkin#running--development)
+Clone or Fork the codebase and following instructions [below](#running--development)
 
 ### Github Pages (using Github Actions)
 Refer to the [workflow](https://github.com/fossasia/open-event-checkin/tree/development/.github/workflows) for deployment
