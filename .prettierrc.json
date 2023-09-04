@@ -5,6 +5,7 @@
   "singleQuote": true,
   "printWidth": 100,
   "trailingComma": "none",
+  "tailwindConfig": "./tailwind.config.js",
   "plugins": [
     "prettier-plugin-svelte",
     "prettier-plugin-organize-imports",
