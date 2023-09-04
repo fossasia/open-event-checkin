@@ -1,60 +1,49 @@
 <script setup>
-import { ref } from 'vue'
 import { DialogTitle } from '@headlessui/vue'
 import ModalBaseTemplate from '@/components/Modals/ModalBaseTemplate.vue'
 import { KeyIcon } from '@heroicons/vue/24/outline'
-import StandardButton from '@/components/Shared/StandardButton.vue'
+import StandardButton from '@/components/Common/StandardButton.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useLoadingStore } from '@/stores/loading'
+import { usePasswordModalStore } from '@/stores/passwordModal'
 import { useRouter } from 'vue-router'
 
 const authStore = useAuthStore()
 const loadingStore = useLoadingStore()
+const passwordModalStore = usePasswordModalStore()
 const router = useRouter()
 
-const props = defineProps({
-  showPasswordModal: {
-    type: Boolean,
-    default: false
-  }
-})
-
-const emit = defineEmits(['hidePasswordModal'])
-
-const passwordField = ref('')
-const validPassword = ref(null)
+function clearFields() {
+  loadingStore.contentLoaded()
+  passwordModalStore.validPassword = false
+  passwordModalStore.passwordField = ''
+}
 
 async function checkPassword() {
-  loadingStore.show = true
-  const payload = { password: passwordField.value }
+  loadingStore.contentLoading()
+  const payload = { password: passwordModalStore.passwordField }
 
   try {
-    const res = await authStore.verifyPassword(payload, 'auth/verify-password')
+    const res = await authStore.verifyPassword(payload)
     if (res === true) {
-      console.log('Password verified: correct')
       await authStore.logout()
-      validPassword.value = true
-      emit('hidePasswordModal', false)
+      passwordModalStore.validPassword = true
+      passwordModalStore.$reset()
       router.push({
         name: 'userAuth'
       })
     } else {
-      console.log('Password verified: incorrect')
-      loadingStore.show = false
-      validPassword.value = false
-      passwordField.value = ''
+      clearFields()
     }
   } catch (error) {
     console.log(error)
-    loadingStore.show = false
-    validPassword.value = false
-    passwordField.value = ''
+    clearFields()
   }
 }
 </script>
 
 <template>
-  <ModalBaseTemplate :show="props.showPasswordModal">
+  <ModalBaseTemplate :show="passwordModalStore.showPasswordModal">
     <form @submit.prevent="checkPassword">
       <div>
         <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-info-light">
@@ -65,7 +54,7 @@ async function checkPassword() {
           <div class="mt-6">
             <input
               id="password"
-              v-model="passwordField"
+              v-model="passwordModalStore.passwordField"
               type="password"
               name="password"
               autocomplete="password"
@@ -73,26 +62,30 @@ async function checkPassword() {
             />
           </div>
           <p
-            v-if="validPassword != true && validPassword != null"
-            class="text-danger text-sm text-left mt-2"
+            v-if="
+              passwordModalStore.validPassword != true && passwordModalStore.validPassword != null
+            "
+            class="mt-2 text-left text-sm text-danger"
           >
             Incorrect Password
           </p>
         </div>
       </div>
-      <div class="mt-6 space-y-3">
-        <StandardButton
-          :type="'submit'"
-          :text="'Sign Out'"
-          :disabled="passwordField === ''"
-          class="btn-primary w-full justify-center"
-        />
-        <StandardButton
-          :type="'button'"
-          :text="'Cancel'"
-          class="btn-secondary w-full justify-center"
-          @click="emit('hidePasswordModal', false)"
-        />
+      <div class="mt-6">
+        <div class="grid grid-cols-2 gap-3">
+          <StandardButton
+            :type="'submit'"
+            :text="'Sign Out'"
+            :disabled="passwordModalStore.passwordField === ''"
+            class="btn-primary w-full justify-center"
+          />
+          <StandardButton
+            :type="'button'"
+            :text="'Cancel'"
+            class="btn-secondary w-full justify-center"
+            @click="passwordModalStore.$reset()"
+          />
+        </div>
       </div>
     </form>
   </ModalBaseTemplate>

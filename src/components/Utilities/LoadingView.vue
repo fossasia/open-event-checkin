@@ -1,12 +1,12 @@
 <template>
   <div
-    class="fixed top-0 left-0 right-0 bottom-0 w-full h-screen z-50 overflow-hidden bg-secondary-light opacity-75 flex flex-col items-center justify-center"
+    class="fixed bottom-0 left-0 right-0 top-0 z-50 flex h-screen w-full flex-col items-center justify-center overflow-hidden bg-secondary-light"
   >
     <!-- <svg
       class="w-16 h-16 rounded-full animate-spin text-info" viewBox="0 0 24 24"
     ></svg> -->
     <svg
-      class="animate-spin h-16 w-16 text-primary"
+      class="h-16 w-16 animate-spin text-primary"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"

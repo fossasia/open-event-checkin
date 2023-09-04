@@ -1,53 +1,60 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useLoadingStore } from '@/stores/loading'
-import { useApiStore } from '@/stores/api'
-import StandardButton from '@/components/Shared/StandardButton.vue'
-
-// form fields
-const email = ref('')
-const password = ref('')
-
-// error handling
-const showError = ref(false)
+import { useAuthStore } from '@/stores/auth'
+import StandardButton from '@/components/Common/StandardButton.vue'
 
 // stores
 const loadingStore = useLoadingStore()
-loadingStore.show = false
+const authStore = useAuthStore()
+
+const email = ref('')
+const password = ref('')
+const showError = ref(false)
+
 // router
 const router = useRouter()
 
 async function submitLogin() {
-  loadingStore.show = true
+  loadingStore.contentLoading()
+  showError.value = false
 
   const payload = {
     email: email.value,
     password: password.value
   }
 
-  await useApiStore()
-    .post(true, 'auth/login', payload, false)
-    .then(async (res) => {
-      localStorage.setItem('token', Object(res).access_token)
-      showError.value = false
-      loadingStore.show = false
+  await authStore
+    .login(payload)
+    .then(async () => {
       router.push({
         name: 'stationSelector'
       })
     })
     .catch((err) => {
-      loadingStore.show = false
       showError.value = true
     })
+
+  loadingStore.contentLoaded()
 }
+
+onMounted(() => {
+  if (authStore.isAuthenticated) {
+    router.push({
+      name: 'stationSelector'
+    })
+  }
+
+  loadingStore.contentLoaded()
+})
 </script>
 
 <template>
-  <div class="flex flex-col justify-center h-screen -mt-16">
-    <div class="sm:mx-auto my-auto sm:w-full sm:max-w-sm">
+  <div class="-mt-16 flex h-screen flex-col justify-center">
+    <div class="my-auto sm:mx-auto sm:w-full sm:max-w-sm">
       <h2 class="text-center">Sign in to your account</h2>
-      <form class="space-y-3 mt-10" @submit.prevent="submitLogin">
+      <form class="mt-10 space-y-3" @submit.prevent="submitLogin">
         <div>
           <label for="email">Email address</label>
           <div class="mt-2">
@@ -82,7 +89,7 @@ async function submitLogin() {
           <StandardButton
             :type="'submit'"
             :text="'Login'"
-            class="w-full mt-6 justify-center btn-primary"
+            class="btn-primary mt-6 w-full justify-center"
           />
         </div>
 
