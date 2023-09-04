@@ -1,8 +1,10 @@
-import { computed, ref } from 'vue'
-import { defineStore } from 'pinia'
 import { useApiStore } from '@/stores/api'
+import { defineStore } from 'pinia'
+import { computed, ref } from 'vue'
 
-export const useTypeSelectorStore = defineStore('typeSelector', () => {
+export const useStationsStore = defineStore('stations', () => {
+  const apiStore = useApiStore()
+
   const stationTypes = [
     { id: 'registration-kiosk', name: 'Registration (via scan)', href: 'registerKiosk' },
     { id: 'registration-hybrid', name: 'Registration (hybrid)', href: 'registerHybrid' },
@@ -11,17 +13,42 @@ export const useTypeSelectorStore = defineStore('typeSelector', () => {
     { id: 'checkout', name: 'Session Checkout', href: 'scanner' }
   ]
 
+  const actualEventStations = ref([])
   const eventStations = ref([])
 
   async function getStations(eventId) {
-    await useApiStore()
-      .get(true, `events/${eventId}/stations`)
-      .then((res) => {
-        eventStations.value = res.data
+    try {
+      const res = await apiStore.get(true, `events/${eventId}/stations`)
+      actualEventStations.value = res.data
+      // check for those with microlocation-id in attributes to replace id with microlocation-id
+      res.data.forEach((station) => {
+        if (station.attributes['microlocation-id']) {
+          station.id = station.attributes['microlocation-id']
+        }
       })
-      .catch((error) => {
-        throw error
-      })
+      eventStations.value = res.data
+    } catch (error) {
+      return Promise.reject(error)
+    }
+  }
+
+  async function getStationIdWithMicrolocation(microlocationId) {
+    // assuming index of actualEventStations is the same as eventStations
+    // find index of station with microlocation-id
+    const index = eventStations.value.findIndex((station) => {
+      station.id === microlocationId
+    })
+    // get station id from actualEventStations
+    return actualEventStations.value[index].id
+  }
+
+  async function createStation(payload) {
+    try {
+      const res = await apiStore.post(true, 'station', payload)
+      return res.data
+    } catch (error) {
+      return Promise.reject(error)
+    }
   }
 
   const registrationStations = computed(() => {
@@ -98,11 +125,13 @@ export const useTypeSelectorStore = defineStore('typeSelector', () => {
 
   return {
     eventStations,
+    createStation,
     registrationStations,
     checkInDailyStations,
     checkInStations,
     checkOutStations,
     getStations,
+    getStationIdWithMicrolocation,
     stationTypes
   }
 })

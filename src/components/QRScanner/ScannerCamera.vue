@@ -1,77 +1,38 @@
 <script setup>
-import { QrcodeStream } from 'vue-qrcode-reader'
-import { computed, ref } from 'vue'
+import { onBeforeMount } from 'vue'
 import { useRoute } from 'vue-router'
-import { ArrowsRightLeftIcon } from '@heroicons/vue/20/solid'
-import StandardButton from '@/components/Shared/StandardButton.vue'
-import { useQRScannerStore } from '@/stores/qrScanner'
-import { useTypeSelectorStore } from '@/stores/typeSelector'
-
-const qrScannerStore = useQRScannerStore()
-const typeSelectorStore = useTypeSelectorStore()
+import QRCamera from '@/components/Common/QRCamera.vue'
+import { useLoadingStore } from '@/stores/loading'
+import { useProcessCheckInStore } from '@/stores/processCheckIn'
+import { useSessionsStore } from '@/stores/sessions'
+const loadingStore = useLoadingStore()
+const processCheckInStore = useProcessCheckInStore()
+const sessionsStore = useSessionsStore()
 
 // get scanner type from vue router params
 const route = useRoute()
 const scannerType = route.params.scannerType
-const stationId = route.params.stationId
-const eventId = route.params.eventId
+const microlocationId = route.params.stationId
 
-const camera = ref('front')
-const validQRCode = ref(true)
-
-const showMessage = ref(false)
-
-const stationName = computed(() => {
-  const station = typeSelectorStore.eventStations.find(
-    (station) => station.id === parseInt(stationId)
-  )
-  return station.attributes['station-name']
+onBeforeMount(async () => {
+  await sessionsStore.getCurrentSession(microlocationId)
+  loadingStore.contentLoaded()
 })
-
-async function logErrors(promise) {
-  try {
-    await promise
-  } catch (error) {
-    if (error.name === 'OverconstrainedError') {
-      camera.value = 'auto'
-    }
-  }
-}
 </script>
 
 <template>
-  <div class="grow">
-    <div class="py-2 space-y-3">
-      <h2 class="text-center text-xl font-bold capitalize">{{ scannerType }} Scan</h2>
-      <p class="text-center text-lg font-medium">Scan QR on badge</p>
-    </div>
-    <div class="w-full items-center flex justify-center">
-      <div>
-        <qrcode-stream
-          class="!aspect-square !h-auto max-w-lg grid-cols-1 align-middle justify-center items-center"
-          :track="qrScannerStore.selected.value"
-          :camera="camera"
-          @init="logErrors"
-          @decode="
-            async () => {
-              showMessage = await qrScannerStore.checkInAttendeeScannerToRoom(stationId, eventId)
-            }
-          "
-        >
-        </qrcode-stream>
-        <StandardButton
-          text="Switch Camera"
-          :icon="ArrowsRightLeftIcon"
-          class="bg-blue-600 text-white hover:bg-blue-500 mt-4"
-          @click="camera = camera === 'front' ? 'rear' : 'front'"
-        />
-      </div>
-    </div>
-    <div v-if="showMessage" class="text-green-500 font-bold mt-5 text-lg text-center">
-      {{ qrScannerStore.name }} has been checked into {{ stationName }}
-    </div>
-    <div v-else class="text-red-500 font-bold mt-5 text-lg text-center">
-      {{ qrScannerStore.errorString }}
-    </div>
+  <div
+    class="grid w-full grid-cols-1 place-items-center items-center justify-center gap-6 align-middle"
+  >
+    <QRCamera
+      :qr-type="'checkIn'"
+      :scan-type="scannerType"
+      :details="sessionsStore.formattedSessionDetails"
+    />
+    <p class="text-bold mt-5 text-center text-lg">
+      <span :class="processCheckInStore.response.classType"
+        >{{ processCheckInStore.response.message }}
+      </span>
+    </p>
   </div>
 </template>

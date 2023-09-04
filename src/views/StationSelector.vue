@@ -1,7 +1,7 @@
 <script setup>
-import TypeSelector from '@/components/TypeSelector.vue'
+import StationSelector from '@/components/StationSelector.vue'
 </script>
 
 <template>
-  <TypeSelector />
+  <StationSelector />
 </template>

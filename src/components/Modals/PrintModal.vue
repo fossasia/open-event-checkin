@@ -1,174 +1,102 @@
 <script setup>
-import { computed, ref } from 'vue'
-import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
+import { ref } from 'vue'
+import { DialogTitle } from '@headlessui/vue'
 import { PrinterIcon } from '@heroicons/vue/24/outline'
-import { ExclamationCircleIcon } from '@heroicons/vue/24/outline'
-import StandardButton from '@/components/Shared/StandardButton.vue'
 import { usePrintModalStore } from '@/stores/printModal'
+import { useNotificationStore } from '@/stores/notification'
+import ModalBaseTemplate from '@/components/Modals/ModalBaseTemplate.vue'
+import StandardButton from '@/components/Common/StandardButton.vue'
+import MultiListSelector from '@/components/Common/MultiListSelector.vue'
 
 const printModalStore = usePrintModalStore()
-
-const props = defineProps({
-  showPrintModal: Boolean,
-  validQRCode: Boolean
-})
-const emit = defineEmits(['hideModal', 'print'])
+const notificationStore = useNotificationStore()
 
 const disableButton = ref(false)
-const printingText = ref(false)
-
-const titleText = computed(() => (props.validQRCode ? 'Select items to print' : 'Error!'))
-const messageText = computed(() => (!props.validQRCode ? 'Please scan a valid QR code' : ''))
-
-const printDelay = (delayHideModal, delayPrint) => {
-  setTimeout(() => emit('hideModal'), delayHideModal)
+function printDelay(delayHideModal, delayPrint) {
+  setTimeout(() => (printModalStore.showPrintModal = false), delayHideModal)
   setTimeout(() => {
-    emit('print')
-    printModalStore.reset()
+    notificationStore.addNotification(
+      ['Successfully printed!', 'Please collect your ticket.'],
+      'success'
+    )
+    disableButton.value = false
+    printModalStore.$reset()
   }, delayPrint)
 }
 
-const print = () => {
-  if (props.validQRCode) {
-    printModalStore.printOptions.forEach((element) => (element.disabled = true))
-    printingText.value = true
-    disableButton.value = true
-    console.log(printModalStore.selectedOptions)
-    printDelay(3000, 3200)
-  } else {
-    printDelay(0, 200)
-    console.log('Rescan')
-  }
+function print() {
+  printModalStore.printingText = true
+  disableButton.value = true
+  const stringFields = printModalStore.selectedOptions.map((element) => element.id).join(',')
+
+  printModalStore.getPDF(stringFields)
+  printDelay(3000, 3200)
 }
 </script>
 
 <template>
-  <TransitionRoot as="template" :show="props.showPrintModal">
-    <Dialog as="div" class="relative z-30" @close="$emit('hideModal')">
-      <TransitionChild
-        as="template"
-        enter="ease-out duration-300"
-        enter-from="opacity-0"
-        enter-to="opacity-100"
-        leave="ease-in duration-200"
-        leave-from="opacity-100"
-        leave-to="opacity-0"
-      >
-        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-      </TransitionChild>
+  <ModalBaseTemplate :show="printModalStore.showPrintModal">
+    <div>
+      <!--Icons-->
+      <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-info-light">
+        <PrinterIcon class="h-6 w-6 text-info" aria-hidden="true" />
+      </div>
+      <!--Title-->
+      <div class="mt-3 sm:mt-5">
+        <div v-if="printModalStore.hasOptions">
+          <DialogTitle as="h3" class="text-center">Select Fields to Print </DialogTitle>
 
-      <div class="fixed inset-0 z-10 overflow-y-auto">
-        <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-          <TransitionChild
-            as="template"
-            enter="ease-out duration-300"
-            enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            enter-to="opacity-100 translate-y-0 sm:scale-100"
-            leave="ease-in duration-200"
-            leave-from="opacity-100 translate-y-0 sm:scale-100"
-            leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-          >
-            <DialogPanel
-              class="w-full h-screen absolute top-0 left-0 flex justify-center items-center"
-            >
-              <div
-                class="relative transform overflow-hidden rounded-lg bg-white px-4 mx-6 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 w-full sm:max-w-sm sm:p-6"
-              >
-                <div>
-                  <!--Icons-->
-                  <div
-                    :class="[props.validQRCode ? 'bg-green-100' : 'bg-red-100']"
-                    class="mx-auto flex h-12 w-12 items-center justify-center rounded-full"
-                  >
-                    <PrinterIcon
-                      v-if="validQRCode"
-                      class="h-6 w-6 text-green-600"
-                      aria-hidden="true"
-                    />
-                    <ExclamationCircleIcon v-else class="h-6 w-6 text-red-600" aria-hidden="true" />
-                  </div>
-
-                  <!--Title-->
-                  <div class="mt-3 text-center sm:mt-5">
-                    <DialogTitle as="h3" class="text-base font-semibold leading-6 text-gray-900">
-                      <span v-if="!printingText">{{ titleText }}</span>
-                      <span v-else>Printing...</span>
-                    </DialogTitle>
-
-                    <!--Checklist-->
-                    <fieldset v-if="props.validQRCode">
-                      <div class="space-y-5 mt-6 sm:mt-5 flex flex-col items-start">
-                        <div
-                          v-for="(printOption, index) in printModalStore.printOptions"
-                          :key="index"
-                          class="relative flex items-start px-12 sm:px-6 first:grayscale"
-                        >
-                          <div class="flex h-6 items-center">
-                            <input
-                              :id="printOption.id"
-                              :disabled="printOption.disabled"
-                              :name="printOption.name"
-                              :checked="printOption.checked"
-                              type="checkbox"
-                              class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
-                              @click="printModalStore.selectOption(printOption)"
-                            />
-                          </div>
-                          <div class="ml-3 text-sm leading-6 text-start">
-                            <label :for="printOption.id" class="font-medium text-gray-900">{{
-                              printOption.label
-                            }}</label>
-                          </div>
-                        </div>
-                        <!--Select all button-->
-                        <StandardButton
-                          :text="
-                            printModalStore.selectedOptions.length === 5
-                              ? 'Deselect All'
-                              : 'Select All'
-                          "
-                          :disabled="disableButton"
-                          :class="[
-                            disableButton
-                              ? 'cursor-not-allowed opacity-20'
-                              : 'hover:bg-blue-500 hover:border-blue-500 hover:text-white',
-                            'text-blue-600 border border-blue-600 ml-6'
-                          ]"
-                          @click="printModalStore.selectOrDeselectAll"
-                        />
-                      </div>
-
-                      <!--DIVIDER-->
-                      <div class="mt-5">
-                        <div class="border-0 border-b mx-6 sm:m-0" />
-                      </div>
-                    </fieldset>
-                    <p v-if="messageText !== ''" class="text-sm text-gray-500 mt-3">
-                      {{ messageText }}
-                    </p>
-                    <p v-if="printingText" class="text-sm text-gray-500 mt-3">
-                      Please wait while we print your pass.
-                    </p>
-                  </div>
-                </div>
-
-                <!--Print button-->
-                <div class="mt-6 sm:mt-5 mx-6 sm:mx-0">
-                  <StandardButton
-                    :text="props.validQRCode ? 'Print' : 'Try Again'"
-                    :disabled="disableButton"
-                    :class="[
-                      disableButton && 'cursor-not-allowed opacity-20',
-                      'bg-blue-600 text-white hover:bg-blue-500 w-full justify-center'
-                    ]"
-                    @click="print"
-                  />
-                </div>
-              </div>
-            </DialogPanel>
-          </TransitionChild>
+          <!--Checklist-->
+          <fieldset v-if="printModalStore.printOptions.length > 0">
+            <div class="mt-3 space-x-3">
+              <StandardButton
+                :text="'Select All'"
+                class="bg-primary"
+                @click="printModalStore.selectAll"
+              />
+              <StandardButton
+                :text="'Deselect All'"
+                class="bg-secondary"
+                @click="printModalStore.selectedOptions = []"
+              />
+            </div>
+            <MultiListSelector
+              :data="printModalStore.printOptions"
+              :is-single="false"
+              :selected-options="printModalStore.selectedOptions"
+              @update-selected="(n) => (printModalStore.selectedOptions = n)"
+            ></MultiListSelector>
+          </fieldset>
+          <p v-else class="text-center">No fields to select. Please proceed to print</p>
+          <p v-if="printModalStore.printingText" class="my-3 text-center">Printing your pass...</p>
+        </div>
+        <div v-else>
+          <DialogTitle as="h3" class="text-center">No Fields to Print</DialogTitle>
         </div>
       </div>
-    </Dialog>
-  </TransitionRoot>
+    </div>
+    <!--  -->
+    <iframe id="printFrame" class="hidden"> </iframe>
+    <!--Print button-->
+    <div class="mt-3">
+      <div :class="[printModalStore.hasOptions ? 'grid-cols-2' : '', 'grid gap-3']">
+        <StandardButton
+          :type="'button'"
+          :text="'Close'"
+          class="btn-secondary w-full justify-center"
+          @click="printModalStore.showPrintModal = false"
+        />
+        <StandardButton
+          v-if="printModalStore.hasOptions"
+          :text="'Print'"
+          :disabled="disableButton"
+          :class="[
+            disableButton && 'cursor-not-allowed opacity-20',
+            'w-full justify-center bg-primary text-white'
+          ]"
+          @click="print"
+        />
+      </div>
+    </div>
+  </ModalBaseTemplate>
 </template>

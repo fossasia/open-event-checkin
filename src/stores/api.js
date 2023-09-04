@@ -1,8 +1,11 @@
-import { mande, defaults } from 'mande'
+import { defaults, mande } from 'mande'
 import { defineStore } from 'pinia'
 
 export const useApiStore = defineStore('api', () => {
-  let instance = mande('https://test-api.eventyay.com/v1/')
+  const apiUrl = import.meta.env.PROD
+    ? import.meta.env.VITE_PROD_API_URL
+    : import.meta.env.VITE_TEST_API_URL
+  let instance = mande(apiUrl)
 
   function setToken() {
     const token = localStorage.getItem('token')
@@ -15,7 +18,7 @@ export const useApiStore = defineStore('api', () => {
 
   function newSession(authenticated) {
     // reinit
-    instance = mande('https://test-api.eventyay.com/v1/')
+    instance = mande(apiUrl)
     if (authenticated) {
       setToken()
     } else {
@@ -33,11 +36,11 @@ export const useApiStore = defineStore('api', () => {
         return await instance.get(path, payload)
       }
     } catch (error) {
-      return await Promise.reject(error)
+      return Promise.reject(error)
     }
   }
 
-  async function post(requiresAuth, path, payload, hasBody) {
+  async function post(requiresAuth, path, payload = false, hasBody = false) {
     newSession(requiresAuth)
     try {
       if (hasBody) {
@@ -58,35 +61,9 @@ export const useApiStore = defineStore('api', () => {
         }
       }
     } catch (error) {
-      const customError = {
-        message: 'An error occurred during the POST request',
-        status: error.response ? error.response.status : null,
-        data: error.response ? error.response.data : null,
-        originalError: error
-      }
-      return Promise.reject(customError)
+      return Promise.reject(error)
     }
   }
 
-  async function remove(path) {
-    newSession(true)
-    try {
-      return await instance.delete(path)
-    } catch (error) {
-      return await Promise.reject(error)
-    }
-  }
-
-  async function patch(path, payload) {
-    newSession(true)
-    instance.options.headers['Content-Type'] = 'application/vnd.api+json'
-    instance.options.headers['Accept'] = 'application/vnd.api+json'
-
-    try {
-      return await instance.patch(path, payload)
-    } catch (error) {
-      return await Promise.reject(error)
-    }
-  }
-  return { instance, setToken, clearToken, newSession, get, post, remove, patch }
+  return { instance, setToken, clearToken, newSession, get, post }
 })

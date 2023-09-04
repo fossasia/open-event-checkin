@@ -1,10 +1,11 @@
 <script setup>
 import { useRouter, useRoute } from 'vue-router'
-import { useTypeSelectorStore } from '@/stores/typeSelector'
+import { useStationsStore } from '@/stores/stations'
+import PrintModal from '@/components/Modals/PrintModal.vue'
 
 const router = useRouter()
 const route = useRoute()
-const typeSelectorStore = useTypeSelectorStore()
+const stationsStore = useStationsStore()
 
 // // check validity of eventId and registration type
 const eventId = route.params.eventId
@@ -17,7 +18,7 @@ if (!eventId || !registrationType) {
 
 // // check if registrationType is valid
 // // loop through array if registrationType is in object id
-const registrationTypes = typeSelectorStore.stationTypes
+const registrationTypes = stationsStore.stationTypes
 const registrationTypeIsValid = registrationTypes.some((type) => type.id === registrationType)
 
 // // if invalid redirect back to login
@@ -26,7 +27,6 @@ if (!registrationTypeIsValid) {
 }
 </script>
 <template>
-  <div class="m-6">
-    <RouterView />
-  </div>
+  <RouterView />
+  <PrintModal />
 </template>

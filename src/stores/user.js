@@ -1,18 +1,24 @@
+import { useApiStore } from '@/stores/api'
 import { defineStore } from 'pinia'
 
 export const useUserStore = defineStore('user', () => {
-  async function storeDetails(payload) {
-    const attributes = payload.data.attributes
-
-    const userDetails = {
-      user_id: payload.data.id,
-      public_name: attributes['public-name'],
-      first_name: attributes['first-name'],
-      last_name: attributes['last-name'],
-      email: attributes['email']
+  async function getUserId() {
+    try {
+      const res = await useApiStore().get(true, `users/user-details/get-user-id`)
+      return res.user_id
+    } catch (error) {
+      return Promise.reject(error)
     }
-    localStorage.setItem('user_details', JSON.stringify(userDetails))
   }
 
-  return { storeDetails }
+  async function getUserDetails(userId) {
+    try {
+      const res = await useApiStore().get(true, `users/${userId}`)
+      return res
+    } catch (error) {
+      return Promise.reject(error)
+    }
+  }
+
+  return { getUserId, getUserDetails }
 })

@@ -1,82 +1,109 @@
+import { useApiStore } from '@/stores/api'
+import { useLoadingStore } from '@/stores/loading'
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 
 export const usePrintModalStore = defineStore('printModal', () => {
-  const printOptions = [
-    {
-      id: 'code',
-      name: 'code',
-      label: 'QR Code',
-      checked: ref(true),
-      disabled: true
-    },
-    {
-      id: 'name',
-      name: 'name',
-      label: 'Name',
-      checked: ref(true),
-      disabled: false
-    },
-    {
-      id: 'email',
-      name: 'email',
-      label: 'Email',
-      checked: ref(true),
-      disabled: false
-    },
-    {
-      id: 'org',
-      name: 'org',
-      label: 'Organisation',
-      checked: ref(true),
-      disabled: false
-    },
-    {
-      id: 'role',
-      name: 'role',
-      label: 'Role',
-      checked: ref(true),
-      disabled: false
-    }
-  ]
-
+  const apiStore = useApiStore()
+  const loadingStore = useLoadingStore()
+  const showPrintModal = ref(false)
+  const printingText = ref(false)
+  const attendeeId = ref(null)
+  const ticketId = ref(null)
+  //id of all options
+  const allOptions = ref([])
+  //for user interaction
+  const printOptions = ref([])
   //updates when checked
-  const selectedOptions = ref(['code', 'name', 'email', 'org', 'role'])
+  const selectedOptions = ref([])
 
-  function selectOption(option) {
-    option.checked = !option.checked
-    if (!option.checked) {
-      selectedOptions.value.splice(selectedOptions.value.indexOf(option.id), 1)
-    } else {
-      selectedOptions.value.push(option.id)
-    }
+  const hasOptions = computed(() => {
+    return allOptions.value.length === 0
+  })
+
+  function selectAll() {
+    selectedOptions.value = printOptions.value
   }
 
-  function selectOrDeselectAll() {
-    if (selectedOptions.value.length === 5) {
-      printOptions.forEach((option) => {
-        if (option.id !== 'code') {
-          option.checked.value = false
-          selectedOptions.value = ['code']
+  function $reset() {
+    showPrintModal.value = false
+    printingText.value = false
+    attendeeId.value = null
+    ticketId.value = null
+    allOptions.value = []
+    printOptions.value = []
+    selectedOptions.value = []
+  }
+
+  async function getBadgeFields() {
+    try {
+      const fields = await apiStore.get(true, `tickets/${ticketId.value}/badge-forms`)
+      allOptions.value = fields.map((field) => {
+        return {
+          id: field.field_identifier,
+          name: field.custom_field
         }
       })
-    } else {
-      printOptions.forEach((option) => {
-        option.checked.value = true
-        selectedOptions.value = ['code', 'name', 'email', 'org', 'role']
-      })
+
+      //remove QR from array
+      printOptions.value = allOptions.value.filter((field) => field.id !== 'QR')
+      //set selected options to all options
+      selectedOptions.value = printOptions.value
+    } catch (error) {
+      console.error(error)
     }
   }
 
-  function reset() {
-    selectedOptions.value = ['code', 'name', 'email', 'org', 'role']
-    printOptions.forEach((option) => {
-      if (option.id !== 'code') {
-        option.disabled = false
-        option.checked.value = true
-      }
+  async function setPrintDetails(tid, aid) {
+    loadingStore.contentLoading()
+    ticketId.value = String(tid)
+    attendeeId.value = String(aid)
+    await getBadgeFields()
+    loadingStore.contentLoaded()
+    nextTick(() => {
+      showPrintModal.value = true
     })
   }
 
-  return { printOptions, selectedOptions, selectOption, selectOrDeselectAll, reset }
+  async function getPDF(fields) {
+    try {
+      const url = await apiStore.get(
+        true,
+        `badge-forms/print-badge-pdf?attendee_id=${attendeeId.value}&list_field_show=${fields}`
+      )
+
+      //check if state is production
+      // need to use URL from same domain to prevent origin error
+      let objFra = document.getElementById('printFrame')
+
+      if (process.env.NODE_ENV !== 'development') {
+        objFra.src = '/dist/test.pdf'
+      } else {
+        const pdf = await apiStore.get(true, url.task_url.substring(4))
+        objFra.src = pdf.result.download_url
+      }
+      objFra.onload = () => {
+        // Trigger the print function
+        objFra.contentWindow.print()
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  return {
+    showPrintModal,
+    printingText,
+    ticketId,
+    attendeeId,
+    allOptions,
+    printOptions,
+    selectedOptions,
+    hasOptions,
+    selectAll,
+    $reset,
+    setPrintDetails,
+    getBadgeFields,
+    getPDF
+  }
 })
