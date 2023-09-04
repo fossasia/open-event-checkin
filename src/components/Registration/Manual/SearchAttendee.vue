@@ -225,6 +225,7 @@ const filteredAttendees = computed(() => {
           v-for="attendee in filteredAttendees"
           :key="attendee.id"
           :value="attendee"
+          :disabled="true"
           as="template"
         >
           <li class="flex cursor-default select-none p-3">
