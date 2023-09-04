@@ -33,7 +33,8 @@ export const useNavbarStore = defineStore('navbar', () => {
       }
       // find station name
       const station = stationsStore.eventStations.find(
-        (station) => station.id === parseInt(route.params.stationId)
+        // provide base for parse Int
+        (station) => station.id === parseInt(route.params.stationId, 10)
       )
       if (!station) {
         return ''
