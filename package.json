@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "vite",
+    "build:staging": "vite build --mode staging",
     "build": "vite build",
     "preview": "vite preview --port 8080 --host",
     "test:unit": "vitest",
