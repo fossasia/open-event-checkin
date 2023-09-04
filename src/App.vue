@@ -9,10 +9,10 @@ import LoadingView from '@/components/Utilities/LoadingView.vue'
 <template>
   <div class="w-full">
     <NavBar />
-    <div class="max-w-7xl px-2 sm:px-4 lg:px-8 mx-auto">
+    <div class="mx-auto max-w-7xl px-2 sm:px-4 lg:px-8">
       <RouterView />
     </div>
   </div>
   <NotificationHolder />
-  <LoadingView v-if="useLoadingStore().show"></LoadingView>
+  <LoadingView v-if="useLoadingStore().loading"></LoadingView>
 </template>

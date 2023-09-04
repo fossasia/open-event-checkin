@@ -1,9 +1,12 @@
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeMount, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { useSearchAttendeeStore } from '@/stores/searchAttendee'
+import { useLoadingStore } from '@/stores/loading'
+import { useAttendeesStore } from '@/stores/attendees'
+import { useTicketsStore } from '@/stores/tickets'
+import { useProcessRegistrationStore } from '@/stores/processRegistration'
 import { usePrintModalStore } from '@/stores/printModal'
-import StandardButton from '@/components/Shared/StandardButton.vue'
+import StandardButton from '@/components/Common/StandardButton.vue'
 import {
   CheckIcon,
   ArrowUturnLeftIcon,
@@ -26,13 +29,17 @@ import {
   ListboxOption
 } from '@headlessui/vue'
 
-const searchAttendeeStore = useSearchAttendeeStore()
+const loadingStore = useLoadingStore()
+const attendeesStore = useAttendeesStore()
+const ticketsStore = useTicketsStore()
+const processRegistrationStore = useProcessRegistrationStore()
 const printModalStore = usePrintModalStore()
+
 const route = useRoute()
-const isLoading = ref(false)
-const query = ref('')
 const stationId = route.params.stationId
 const eventId = route.params.eventId
+const isFetchingFiltered = ref(false)
+const query = ref('')
 
 const displayMenuOpen = ref(false)
 const searchByType = [
@@ -41,30 +48,32 @@ const searchByType = [
 ]
 
 const selectedSearchBy = ref(searchByType[0])
-const selectedFields = ref([searchAttendeeStore.filterOptions[0]])
+const selectedFields = ref([])
 
 watch(query, async (newValue) => {
-  if (newValue === '') {
-    setTimeout(() => searchAttendeeStore.clearAttendees(), 700)
+  if (newValue === '' || newValue === null) {
+    setTimeout(() => attendeesStore.clearAttendees(), 700)
   } else {
-    isLoading.value = true
-    await searchAttendeeStore.fetchAttendees(
+    isFetchingFiltered.value = true
+    await attendeesStore.fetchAttendees(
       route.params.eventId,
       selectedSearchBy.value.id,
       newValue.toLowerCase()
     )
-    isLoading.value = false
+    isFetchingFiltered.value = false
   }
 })
 
-onMounted(() => {
-  searchAttendeeStore.getTicketDetails(eventId)
+onBeforeMount(async () => {
+  ticketsStore.$reset()
+  await ticketsStore.getBadgeFormFields(eventId)
+  loadingStore.contentLoaded()
 })
 
 const filteredAttendees = computed(() => {
   // check within info object and remove object key value if selected by search by type
   const selectedFieldsIds = selectedFields.value.map((f) => f.id)
-  return searchAttendeeStore.people.map((a) => {
+  return attendeesStore.attendees.map((a) => {
     const info = a.info
     // check if key is in selected fields
     // if false, remove the key value pair
@@ -76,28 +85,11 @@ const filteredAttendees = computed(() => {
     return a
   })
 })
-
-async function checkin(id) {
-  const checkedIn = await searchAttendeeStore.checkInAttendee(id, stationId, eventId) // Patch API to check-in
-  // find attendee swith id and set checkedIn to true
-  if (checkedIn) {
-    const person = searchAttendeeStore.people.find((a) => a.id === id)
-    person.checkedIn = true
-  } else console.log('check in failed')
-}
-
-
-function printBadge(ticketId, attendeeId) {
-  printModalStore.ticketId = ticketId
-  printModalStore.attendeeId = attendeeId
-  printModalStore.getBadgeFields()
-  printModalStore.showPrintModal = true
-}
 </script>
 
 <template>
   <div>
-    <Combobox>
+    <Combobox v-model="query" nullable>
       <div class="relative mb-auto rounded-md shadow-sm">
         <div class="absolute inset-y-0 left-0 flex items-center">
           <Listbox v-model="selectedSearchBy" as="div">
@@ -119,7 +111,7 @@ function printBadge(ticketId, attendeeId) {
               leave-to-class="transform opacity-0 scale-95"
             >
               <ListboxOptions
-                class="absolute z-10 mt-1 w-full max-h-60 rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-secondary ring-opacity-30 focus:outline-none sm:text-sm"
+                class="absolute z-10 mt-1 max-h-60 w-full rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-secondary ring-opacity-30 focus:outline-none sm:text-sm"
               >
                 <ListboxOption
                   v-for="d in searchByType"
@@ -134,13 +126,11 @@ function printBadge(ticketId, attendeeId) {
                       'relative cursor-default select-none py-2 pl-10 pr-4'
                     ]"
                   >
-                    <span :class="[active ? 'font-semibold' : 'font-normal', 'block truncate']">{{
-                      d.name
-                    }}</span>
+                    <span class="block truncate">{{ d.name }}</span>
                     <span
                       v-if="selected"
                       :class="[
-                        active ? 'text-white bg-primary' : 'text-body',
+                        active ? 'bg-primary text-white' : 'text-body',
                         'absolute inset-y-0 left-0 flex items-center pl-3 text-primary'
                       ]"
                     >
@@ -153,10 +143,8 @@ function printBadge(ticketId, attendeeId) {
           </Listbox>
         </div>
         <ComboboxInput
-          id="query"
-          type="text"
-          name="query"
-          class="block inset-y-0 w-full pl-44 pr-32"
+          class="inset-y-0 block w-full pl-44 pr-32"
+          :display-value="() => query"
           @change="query = $event.target.value"
         />
         <div class="absolute inset-y-0 right-0 flex items-stretch">
@@ -184,10 +172,13 @@ function printBadge(ticketId, attendeeId) {
               leave-to-class="transform opacity-0 scale-95"
             >
               <ListboxOptions
-                class="absolute z-10 w-40 mt-1 max-h-60 rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-secondary ring-opacity-30 focus:outline-none sm:text-sm"
+                class="absolute z-10 mt-1 max-h-60 w-40 rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-secondary ring-opacity-30 focus:outline-none sm:text-sm"
               >
+                <div v-if="ticketsStore.filterOptions.length === 0" class="p-2 text-center">
+                  No filters found
+                </div>
                 <ListboxOption
-                  v-for="d in searchAttendeeStore.filterOptions"
+                  v-for="d in ticketsStore.filterOptions"
                   :key="d.id"
                   v-slot="{ active, selected }"
                   as="template"
@@ -199,13 +190,11 @@ function printBadge(ticketId, attendeeId) {
                       'relative cursor-default select-none py-2 pl-10 pr-4'
                     ]"
                   >
-                    <span :class="[active ? 'font-semibold' : 'font-normal', 'block truncate']">{{
-                      d.name
-                    }}</span>
+                    <span class="block truncate">{{ d.name }}</span>
                     <span
                       v-if="selected"
                       :class="[
-                        active ? 'text-white bg-primary' : 'text-body',
+                        active ? 'bg-primary text-white' : 'text-body',
                         'absolute inset-y-0 left-0 flex items-center pl-3 text-primary'
                       ]"
                     >
@@ -217,7 +206,7 @@ function printBadge(ticketId, attendeeId) {
                   <StandardButton
                     :text="'Reset'"
                     :icon="ArrowUturnLeftIcon"
-                    class="justify-center w-full btn-secondary"
+                    class="btn-secondary w-full justify-center"
                     @click="selectedFields = [false]"
                   />
                 </ListboxOption>
@@ -230,7 +219,7 @@ function printBadge(ticketId, attendeeId) {
       <ComboboxOptions
         v-if="filteredAttendees.length > 0"
         static
-        class="max-h-96 scroll-py-3 overflow-y-auto p-3 ring-1 ring-secondary rounded-md mt-5 divide-y divide-secondary"
+        class="mt-5 max-h-96 scroll-py-3 divide-y divide-secondary overflow-y-auto rounded-md p-3 ring-1 ring-secondary"
       >
         <ComboboxOption
           v-for="attendee in filteredAttendees"
@@ -255,24 +244,26 @@ function printBadge(ticketId, attendeeId) {
                 <template v-for="(info, key) in attendee.info" :key="key">
                   <span
                     v-if="info"
-                    class="inline-block align-middle rounded-full bg-secondary-light px-2 py-1 my-1 mr-1 text-xs font-medium text-secondary-dark"
+                    class="my-1 mr-1 inline-block rounded-full bg-secondary-light px-2 py-1 align-middle text-xs font-medium text-secondary-dark"
                     >{{ info }}</span
                   >
                 </template>
               </div>
-              <div class="flex items-center justify-end gap-2 mt-3">
+              <div class="mt-3 flex items-center justify-end gap-2">
                 <StandardButton
                   :icon="ArrowRightOnRectangleIcon"
                   :disabled="attendee.checkedIn"
                   :text="attendee.checkedIn ? 'Checked-in' : 'Check-in'"
                   :class="[attendee.checkedIn ? 'btn-secondary' : 'btn-success']"
-                  @click="checkin(attendee.id)"
+                  @click="
+                    processRegistrationStore.processRegistrationCheckin(attendee.id, stationId)
+                  "
                 />
                 <StandardButton
                   :text="'Print'"
                   :icon="PrinterIcon"
                   class="btn-info"
-                  @click="printBadge(attendee.ticketId, attendee.id)"
+                  @click="printModalStore.setPrintDetails(attendee.ticketId, attendee.id)"
                 />
               </div>
             </div>
@@ -280,30 +271,31 @@ function printBadge(ticketId, attendeeId) {
         </ComboboxOption>
       </ComboboxOptions>
       <div
-        v-if="query !== '' && filteredAttendees.length === 0 && !isLoading"
-        class="px-6 py-14 text-center text-sm sm:px-14 ring-1 ring-secondary rounded-md mt-5"
+        v-if="query !== '' && filteredAttendees.length === 0 && !isFetchingFiltered"
+        class="mt-5 rounded-md px-6 py-14 text-center text-sm ring-1 ring-secondary sm:px-14"
       >
         <ExclamationCircleIcon name="exclamation-circle" class="mx-auto h-10 w-10 text-info" />
         <p class="mt-4 font-semibold">No attendees found. Please try again.</p>
       </div>
       <div
-        v-if="query !== '' && isLoading"
-        class="py-14 text-center text-sm ring-1 ring-secondary rounded-md mt-5 flex flex-col justify-start"
+        v-if="query !== '' && isFetchingFiltered"
+        class="mt-5 flex flex-col justify-start rounded-md py-14 text-center text-sm ring-1 ring-secondary"
       >
-        <div class="flex p-3 animate-pulse">
+        <p class="mb-4 font-semibold">Fetching attendees. Please wait...</p>
+        <div class="flex animate-pulse p-3">
           <div class="h-12 w-12 rounded-full bg-secondary-light"></div>
           <div class="ml-4 flex-auto space-y-3">
-            <div class="h-4 bg-secondary-light rounded"></div>
-            <div class="h-4 bg-secondary-light rounded"></div>
+            <div class="h-4 rounded bg-secondary-light"></div>
+            <div class="h-4 rounded bg-secondary-light"></div>
             <div class="mt-3 text-left">
               <span
-                v-for="n in 4" :key="n"
-                class="inline-block rounded-full bg-secondary-light my-1 mr-1 h-4 w-16"
+                v-for="n in 4"
+                :key="n"
+                class="my-1 mr-1 inline-block h-4 w-16 rounded-full bg-secondary-light"
               ></span>
             </div>
           </div>
         </div>
-        <p class="mt-4 font-semibold">Fetching attendees. Please wait...</p>
       </div>
     </Combobox>
   </div>

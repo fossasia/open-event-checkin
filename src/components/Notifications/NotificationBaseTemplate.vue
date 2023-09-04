@@ -26,7 +26,7 @@ onMounted(() => {
           <div class="flex-shrink-0">
             <slot name="icon"></slot>
           </div>
-          <div class="ml-3 w-0 flex-1 pt-0.5 space-y-1">
+          <div class="ml-3 w-0 flex-1 space-y-1 pt-0.5">
             <slot name="messages"></slot>
           </div>
           <div class="ml-4 flex flex-shrink-0">

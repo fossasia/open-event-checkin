@@ -79,14 +79,12 @@ watch(
               'relative cursor-default select-none py-2 pl-3 pr-9'
             ]"
           >
-            <span :class="[active ? 'font-semibold' : 'font-normal', 'block truncate']">{{
-              d.name
-            }}</span>
+            <span class="block truncate">{{ d.name }}</span>
 
             <span
               v-if="selected"
               :class="[
-                active ? 'text-white bg-primary' : 'text-body',
+                active ? 'bg-primary text-white' : 'text-body',
                 'absolute inset-y-0 right-0 flex items-center pr-4'
               ]"
             >

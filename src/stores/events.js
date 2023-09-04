@@ -1,56 +1,50 @@
-import { ref } from 'vue'
-import { defineStore } from 'pinia'
 import { useApiStore } from '@/stores/api'
+import { defineStore } from 'pinia'
+import { ref } from 'vue'
 
 export const useEventsStore = defineStore('events', () => {
+  const apiStore = useApiStore()
   const userEvents = ref([])
   const eventMicrolocations = ref([])
   const eventName = ref('')
 
   async function getEvents() {
-    await useApiStore()
-      .get(true, 'users/user-details/get-user-id') // get user id
-      .then(async (res) => {
-        // clear userEvents
-        userEvents.value = []
-        // get user list of events
-        await useApiStore()
-          .get(true, `users/${res.user_id}/events`)
-          .then((res) => {
-            // remap data to new key
-            res.data.forEach((event) => {
-              userEvents.value.push({
-                id: event.id,
-                name: event.attributes.name
-              })
-            })
-          })
-          .catch((error) => {
-            throw error
-          })
+    try {
+      const res = await apiStore.get(true, 'users/user-details/get-user-id') // get user id
+      // clear userEvents
+      userEvents.value = []
+
+      // get user list of events
+      const r = await apiStore.get(true, `users/${res.user_id}/events`)
+
+      // remap data to new key
+      r.data.forEach((event) => {
+        userEvents.value.push({
+          id: event.id,
+          name: event.attributes.name
+        })
       })
-      .catch((error) => {
-        throw error
-      })
+    } catch (error) {
+      return Promise.reject(error)
+    }
   }
 
   async function getEventMicrolocations(eventId) {
-    await useApiStore()
-      .get(true, `events/${eventId}/microlocations`)
-      .then((res) => {
-        // clear eventMicrolocations
-        eventMicrolocations.value = []
-        // remap data to new key
-        res.data.forEach((microlocation) => {
-          eventMicrolocations.value.push({
-            id: microlocation.id,
-            name: microlocation.attributes.name
-          })
+    try {
+      const res = await apiStore.get(true, `events/${eventId}/microlocations`)
+
+      // clear eventMicrolocations
+      eventMicrolocations.value = []
+      // remap data to new key
+      res.data.forEach((microlocation) => {
+        eventMicrolocations.value.push({
+          id: microlocation.id,
+          name: microlocation.attributes.name
         })
       })
-      .catch((error) => {
-        throw error
-      })
+    } catch (error) {
+      return Promise.reject(error)
+    }
   }
 
   async function getEventName(eventId) {
@@ -58,10 +52,21 @@ export const useEventsStore = defineStore('events', () => {
     // should use getevents then check from inside the list
     // means the user dont have access to the event
     // redirect to 404
-    const event = await useApiStore().get(true, `events/${eventId}`)
-    eventName.value = event.data.attributes.name
-    return eventName.value
+    try {
+      const event = await apiStore.get(true, `events/${eventId}`)
+      eventName.value = event.data.attributes.name
+      return eventName.value
+    } catch (error) {
+      return Promise.reject(error)
+    }
   }
 
-  return { userEvents, eventMicrolocations, getEvents, getEventMicrolocations, getEventName }
+  return {
+    eventName,
+    userEvents,
+    eventMicrolocations,
+    getEvents,
+    getEventMicrolocations,
+    getEventName
+  }
 })

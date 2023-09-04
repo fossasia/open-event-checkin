@@ -1,34 +1,61 @@
 <script setup>
-const sessionName = 'Session 1'
-const trackName = 'Track 1'
-const speakerName = ['Speaker 1', 'Speaker 2']
-const stationName = 'Station 1'
+import { onBeforeMount, ref } from 'vue'
+import { useRoute } from 'vue-router'
+import { useLoadingStore } from '@/stores/loading'
+import { useSessionsStore } from '@/stores/sessions'
+import { useStatsStore } from '@/stores/stats'
+import RefreshButton from '@/components/Utilities/RefreshButton.vue'
 
-const stationStats = [
-  { name: 'Check-In', stat: '71,897' },
-  { name: 'Checkout', stat: '71,897' }
-]
+const loadingStore = useLoadingStore()
+const statsStore = useStatsStore()
+const sessionsStore = useSessionsStore()
+const route = useRoute()
+const eventId = route.params.eventId
+const microlocationId = route.params.stationId
 
-const sessionStats = [
-  { name: 'Check-In', stat: '71,897' },
-  { name: 'Checkout', stat: '71,897' }
-]
+const sessionStats = ref([
+  { name: 'Check-In', stat: '0' },
+  { name: 'Checkout', stat: '0' }
+])
 
-const trackStats = [
-  { name: 'Check-In', stat: '71,897' },
-  { name: 'Checkout', stat: '71,897' }
-]
+const trackStats = ref([
+  { name: 'Check-In', stat: '0' },
+  { name: 'Checkout', stat: '0' }
+])
+
+const trackName = ref('')
+
+onBeforeMount(async () => {
+  // check for location then pass to get curent sessions
+  await sessionsStore.getCurrentSession(microlocationId).then(async (res) => {
+    if (res === undefined) {
+      trackName.value = 'No Track'
+      loadingStore.contentLoaded()
+      return
+    }
+
+    await statsStore.getStats(eventId, res.id).then((r) => {
+      trackName.value = r.session_stats[0].track_name
+      sessionStats.value[0].stat = r.total_session_checked_in
+      sessionStats.value[1].stat = r.total_session_checked_out
+      trackStats.value[0].stat = r.total_track_checked_in
+      trackStats.value[1].stat = r.total_track_checked_out
+      loadingStore.contentLoaded()
+    })
+  })
+})
 </script>
 
 <template>
   <div class="grow">
-    <div class="py-2 space-y-3">
-      <h2 class="text-center">Stats</h2>
+    <div class="my-5 flex items-center justify-between">
+      <h2>Stats</h2>
+      <RefreshButton />
     </div>
     <div class="space-y-5">
       <div>
         <h3 class="text-base font-semibold leading-6 text-body">
-          Current Session: {{ sessionName }} by {{ speakerName }}
+          Current Session: {{ sessionsStore.currentSessionName }}
         </h3>
         <dl class="mt-5 grid grid-cols-2 gap-5">
           <div
@@ -48,23 +75,6 @@ const trackStats = [
         <dl class="mt-5 grid grid-cols-2 gap-5">
           <div
             v-for="item in trackStats"
-            :key="item.name"
-            class="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6"
-          >
-            <dt class="truncate text-base font-medium">{{ item.name }}</dt>
-            <dd class="mt-1 text-3xl font-semibold tracking-tight text-body">
-              {{ item.stat }}
-            </dd>
-          </div>
-        </dl>
-      </div>
-      <div>
-        <h3 class="text-base font-semibold leading-6 text-body">
-          Station Total: {{ stationName }}
-        </h3>
-        <dl class="mt-5 grid grid-cols-2 gap-5">
-          <div
-            v-for="item in stationStats"
             :key="item.name"
             class="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6"
           >

@@ -9,11 +9,11 @@
   }
 
   h1 {
-    @apply text-4xl sm:text-5xl font-bold leading-10  tracking-tight;
+    @apply text-4xl font-bold leading-10 tracking-tight  sm:text-5xl;
   }
 
   h2 {
-    @apply text-2xl sm:text-3xl font-bold leading-9 tracking-tight;
+    @apply text-2xl font-bold leading-9 tracking-tight sm:text-3xl;
   }
 
   h3 {
@@ -21,7 +21,7 @@
   }
 
   button {
-    @apply px-2.5 py-2 rounded-md font-medium text-white text-sm disabled:bg-secondary disabled:hover:bg-secondary disabled:opacity-75 disabled:cursor-not-allowed transition;
+    @apply rounded-md px-2.5 py-2 text-sm font-medium text-white transition disabled:cursor-not-allowed disabled:bg-secondary disabled:opacity-75 disabled:hover:bg-secondary;
   }
 
   label {
@@ -43,7 +43,7 @@
   [multiple],
   textarea,
   select {
-    @apply rounded-md border-0 px-2.5 py-1.5 shadow-sm ring-1 ring-secondary focus:ring-primary focus:ring-2 placeholder:text-secondary sm:text-sm sm:leading-6;
+    @apply rounded-md border-0 px-2.5 py-1.5 shadow-sm ring-1 ring-secondary placeholder:text-secondary focus:ring-2 focus:ring-primary sm:text-sm sm:leading-6;
   }
 }
 
@@ -65,7 +65,7 @@
   }
 
   .btn-warning {
-    @apply bg-warning hover:bg-warning-dark text-body;
+    @apply bg-warning text-body hover:bg-warning-dark;
   }
 
   .btn-info {
@@ -73,6 +73,12 @@
   }
 
   .btn-white {
-    @apply bg-white hover:bg-secondary-light text-body;
+    @apply bg-white text-body hover:bg-secondary-light;
+  }
+}
+
+@layer utilities {
+  .shadow {
+    @apply shadow-secondary;
   }
 }

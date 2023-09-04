@@ -1,8 +1,16 @@
-import { ref } from 'vue'
 import { defineStore } from 'pinia'
+import { ref } from 'vue'
 
 export const usePasswordModalStore = defineStore('passwordModal', () => {
-  const password = ref('1234')
+  const showPasswordModal = ref(false)
+  const passwordField = ref('')
+  const validPassword = ref(null)
 
-  return { password }
+  function $reset() {
+    showPasswordModal.value = false
+    passwordField.value = null
+    validPassword.value = null
+  }
+
+  return { showPasswordModal, passwordField, validPassword, $reset }
 })
