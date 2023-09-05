@@ -2,16 +2,39 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
 export const useCameraStore = defineStore('camera', () => {
-  const cameraSide = ref('front')
+  const selectedCameraId = ref({
+    deviceId: 'environment'
+  })
+  const cameraDevices = ref([])
   const QRCodeValue = ref('')
 
   function $reset() {
-    cameraSide.value = 'front'
+    selectedCameraId.value = 'environment'
+    cameraDevices.value = []
     QRCodeValue.value = ''
   }
 
   function toggleCameraSide() {
-    cameraSide.value = cameraSide.value === 'front' ? 'back' : 'front'
+    // get length of devices
+    // if length is 1, then toggle is not possible
+    const qty = cameraDevices.value
+    if (qty === 1) {
+      return
+    }
+
+    let index = cameraDevices.value.findIndex((device) => {
+      return device.id === selectedCameraId.value.deviceId
+    })
+
+    // selected device is the next index
+    const nextIndex = index + 1
+    // if next index is the last index, then select the first index
+    if (nextIndex === cameraDevices.value.length) {
+      selectedCameraId.value.deviceId = cameraDevices.value[0].id
+      return
+    }
+    // else select the next index
+    selectedCameraId.value.deviceId = cameraDevices.value[nextIndex].id
   }
 
   function paintOutline(detectedCodes, ctx) {
@@ -37,18 +60,17 @@ export const useCameraStore = defineStore('camera', () => {
     value: paintOutline
   }
 
-  async function logErrors(promise) {
-    try {
-      await promise
-    } catch (error) {
-      if (error.name === 'OverconstrainedError') {
-        camera.value = 'auto'
-      }
-    }
-  }
+  function logErrors(error) {
+    console.error(error)
+    if (error.name === "NotAllowedError") {
+      console.error(
+        "You need to grant this page permission to access your camera and microphone.",
+      );
+  }}
 
   return {
-    cameraSide,
+    selectedCameraId,
+    cameraDevices,
     QRCodeValue,
     $reset,
     toggleCameraSide,
