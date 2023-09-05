@@ -19,14 +19,12 @@ onBeforeMount(async () => {
   // this is for if loading the page directly
   // check if user details is empty
   if (!userStore.userDetails) {
-    await userStore
-      .getUserDetails()
-      .catch((err) => {
-        // if error, kick user to login page
-        router.replace({
-          name: 'userAuth'
-        })
+    await userStore.getUserDetails().catch((err) => {
+      // if error, kick user to login page
+      router.replace({
+        name: 'userAuth'
       })
+    })
   }
   nextTick(() => {
     loadingStore.navbarLoaded()

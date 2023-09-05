@@ -36,7 +36,9 @@ export const useNavbarStore = defineStore('navbar', () => {
         // provide base for parse Int
         (station) => station.id === parseInt(route.params.stationId, 10)
       )
+      
       if (!station) {
+        stationsStore.getStations(route.params.eventId)
         return ''
       }
 
@@ -52,7 +54,7 @@ export const useNavbarStore = defineStore('navbar', () => {
 
   // authenticated and not station page
   const stationNavigation = computed(() => {
-    if (route.name !== 'stationSelector') {
+    if (route.name !== 'selectStation') {
       let obj = {
         icon: MagnifyingGlassIcon,
         name: 'Search',

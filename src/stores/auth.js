@@ -1,6 +1,6 @@
 import { useApiStore } from '@/stores/api'
-import { defineStore } from 'pinia'
 import clearStores from '@/utils/clearStores'
+import { defineStore } from 'pinia'
 
 export const useAuthStore = defineStore('auth', () => {
   const apiStore = useApiStore()

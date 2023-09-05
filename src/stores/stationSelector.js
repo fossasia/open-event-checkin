@@ -3,7 +3,7 @@ import { useStationsStore } from '@/stores/stations'
 import { defineStore } from 'pinia'
 import { computed, ref, watch } from 'vue'
 
-export const useStationSelectorStore = defineStore('stationSelector', () => {
+export const useStationSelectorStore = defineStore('selectStation', () => {
   const eventsStore = useEventsStore()
   const stationsStore = useStationsStore()
 
@@ -55,7 +55,7 @@ export const useStationSelectorStore = defineStore('stationSelector', () => {
     if (
       selectedType.value.id === 'registration-kiosk' ||
       selectedType.value.id === 'registration-hybrid' ||
-      selectedType.value.id === 'check-in-daily'
+      selectedType.value.id === 'daily'
     ) {
       return true
     } else if (selectedType.value.id === 'check-in' || selectedType.value.id === 'checkout') {
@@ -70,7 +70,7 @@ export const useStationSelectorStore = defineStore('stationSelector', () => {
       selectedStation.value.id == 'create-new' &&
       (selectedType.value.id == 'registration-kiosk' ||
         selectedType.value.id == 'registration-hybrid' ||
-        selectedType.value.id == 'check-in-daily')
+        selectedType.value.id == 'daily')
     )
   })
 
@@ -80,19 +80,24 @@ export const useStationSelectorStore = defineStore('stationSelector', () => {
       selectedType.value.id === 'registration-hybrid'
     ) {
       return stationsStore.registrationStations
-    } else if (selectedType.value.id === 'check-in-daily') {
+    } else if (selectedType.value.id === 'daily') {
       return stationsStore.checkInDailyStations
     } else {
       return []
     }
   })
 
-  const isRegistrationStations = computed(() => {
+  const isRegisterDailyStations = computed(() => {
     return (
       selectedType.value.id === 'registration-kiosk' ||
       selectedType.value.id === 'registration-hybrid' ||
-      selectedType.value.id === 'check-in-daily'
+      selectedType.value.id === 'daily'
     )
+  })
+
+  const isRegisterStations = computed(() => {
+    return (selectedType.value.id === 'registration-kiosk' ||
+    selectedType.value.id === 'registration-hybrid')
   })
 
   const validation = computed(() => {
@@ -104,7 +109,7 @@ export const useStationSelectorStore = defineStore('stationSelector', () => {
       return selectedMicrolocation.value.id !== null && selectedMicrolocation.value.id !== ''
     }
 
-    if (isRegistrationStations.value) {
+    if (isRegisterDailyStations.value) {
       if (selectedStation.value.id === null) {
         return false
       }
@@ -181,7 +186,8 @@ export const useStationSelectorStore = defineStore('stationSelector', () => {
     selectedStation,
     newStationName,
     isStationType,
-    isRegistrationStations,
+    isRegisterDailyStations,
+    isRegisterStations,
     isCreateNewStation,
     availableStations,
     validation,

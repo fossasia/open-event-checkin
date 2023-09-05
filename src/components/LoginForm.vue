@@ -32,7 +32,7 @@ async function submitLogin() {
     .then(async () => {
       await userStore.getUserDetails()
       router.push({
-        name: 'stationSelector'
+        name: 'selectStation'
       })
     })
     .catch((err) => {
@@ -45,7 +45,7 @@ async function submitLogin() {
 onMounted(() => {
   if (authStore.isAuthenticated) {
     router.push({
-      name: 'stationSelector'
+      name: 'selectStation'
     })
   }
 

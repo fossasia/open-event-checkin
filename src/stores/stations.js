@@ -6,11 +6,21 @@ export const useStationsStore = defineStore('stations', () => {
   const apiStore = useApiStore()
 
   const stationTypes = [
-    { id: 'registration-kiosk', name: 'Registration Kiosk (with Scan only)', href: 'registerKiosk' },
-    { id: 'registration-hybrid', name: 'Registration Station (with Scan & Search)', href: 'registerStation' },
-    { id: 'check-in-daily', name: 'Daily Check-In', href: 'checkin' },
-    { id: 'check-in', name: 'Session Check-In', href: 'checkin' },
-    { id: 'checkout', name: 'Session Checkout', href: 'checkin' }
+    {
+      id: 'registration-kiosk',
+      type: 'registration',
+      name: 'Registration Kiosk (with Scan only)',
+      href: 'registerKiosk'
+    },
+    {
+      id: 'registration-hybrid',
+      type: 'registration',
+      name: 'Registration Station (with Scan & Search)',
+      href: 'registerStation'
+    },
+    { id: 'daily', type: 'daily', name: 'Daily Check-In', href: 'checkIn' },
+    { id: 'check-in', type: 'check in', name: 'Session Check-In', href: 'checkIn' },
+    { id: 'checkout', type: 'check out', name: 'Session Checkout', href: 'checkIn' }
   ]
 
   const actualEventStations = ref([])
@@ -23,7 +33,7 @@ export const useStationsStore = defineStore('stations', () => {
 
   async function getStations(eventId) {
     try {
-      const res = await apiStore.get(true, `events/${eventId}/stations`)
+      const res = await apiStore.get(true, `events/${eventId}/stations?page[size]=1000`)
       actualEventStations.value = res.data
       // check for those with microlocation-id in attributes to replace id with microlocation-id
       res.data.forEach((station) => {

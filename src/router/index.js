@@ -1,16 +1,16 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import { useLoadingStore } from '@/stores/loading'
 import AuthTemplate from '@/AuthTemplate.vue'
-import UserAuth from '@/views/UserAuth.vue'
-import StationSelector from '@/views/StationSelector.vue'
-import CheckInStats from '@/components/CheckIn/CheckInStats.vue'
 import CheckInCamera from '@/components/CheckIn/CheckInCamera.vue'
+import CheckInStats from '@/components/CheckIn/CheckInStats.vue'
 import RegistrationKiosk from '@/components/Registration/Kiosk/Overview.vue'
-import RegistrationStats from '@/components/Registration/Station/RegistrationStats.vue'
 import RegistrationStation from '@/components/Registration/Station/Overview.vue'
-import RegistrationView from '@/views/RegistrationView.vue'
+import RegistrationStats from '@/components/Registration/Station/RegistrationStats.vue'
+import { useLoadingStore } from '@/stores/loading'
 import CheckInView from '@/views/CheckInView.vue'
 import NotFound from '@/views/NotFound.vue'
+import RegistrationView from '@/views/RegistrationView.vue'
+import SelectStation from '@/views/SelectStation.vue'
+import UserAuth from '@/views/UserAuth.vue'
+import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,9 +26,9 @@ const router = createRouter({
       component: AuthTemplate,
       children: [
         {
-          path: 'station-selector',
-          name: 'stationSelector',
-          component: StationSelector
+          path: 'select-station',
+          name: 'selectStation',
+          component: SelectStation
         },
         {
           path: ':eventId/registration/:registrationType/:stationId',
@@ -56,7 +56,7 @@ const router = createRouter({
         {
           // stationId = microlocation over here
           path: ':eventId/:stationId/checkin/:scannerType',
-          name: 'checkin',
+          name: 'checkIn',
           redirect: { name: 'checkInCamera' },
           component: CheckInView,
           children: [

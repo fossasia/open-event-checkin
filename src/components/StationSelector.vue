@@ -5,6 +5,7 @@ import { useStationsStore } from '@/stores/stations'
 import { useStationSelectorStore } from '@/stores/stationSelector'
 import { useRouter } from 'vue-router'
 import { useLoadingStore } from '@/stores/loading'
+import { useNotificationStore } from '@/stores/notification'
 import ListboxSelector from '@/components/Common/ListboxSelector.vue'
 import StandardButton from '@/components/Common/StandardButton.vue'
 
@@ -13,6 +14,7 @@ const eventsStore = useEventsStore()
 const stationsStore = useStationsStore()
 const stationSelectorStore = useStationSelectorStore()
 const loadingStore = useLoadingStore()
+const notificationStore = useNotificationStore()
 loadingStore.contentLoading()
 
 // router
@@ -28,120 +30,114 @@ onBeforeMount(async () => {
   loadingStore.contentLoaded()
 })
 
+async function createStation() {
+  const stationType = stationSelectorStore.selectedType.id
+  // find station type's type from stationTypes
+  const stationTypeObj = stationsStore.stationTypes.find((type) => type.id === stationType)
+  let payload = {
+    data: {
+      attributes: {
+        'station-name': stationSelectorStore.newStationName,
+        //  registration | daily | check in | check out
+        'station-type': stationTypeObj.type
+      },
+      relationships: {
+        event: {
+          data: {
+            type: 'event',
+            id: stationSelectorStore.selectedEvent.id
+          }
+        }
+      },
+      type: 'station'
+    }
+  }
+
+  if (!stationSelectorStore.isRegisterDailyStations) {
+    // but if station type is not registration/daily, use location name
+    payload.data.attributes['station-name'] = stationSelectorStore.selectedMicrolocation.name
+    // add microlocation data to relationships in payload
+    payload.data.relationships.microlocation = {
+      data: {
+        id: stationSelectorStore.selectedMicrolocation.id,
+        type: 'microlocation'
+      }
+    }
+  }
+
+  try {
+    await stationSelectorStore.createStation(payload)
+  } catch (error) {
+    // show notification error
+    loadingStore.contentLoaded()
+    notificationStore.addNotification({ type: 'error', message: 'Error creating new station' })
+  }
+}
+
+function completeSelection() {
+  let routerObj = {
+    name: stationSelectorStore.selectedType.href,
+    params: {
+      eventId: stationSelectorStore.selectedEvent.id,
+      // statopmId is microlocation in not checkin/checkout
+      stationId: stationSelectorStore.selectedStation.id
+    }
+  }
+
+  if (stationSelectorStore.isRegisterDailyStations) {
+    routerObj.params.registrationType = stationSelectorStore.selectedType.id
+  } else {
+    routerObj.params.scannerType = stationSelectorStore.selectedType.id
+  }
+
+  // clear store before redirect
+  stationSelectorStore.$reset()
+  router.push(routerObj)
+}
+
 async function submitForm() {
   loadingStore.contentLoading()
-  if (stationSelectorStore.isRegistrationStations) {
-    // if create new station is selected, create new station
 
-    if (stationSelectorStore.selectedStation.id === 'create-new') {
-      const payload = {
-        data: {
-          attributes: {
-            'station-name': stationSelectorStore.newStationName,
-            //  registration | daily | check in | check out
-            'station-type':
-              stationSelectorStore.selectedType.id === 'check-in-daily' ? 'daily' : 'registration'
-          },
-          relationships: {
-            event: {
-              data: {
-                type: 'event',
-                id: stationSelectorStore.selectedEvent.id
-              }
-            }
-          },
-          type: 'station'
-        }
-      }
-
-      await stationSelectorStore.createStation(payload)
-    }
-
-    const obj = {
-      name: stationSelectorStore.selectedType.href,
-      params: {
-        eventId: stationSelectorStore.selectedEvent.id,
-        registrationType: stationSelectorStore.selectedType.id,
-        stationId: stationSelectorStore.selectedStation.id
-      }
-    }
-
-    // clear store before redirect
-    stationSelectorStore.$reset()
-    router.push(obj)
-  } else {
-    // front end to lock only one station for checkin and checkout
-    // station, check if station exist else create
-    const payload = {
-      data: {
-        attributes: {
-          'station-name': stationSelectorStore.selectedMicrolocation.name,
-          //  check in | check out
-          'station-type':
-            stationSelectorStore.selectedType.id === 'check-in' ? 'check in' : 'check out'
-        },
-        relationships: {
-          event: {
-            data: {
-              type: 'event',
-              id: stationSelectorStore.selectedEvent.id
-            }
-          },
-          microlocation: {
-            data: {
-              id: stationSelectorStore.selectedMicrolocation.id,
-              type: 'microlocation'
-            }
-          }
-        },
-        type: 'station'
-      }
-    }
-
-    if (stationSelectorStore.selectedType.id === 'check-in') {
-      if (stationsStore.checkInStations.length < 1) {
-        // means station not created
-        await stationSelectorStore.createStation(payload)
-      } else {
-        // set first station as selected
-        stationSelectorStore.$patch({
-          selectedStation: {
-            id: stationsStore.checkInStations[0].id,
-            name: stationsStore.checkInStations[0].name
-          }
-        })
-      }
-    }
-
-    if (stationSelectorStore.selectedType.id === 'checkout') {
-      if (stationsStore.checkOutStations.length < 1) {
-        // means station not created
-        await stationSelectorStore.createStation(payload)
-      } else {
-        // set first station as selected
-        stationSelectorStore.$patch({
-          selectedStation: {
-            id: stationsStore.checkOutStations[0].id,
-            name: stationsStore.checkOutStations[0].name
-          }
-        })
-      }
-    }
-
-    const obj = {
-      name: stationSelectorStore.selectedType.href,
-      params: {
-        eventId: stationSelectorStore.selectedEvent.id,
-        // stationId is microlocation
-        stationId: stationSelectorStore.selectedStation.id,
-        scannerType: stationSelectorStore.selectedType.id
-      }
-    }
-
-    // clear store before redirect
-    stationSelectorStore.$reset()
-    router.push(obj)
+  if (
+    stationSelectorStore.isRegisterDailyStations &&
+    stationSelectorStore.selectedStation.id === 'create-new'
+  ) {
+    await createStation()
   }
+
+  // front end to lock only one station for checkin and checkout
+  // station, check if station exist else create
+  if (stationSelectorStore.selectedType.id === 'check-in') {
+    if (stationsStore.checkInStations.length < 1) {
+      // means station not created
+      await createStation()
+    } else {
+      // set first station as selected
+      stationSelectorStore.$patch({
+        selectedStation: {
+          id: stationsStore.checkInStations[0].id,
+          name: stationsStore.checkInStations[0].name
+        }
+      })
+    }
+  }
+
+  if (stationSelectorStore.selectedType.id === 'checkout') {
+    if (stationsStore.checkOutStations.length < 1) {
+      // means station not created
+      await createStation()
+    } else {
+      // set first station as selected
+      stationSelectorStore.$patch({
+        selectedStation: {
+          id: stationsStore.checkOutStations[0].id,
+          name: stationsStore.checkOutStations[0].name
+        }
+      })
+    }
+  }
+
+  completeSelection()
 }
 </script>
 
