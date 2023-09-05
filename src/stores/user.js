@@ -5,6 +5,10 @@ import { ref, computed } from 'vue'
 export const useUserStore = defineStore('user', () => {
   const userDetails = ref(null)
 
+  function $reset() {
+    userDetails.value = null
+  }
+
   async function getUserId() {
     try {
       const res = await useApiStore().get(true, `users/user-details/get-user-id`)
@@ -41,5 +45,5 @@ export const useUserStore = defineStore('user', () => {
     return ''
   })
 
-  return { getUserId, getUserDetails, userName }
+  return { $reset, getUserId, getUserDetails, userName }
 })

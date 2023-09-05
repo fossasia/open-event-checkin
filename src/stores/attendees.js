@@ -11,7 +11,7 @@ export const useAttendeesStore = defineStore('attendees', () => {
 
   const attendees = ref([])
 
-  function clearAttendees() {
+  function $reset() {
     attendees.value = []
   }
 
@@ -117,7 +117,7 @@ export const useAttendeesStore = defineStore('attendees', () => {
 
   return {
     attendees,
-    clearAttendees,
+    $reset,
     fetchAttendees,
     registerAttendee,
     checkInAttendee,

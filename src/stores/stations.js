@@ -8,13 +8,18 @@ export const useStationsStore = defineStore('stations', () => {
   const stationTypes = [
     { id: 'registration-kiosk', name: 'Registration Kiosk (with Scan only)', href: 'registerKiosk' },
     { id: 'registration-hybrid', name: 'Registration Station (with Scan & Search)', href: 'registerStation' },
-    { id: 'check-in-daily', name: 'Daily Check-In', href: 'scanner' },
-    { id: 'check-in', name: 'Session Check-In', href: 'scanner' },
-    { id: 'checkout', name: 'Session Checkout', href: 'scanner' }
+    { id: 'check-in-daily', name: 'Daily Check-In', href: 'checkin' },
+    { id: 'check-in', name: 'Session Check-In', href: 'checkin' },
+    { id: 'checkout', name: 'Session Checkout', href: 'checkin' }
   ]
 
   const actualEventStations = ref([])
   const eventStations = ref([])
+
+  function $reset() {
+    actualEventStations.value = []
+    eventStations.value = []
+  }
 
   async function getStations(eventId) {
     try {
@@ -125,6 +130,7 @@ export const useStationsStore = defineStore('stations', () => {
 
   return {
     eventStations,
+    $reset,
     createStation,
     registrationStations,
     checkInDailyStations,

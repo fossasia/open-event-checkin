@@ -11,6 +11,11 @@ export const useSessionsStore = defineStore('sessions', () => {
   const sessions = ref([])
   const currentSession = ref(null)
 
+  function $reset() {
+    sessions.value = []
+    currentSession.value = null
+  }
+
   async function getSessions(eventId) {
     try {
       const res = await apiStore.get(true, `events/${eventId}/sessions`)
@@ -66,5 +71,5 @@ export const useSessionsStore = defineStore('sessions', () => {
     return str
   })
 
-  return { getSessions, getCurrentSession, currentSessionName, formattedSessionDetails }
+  return { getSessions, getCurrentSession, $reset, currentSessionName, formattedSessionDetails }
 })

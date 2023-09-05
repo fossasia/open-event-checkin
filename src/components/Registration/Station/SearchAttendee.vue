@@ -52,7 +52,7 @@ const selectedFields = ref([])
 
 watch(query, async (newValue) => {
   if (newValue === '' || newValue === null) {
-    setTimeout(() => attendeesStore.clearAttendees(), 700)
+    setTimeout(() => attendeesStore.$reset, 700)
   } else {
     isFetchingFiltered.value = true
     await attendeesStore.fetchAttendees(

@@ -1,5 +1,6 @@
 import { useApiStore } from '@/stores/api'
 import { defineStore } from 'pinia'
+import clearStores from '@/utils/clearStores'
 
 export const useAuthStore = defineStore('auth', () => {
   const apiStore = useApiStore()
@@ -9,6 +10,8 @@ export const useAuthStore = defineStore('auth', () => {
       const res = await apiStore.post(false, 'auth/logout')
       useApiStore().clearToken()
       localStorage.clear()
+      // clear all stores as well
+      clearStores()
       return res.success
     } catch (error) {
       return Promise.reject(error)
