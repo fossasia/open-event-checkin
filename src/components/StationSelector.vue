@@ -70,7 +70,10 @@ async function createStation() {
   } catch (error) {
     // show notification error
     loadingStore.contentLoaded()
-    notificationStore.addNotification({ type: 'error', message: 'Error creating new station' })
+    notificationStore.addNotification(
+      ['Error', 'Error creating new station.'],
+      'error'
+    )
   }
 }
 
