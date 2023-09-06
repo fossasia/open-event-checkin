@@ -7,17 +7,16 @@
 [![Twitter Follow](https://img.shields.io/twitter/follow/eventyay.svg?style=social&label=Follow&maxAge=2592000?style=flat-square)](https://twitter.com/eventyay)
 
 ## Communication
-
-Please join our [Mailing list](https://groups.google.com/forum/#!forum/open-event) or [chat channel](https://gitter.im/fossasia/open-event-frontend) to get in touch with the developers.
+Please join our [mailing list](https://groups.google.com/forum/#!forum/open-event) or [chat channel](https://gitter.im/fossasia/open-event-frontend) to get in touch with the developers.
 
 ## Installation
-
 Easily deployed on a variety of platforms. Detailed platform specific instructions have been provided below.
+
 ### Local
-Clone or Fork the codebase and following instructions [below](https://github.com/fossasia/open-event-checkin#running--development)
+Clone or Fork the codebase and following instructions [below](#running--development).
 
 ### Github Pages (using Github Actions)
-Refer to the [workflow](https://github.com/fossasia/open-event-checkin/tree/development/.github/workflows) for deployment
+Refer to the [workflow](https://github.com/fossasia/open-event-checkin/tree/development/.github/workflows) for deployment.
 
 ## Running / Development
 
@@ -69,13 +68,11 @@ npm build
 
 **Master branch**
 
-Deployed in a production environment at [https://checkin.eventyay.com](https://checkin-eventyay.com)
-It consumes the API exposed by master branch deployment of open event server, hosted at [https://api.eventyay.com](https://api.eventyay.com)
+Deployed in a production environment at [checkin.eventyay.com](https://checkin.eventyay.com) it consumes the API exposed by master branch deployment of open event server, hosted at [api.eventyay.com](https://api.eventyay.com).
 
 #### Development branch
 
-Only deployed locally with `npm run dev` or Netlify version when you make a pull request
-It consumes the API exposed by development branch of open event server, hosted at [https://test-api.eventyay.com](https://test-api.eventyay.com)
+Only deployed locally with `npm run dev` or Netlify when you make a pull request it consumes the API exposed by development branch of open event server, hosted at [test-api.eventyay.com](https://test-api.eventyay.com).
 
 ## Further Reading / Useful Links
 
@@ -116,4 +113,4 @@ When you file a feature request or when you are submitting a bug report to the [
 
 This project is currently licensed under the [Apache License version 2.0](LICENSE).
 
-To obtain the software under a different license, Please contact **[FOSSASIA](https://blog.fossasia.org/contact/)**.
+To obtain the software under a different license, Please contact [FOSSASIA](https://blog.fossasia.org/contact/).
