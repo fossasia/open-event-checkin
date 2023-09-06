@@ -45,7 +45,7 @@ export const useSessionsStore = defineStore('sessions', () => {
     if (currentSession.value) {
       return currentSession.value.attributes['title']
     }
-    return 'No Session'
+    return 'No Session Name'
   })
 
   const currentSessionTimeRange = computed(() => {
@@ -60,7 +60,7 @@ export const useSessionsStore = defineStore('sessions', () => {
   })
 
   const formattedSessionDetails = computed(() => {
-    if (currentSession.value === undefined) {
+    if (currentSession.value === null) {
       return 'No Session'
     }
 
@@ -71,5 +71,5 @@ export const useSessionsStore = defineStore('sessions', () => {
     return str
   })
 
-  return { getSessions, getCurrentSession, $reset, currentSessionName, formattedSessionDetails }
+  return { getSessions, currentSession, getCurrentSession, $reset, currentSessionName, formattedSessionDetails }
 })

@@ -6,12 +6,16 @@ export const useCameraStore = defineStore('camera', () => {
     deviceId: 'environment'
   })
   const cameraDevices = ref([])
-  const QRCodeValue = ref('')
+  const paused = ref(false)
+  const qrCodeValue = ref(null)
 
   function $reset() {
-    selectedCameraId.value = 'environment'
+    selectedCameraId.value = {
+      deviceId: 'environment'
+    }
+    paused.value = false
     cameraDevices.value = []
-    QRCodeValue.value = ''
+    qrCodeValue.value = null
   }
 
   function toggleCameraSide() {
@@ -39,7 +43,7 @@ export const useCameraStore = defineStore('camera', () => {
 
   function paintOutline(detectedCodes, ctx) {
     for (const detectedCode of detectedCodes) {
-      QRCodeValue.value = detectedCode.rawValue
+      qrCodeValue.value = detectedCode.rawValue
       const [firstPoint, ...otherPoints] = detectedCode.cornerPoints
       ctx.strokeStyle = 'red'
       ctx.strokeWidth = 5
@@ -70,8 +74,9 @@ export const useCameraStore = defineStore('camera', () => {
 
   return {
     selectedCameraId,
+    paused,
     cameraDevices,
-    QRCodeValue,
+    qrCodeValue,
     $reset,
     toggleCameraSide,
     selected,

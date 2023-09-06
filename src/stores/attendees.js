@@ -8,7 +8,6 @@ export const useAttendeesStore = defineStore('attendees', () => {
   const apiStore = useApiStore()
   const stations = useStationsStore()
   const sessions = useSessionsStore()
-
   const attendees = ref([])
 
   function $reset() {
@@ -69,25 +68,19 @@ export const useAttendeesStore = defineStore('attendees', () => {
     }
   }
 
-  async function checkInAttendee(attendeeId, microlocationId) {
+  async function checkInAttendee(attendeeId, stationId, scannerType) {
     try {
-      const stationId = await stations.getStationIdWithMicrolocation(microlocationId)
-      const session = await sessions.getCurrentSession(microlocationId)
-      const sessionId = session ? String(session.id) : null
-      const payload = {
+      const actualStationId = await stations.getActualStationId(stationId, scannerType)
+      if (!actualStationId) {
+        return Promise.reject('No station found.')
+      }
+      let payload = {
         data: {
           relationships: {
             station: {
               data: {
                 type: 'station',
-                id: String(stationId)
-              }
-            },
-            // session is optional if is daily check in
-            session: {
-              data: {
-                type: 'session',
-                id: sessionId
+                id: String(actualStationId)
               }
             },
             ticket_holder: {
@@ -100,9 +93,23 @@ export const useAttendeesStore = defineStore('attendees', () => {
           type: 'user_check_in'
         }
       }
-      return await apiStore.post(true, 'user-check-in', payload, false)
+
+      if (scannerType !== 'daily') {
+        const session = await sessions.getCurrentSession(stationId)
+        const sessionId = session ? String(session.id) : null
+        payload.data.relationships.session = {
+            data: {
+              type: 'session',
+              id: String(sessionId)
+            }
+          }
+      }
+      return await apiStore.post(true, 'user-check-in', payload)
     } catch (error) {
-      return Promise.reject('Error checking in.')
+      if (error.response?.status === 422) {
+        return Promise.reject('already done')
+      }
+      return Promise.reject('Error processing.')
     }
   }
 

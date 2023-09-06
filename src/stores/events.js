@@ -21,7 +21,7 @@ export const useEventsStore = defineStore('events', () => {
       userEvents.value = []
 
       // get user list of events
-      const r = await apiStore.get(true, `users/${res.user_id}/events?page[size]=1000`)
+      const r = await apiStore.get(true, `users/${res.user_id}/events?sort=name&page[size]=1000`)
 
       // remap data to new key
       r.data.forEach((event) => {

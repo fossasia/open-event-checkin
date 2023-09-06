@@ -14,7 +14,6 @@ const destroyed = ref(false)
 // get list of camera devices of device and side
 onBeforeMount(() => {
   if (navigator.mediaDevices.getUserMedia) {
-    console.log(navigator.mediaDevices.getUserMedia({video:true}));
     navigator.mediaDevices.enumerateDevices()
     .then((devices) => {
       let environmentCameras = []
@@ -48,10 +47,13 @@ onBeforeMount(() => {
 }
 })
 
-async function detectedQR(result) {
+async function detectedQR([result]) {
   if (result) {
-    cameraStore.QRCodeValue = result.rawValue
-    console.log(result)
+    // check if previous data is same
+    if (cameraStore.qrCodeValue === result.rawValue) {
+      return
+    }
+    cameraStore.qrCodeValue = result.rawValue
     emit('scanned')
   }
 }
@@ -65,9 +67,12 @@ function switchCamera(){
 }
 
 </script>
+
+// stop cam from processing if 7
 <template>
   <qrcode-stream
     class="!aspect-square !h-auto max-w-sm"
+    :paused="cameraStore.paused"
     :track="cameraStore.selected.value"
     :constraints="cameraStore.selectedCameraId"
     @error="cameraStore.logErrors"

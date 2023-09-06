@@ -1,9 +1,7 @@
 import { useAttendeesStore } from '@/stores/attendees'
 import { useCameraStore } from '@/stores/camera'
 import { useLoadingStore } from '@/stores/loading'
-import { useTicketsStore } from '@/stores/tickets'
-import extractOrderId from '@/utils/extractOrderId'
-import isValidTicketQR from '@/utils/isValidTicketQR'
+import extractVcardID from '@/utils/extractVcardID'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 
@@ -11,7 +9,6 @@ export const useProcessCheckInStore = defineStore('processCheckIn', () => {
   const loadingStore = useLoadingStore()
   const cameraStore = useCameraStore()
   const attendeesStore = useAttendeesStore()
-  const ticketsStore = useTicketsStore()
 
   const message = ref('')
   const showSuccess = ref(false)
@@ -47,30 +44,33 @@ export const useProcessCheckInStore = defineStore('processCheckIn', () => {
     showError.value = false
   }
 
-  async function checkInAttendeeScannerToRoom(microlocationId) {
-    if (!isValidTicketQR(cameraStore.QRCodeValue)) {
+  async function checkInAttendeeScannerToRoom(microlocationId, scannerType) {
+    const attendeeId = extractVcardID(cameraStore.qrCodeValue)
+    if (!attendeeId) {
       message.value = 'Invalid QR Code'
       showErrorMsg()
       return
     }
 
-    const orderId = extractOrderId(cameraStore.QRCodeValue)
     loadingStore.contentLoading()
 
     try {
-      const attendee = await ticketsStore.getTicketAttendee(orderId)
-      const checkedIn = await attendeesStore.checkInAttendee(attendee.id, microlocationId)
+      const checkedIn = await attendeesStore.checkInAttendee(attendeeId, microlocationId, scannerType)
       if (checkedIn) {
-        message.value = 'Checked in: ' + name
+        message.value = 'Attendee ' + attendeeId + ' scan success.'
         showSuccessMsg()
       } else {
-        message.value = name + ' already checked in.'
+        message.value = 'Unknown error'
         showErrorMsg()
       }
       loadingStore.contentLoaded()
     } catch (error) {
+      if (error === 'already done') {
+        message.value = 'Attendee ' + attendeeId + ' already scanned.'
+      } else {
+        message.value = error
+      }
       loadingStore.contentLoaded()
-      message.value = error
       showErrorMsg()
     }
   }

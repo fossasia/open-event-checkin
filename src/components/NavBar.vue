@@ -38,7 +38,7 @@ onBeforeMount(async () => {
       <div class="flex h-16 items-center justify-between space-x-5">
         <div>
           <div>Eventyay</div>
-          <div v-if="navbarStore.navbarTitle" class="w-60 sm:w-96">
+          <div v-if="navbarStore.navbarTitle" class="w-80 sm:w-96">
             <p class="truncate text-ellipsis text-lg">{{ navbarStore.navbarTitle }}</p>
           </div>
         </div>
@@ -73,7 +73,7 @@ onBeforeMount(async () => {
     <DisclosurePanel v-if="navbarStore.loadMenu" as="nav" class="lg:hidden" aria-label="Global">
       <div class="border-t border-secondary-light pb-3 pt-4">
         <div class="flex items-center px-5">
-          <div class="text-base font-medium">Logged in as: {{ userName }}</div>
+          <div class="text-base font-medium">Logged in as: {{ userStore.userName }}</div>
         </div>
         <div class="mt-3 space-y-1 px-2">
           <DisclosureButton

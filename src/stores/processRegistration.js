@@ -38,12 +38,12 @@ export const useProcessRegistrationStore = defineStore('processRegistration', ()
   }
 
   async function registerAttendeeScanner(stationId) {
-    if (!isValidTicketQR(cameraStore.QRCodeValue)) {
+    if (!isValidTicketQR(cameraStore.qrCodeValue)) {
       notificationStore.addNotification({ type: 'error', message: 'Invalid QR Code' })
       return
     }
 
-    const orderId = extractOrderId(cameraStore.QRCodeValue)
+    const orderId = extractOrderId(cameraStore.qrCodeValue)
     loadingStore.contentLoading()
     try {
       const attendee = await ticketsStore.getTicketAttendee(orderId)

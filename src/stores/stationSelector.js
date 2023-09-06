@@ -18,11 +18,6 @@ export const useStationSelectorStore = defineStore('selectStation', () => {
     href: ''
   })
 
-  const selectedMicrolocation = ref({
-    id: null,
-    name: ''
-  })
-
   const selectedStation = ref({
     id: null,
     name: ''
@@ -39,10 +34,6 @@ export const useStationSelectorStore = defineStore('selectStation', () => {
       id: null,
       name: '',
       href: ''
-    }
-    selectedMicrolocation.value = {
-      id: null,
-      name: ''
     }
     selectedStation.value = {
       id: null,
@@ -106,7 +97,7 @@ export const useStationSelectorStore = defineStore('selectStation', () => {
     }
 
     if (selectedType.value.id === 'check-in' || selectedType.value.id === 'checkout') {
-      return selectedMicrolocation.value.id !== null && selectedMicrolocation.value.id !== ''
+      return selectedStation.value.id !== null && selectedStation.value.id !== ''
     }
 
     if (isRegisterDailyStations.value) {
@@ -133,10 +124,6 @@ export const useStationSelectorStore = defineStore('selectStation', () => {
         name: '',
         href: ''
       }
-      selectedMicrolocation.value = {
-        id: null,
-        name: ''
-      }
       selectedStation.value = {
         id: null,
         name: ''
@@ -146,11 +133,6 @@ export const useStationSelectorStore = defineStore('selectStation', () => {
   })
 
   watch(selectedType, async (newValue, oldValue) => {
-    // type change so clear all fields after
-    selectedMicrolocation.value = {
-      id: null,
-      name: ''
-    }
     if (oldValue) {
       if (
         (oldValue.id === 'registration-kiosk' || oldValue.id === 'registration-hybrid') &&
@@ -182,7 +164,6 @@ export const useStationSelectorStore = defineStore('selectStation', () => {
   return {
     selectedEvent,
     selectedType,
-    selectedMicrolocation,
     selectedStation,
     newStationName,
     isStationType,

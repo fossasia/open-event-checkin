@@ -55,11 +55,11 @@ async function createStation() {
 
   if (!stationSelectorStore.isRegisterDailyStations) {
     // but if station type is not registration/daily, use location name
-    payload.data.attributes['station-name'] = stationSelectorStore.selectedMicrolocation.name
+    payload.data.attributes['station-name'] = stationSelectorStore.selectedStation.name
     // add microlocation data to relationships in payload
     payload.data.relationships.microlocation = {
       data: {
-        id: stationSelectorStore.selectedMicrolocation.id,
+        id: stationSelectorStore.selectedStation.id,
         type: 'microlocation'
       }
     }
@@ -84,9 +84,13 @@ function completeSelection() {
     }
   }
 
-  if (stationSelectorStore.isRegisterDailyStations) {
+  if (stationSelectorStore.isRegisterStations) {
+    // remove the scannerType
+    delete routerObj.params.scannerType
     routerObj.params.registrationType = stationSelectorStore.selectedType.id
   } else {
+    // remove registrationType
+    delete routerObj.params.registrationType
     routerObj.params.scannerType = stationSelectorStore.selectedType.id
   }
 
@@ -111,14 +115,6 @@ async function submitForm() {
     if (stationsStore.checkInStations.length < 1) {
       // means station not created
       await createStation()
-    } else {
-      // set first station as selected
-      stationSelectorStore.$patch({
-        selectedStation: {
-          id: stationsStore.checkInStations[0].id,
-          name: stationsStore.checkInStations[0].name
-        }
-      })
     }
   }
 
@@ -126,14 +122,6 @@ async function submitForm() {
     if (stationsStore.checkOutStations.length < 1) {
       // means station not created
       await createStation()
-    } else {
-      // set first station as selected
-      stationSelectorStore.$patch({
-        selectedStation: {
-          id: stationsStore.checkOutStations[0].id,
-          name: stationsStore.checkOutStations[0].name
-        }
-      })
     }
   }
 
@@ -154,7 +142,7 @@ async function submitForm() {
           @update-selected="(n) => stationSelectorStore.$patch({ selectedEvent: n })"
         ></ListboxSelector>
         <!-- select booth type -->
-        <ListboxSelector
+        <ListboxSelector v-if="stationSelectorStore.selectedEvent.id"
           :select-text="'Select Type'"
           :label="'Type'"
           :data="stationsStore.stationTypes"
@@ -180,8 +168,8 @@ async function submitForm() {
           :select-text="'Select Microlocation'"
           :label="'Microlocation'"
           :data="eventsStore.eventMicrolocations"
-          :selected-option="stationSelectorStore.selectedMicrolocation"
-          @update-selected="(n) => stationSelectorStore.$patch({ selectedMicrolocation: n })"
+          :selected-option="stationSelectorStore.selectedStation"
+          @update-selected="(n) => stationSelectorStore.$patch({ selectedStation: n })"
         ></ListboxSelector>
 
         <!-- display if create new booth is selected -->

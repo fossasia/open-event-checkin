@@ -55,7 +55,7 @@ const router = createRouter({
         },
         {
           // stationId = microlocation over here
-          path: ':eventId/:stationId/checkin/:scannerType',
+          path: ':eventId/:stationId/:scannerType',
           name: 'checkIn',
           redirect: { name: 'checkInCamera' },
           component: CheckInView,

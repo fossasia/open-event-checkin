@@ -11,6 +11,7 @@ const statsStore = useStatsStore()
 const sessionsStore = useSessionsStore()
 const route = useRoute()
 const eventId = route.params.eventId
+const scannerType = route.params.scannerType
 const microlocationId = route.params.stationId
 
 const sessionStats = ref([
@@ -52,7 +53,7 @@ onBeforeMount(async () => {
       <h2>Stats</h2>
       <RefreshButton />
     </div>
-    <div class="space-y-5">
+    <div v-if="scannerType !== 'daily'" class="space-y-5">
       <div>
         <h3 class="text-base font-semibold leading-6 text-body">
           Current Session: {{ sessionsStore.currentSessionName }}
@@ -85,6 +86,9 @@ onBeforeMount(async () => {
           </div>
         </dl>
       </div>
+    </div>
+    <div v-else>
+      Work in progress
     </div>
   </div>
 </template>
