@@ -5,7 +5,7 @@ import { XMarkIcon } from '@heroicons/vue/20/solid'
 const show = ref(true)
 
 onMounted(() => {
-  setTimeout(() => (show.value = false), 3000)
+  setTimeout(() => (show.value = false), 5000)
 })
 </script>
 <template>

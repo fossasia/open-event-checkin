@@ -18,12 +18,8 @@ export const usePrintModalStore = defineStore('printModal', () => {
   const selectedOptions = ref([])
 
   const hasOptions = computed(() => {
-    return allOptions.value.length === 0
+    return allOptions.value.length !== 0
   })
-
-  function selectAll() {
-    selectedOptions.value = printOptions.value
-  }
 
   function $reset() {
     showPrintModal.value = false
@@ -54,12 +50,20 @@ export const usePrintModalStore = defineStore('printModal', () => {
     }
   }
 
+  function selectAll() {
+    selectedOptions.value = printOptions.value
+  }
+
   async function setPrintDetails(tid, aid) {
     loadingStore.contentLoading()
     ticketId.value = String(tid)
     attendeeId.value = String(aid)
-    await getBadgeFields()
-    loadingStore.contentLoaded()
+    try {
+      await getBadgeFields()
+      loadingStore.contentLoaded()
+    } catch (error) {
+      console.error(error)
+    }
     nextTick(() => {
       showPrintModal.value = true
     })
@@ -76,8 +80,8 @@ export const usePrintModalStore = defineStore('printModal', () => {
       // need to use URL from same domain to prevent origin error
       let objFra = document.getElementById('printFrame')
 
-      if (process.env.NODE_ENV !== 'development') {
-        objFra.src = '/dist/test.pdf'
+      if (process.env.NODE_ENV !== 'production') {
+        objFra.src = '/test-badge.pdf'
       } else {
         const pdf = await apiStore.get(true, url.task_url.substring(4))
         objFra.src = pdf.result.download_url

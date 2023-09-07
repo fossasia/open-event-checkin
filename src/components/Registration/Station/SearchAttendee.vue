@@ -52,7 +52,7 @@ const selectedFields = ref([])
 
 watch(query, async (newValue) => {
   if (newValue === '' || newValue === null) {
-    setTimeout(() => attendeesStore.clearAttendees(), 700)
+    setTimeout(() => attendeesStore.$reset, 700)
   } else {
     isFetchingFiltered.value = true
     await attendeesStore.fetchAttendees(
@@ -217,7 +217,7 @@ const filteredAttendees = computed(() => {
       </div>
 
       <ComboboxOptions
-        v-if="filteredAttendees.length > 0"
+        v-if="filteredAttendees.length > 0 && !isFetchingFiltered"
         static
         class="mt-5 max-h-96 scroll-py-3 divide-y divide-secondary overflow-y-auto rounded-md p-3 ring-1 ring-secondary"
       >
@@ -282,7 +282,7 @@ const filteredAttendees = computed(() => {
         v-if="query !== '' && isFetchingFiltered"
         class="mt-5 flex flex-col justify-start rounded-md py-14 text-center text-sm ring-1 ring-secondary"
       >
-        <p class="mb-4 font-semibold">Fetching attendees. Please wait...</p>
+        <p class="mb-4 text-base font-semibold">Fetching attendees. Please wait...</p>
         <div class="flex animate-pulse p-3">
           <div class="h-12 w-12 rounded-full bg-secondary-light"></div>
           <div class="ml-4 flex-auto space-y-3">

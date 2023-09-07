@@ -8,7 +8,7 @@ import {
   MagnifyingGlassIcon
 } from '@heroicons/vue/24/outline'
 import { defineStore } from 'pinia'
-import { computed } from 'vue'
+import { computed, onBeforeMount, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 export const useNavbarStore = defineStore('navbar', () => {
@@ -16,31 +16,56 @@ export const useNavbarStore = defineStore('navbar', () => {
   const router = useRouter()
   const eventsStore = useEventsStore()
   const stationsStore = useStationsStore()
-
   const passwordModalStore = usePasswordModalStore()
 
-  const navbarTitle = computed(() => {
-    // check if event id and station id exist in url params
+  // watch for router change and call fetchNavbarTitle
+  watch(
+    () => route.params,
+    async () => {
+      await fetchNavbarTitle()
+    }
+  )
+
+  onBeforeMount(async () => {
+    await router.isReady()
+    await fetchNavbarTitle()
+  })
+
+  const station = computed(() => {
+    const sn = stationsStore.eventStations.find(
+      // provide base for parse Int
+      (s) => s.id === parseInt(route.params.stationId, 10)
+    )
+    // if undefined return false
+    if (!sn) {
+      return false
+    }
+
+    return sn
+  })
+
+  async function fetchNavbarTitle() {
     if (route.params.eventId && route.params.stationId) {
       // check if event name is empty
       if (!eventsStore.eventName) {
         // event name empty so call for event name
-        eventsStore.getEventName(route.params.eventId)
+        await eventsStore.getEventName(route.params.eventId)
       }
 
-      if (!stationsStore.eventStations.length > 0) {
-        stationsStore.getStations(route.params.eventId)
+      if (!station.value || !stationsStore.eventStations.length > 0) {
+        await stationsStore.getStations(route.params.eventId)
       }
-      // find station name
-      const station = stationsStore.eventStations.find(
-        // provide base for parse Int
-        (station) => station.id === parseInt(route.params.stationId, 10)
-      )
-      if (!station) {
+    }
+  }
+
+  const navbarTitle = computed(() => {
+    // check if event id and station id exist in url params
+    if (route.params.eventId && route.params.stationId) {
+      if (!station.value) {
         return ''
       }
 
-      return `${eventsStore.eventName} - ${station.attributes['station-name']}`
+      return `${eventsStore.eventName} - ${station.value.attributes['station-name']}`
     }
     return ''
   })
@@ -52,14 +77,14 @@ export const useNavbarStore = defineStore('navbar', () => {
 
   // authenticated and not station page
   const stationNavigation = computed(() => {
-    if (route.name !== 'stationSelector') {
+    if (route.name !== 'selectStation') {
       let obj = {
         icon: MagnifyingGlassIcon,
         name: 'Search',
         customClass: 'text-body hover:bg-body-light',
         action: () => {
           if (route.params.registrationType) {
-            router.push({ name: 'registerHybrid' })
+            router.push({ name: 'registerStation' })
           }
         }
       }
@@ -74,7 +99,7 @@ export const useNavbarStore = defineStore('navbar', () => {
               router.push({ name: 'registerKiosk' })
             }
             if (route.params.scannerType) {
-              router.push({ name: 'scannerCamera' })
+              router.push({ name: 'checkInCamera' })
             }
           }
         },
@@ -87,7 +112,7 @@ export const useNavbarStore = defineStore('navbar', () => {
               router.push({ name: 'registerStats' })
             }
             if (route.params.scannerType) {
-              router.push({ name: 'scannerStats' })
+              router.push({ name: 'checkInStats' })
             }
           }
         }

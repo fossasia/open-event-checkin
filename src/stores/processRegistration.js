@@ -4,6 +4,7 @@ import { useLoadingStore } from '@/stores/loading'
 import { useNotificationStore } from '@/stores/notification'
 import { usePrintModalStore } from '@/stores/printModal'
 import { useTicketsStore } from '@/stores/tickets'
+import extractAttendeeId from '@/utils/extractAttendeeId'
 import extractOrderId from '@/utils/extractOrderId'
 import isValidTicketQR from '@/utils/isValidTicketQR'
 import { defineStore } from 'pinia'
@@ -29,7 +30,7 @@ export const useProcessRegistrationStore = defineStore('processRegistration', ()
         }
         // end
       } else {
-        notificationStore.addNotification({ type: 'error', message: 'Already checked in' })
+        notificationStore.addNotification(['Error', 'Already checked in'], 'error')
       }
     } catch (error) {
       console.log(error)
@@ -38,24 +39,23 @@ export const useProcessRegistrationStore = defineStore('processRegistration', ()
   }
 
   async function registerAttendeeScanner(stationId) {
-    if (!isValidTicketQR(cameraStore.QRCodeValue)) {
-      notificationStore.addNotification({ type: 'error', message: 'Invalid QR Code' })
+    if (!isValidTicketQR(cameraStore.qrCodeValue)) {
+      notificationStore.addNotification(['Error', 'Invalid QR Code'], 'error')
       return
     }
 
-    const orderId = extractOrderId(cameraStore.QRCodeValue)
+    const attendeeId = extractAttendeeId(cameraStore.qrCodeValue)
+    const orderId = extractOrderId(cameraStore.qrCodeValue)
+
     loadingStore.contentLoading()
     try {
       const attendee = await ticketsStore.getTicketAttendee(orderId)
-      await processRegistrationCheckin(attendee.id, stationId)
-      printModalStore.setPrintDetails(attendee.attributes['ticket-id'], attendee.id)
+      await processRegistrationCheckin(attendeeId, stationId)
+      printModalStore.setPrintDetails(attendee.attributes['ticket-id'], attendeeId)
     } catch (error) {
       console.log(error)
       loadingStore.contentLoaded()
-      notificationStore.addNotification({
-        type: 'error',
-        message: 'Unable to retrieve badge details'
-      })
+      notificationStore.addNotification(['Error', 'Unable to retrieve badge details'], 'error')
     }
   }
 

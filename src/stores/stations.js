@@ -6,40 +6,72 @@ export const useStationsStore = defineStore('stations', () => {
   const apiStore = useApiStore()
 
   const stationTypes = [
-    { id: 'registration-kiosk', name: 'Registration (via scan)', href: 'registerKiosk' },
-    { id: 'registration-hybrid', name: 'Registration (hybrid)', href: 'registerHybrid' },
-    { id: 'check-in-daily', name: 'Daily Check-In', href: 'scanner' },
-    { id: 'check-in', name: 'Session Check-In', href: 'scanner' },
-    { id: 'checkout', name: 'Session Checkout', href: 'scanner' }
+    {
+      id: 'registration-kiosk',
+      type: 'registration',
+      name: 'Registration Kiosk (with Scan only)',
+      href: 'registerKiosk'
+    },
+    {
+      id: 'registration-hybrid',
+      type: 'registration',
+      name: 'Registration Station (with Scan & Search)',
+      href: 'registerStation'
+    },
+    { id: 'daily', type: 'daily', name: 'Daily Check-In', href: 'checkIn' },
+    { id: 'check-in', type: 'check in', name: 'Session Check-In', href: 'checkIn' },
+    { id: 'checkout', type: 'check out', name: 'Session Checkout', href: 'checkIn' }
   ]
 
   const actualEventStations = ref([])
   const eventStations = ref([])
 
+  function $reset() {
+    actualEventStations.value = []
+    eventStations.value = []
+  }
+
   async function getStations(eventId) {
     try {
-      const res = await apiStore.get(true, `events/${eventId}/stations`)
+      const res = await apiStore.get(true, `events/${eventId}/stations?page[size]=1000`)
       actualEventStations.value = res.data
+      // clone data to remove reactivity
+      let data = JSON.parse(JSON.stringify(res.data))
+
       // check for those with microlocation-id in attributes to replace id with microlocation-id
-      res.data.forEach((station) => {
+      data.forEach((station) => {
         if (station.attributes['microlocation-id']) {
           station.id = station.attributes['microlocation-id']
         }
       })
-      eventStations.value = res.data
+      eventStations.value = data
     } catch (error) {
       return Promise.reject(error)
     }
   }
 
-  async function getStationIdWithMicrolocation(microlocationId) {
-    // assuming index of actualEventStations is the same as eventStations
-    // find index of station with microlocation-id
-    const index = eventStations.value.findIndex((station) => {
-      station.id === microlocationId
-    })
-    // get station id from actualEventStations
-    return actualEventStations.value[index].id
+  async function getActualStationId(stationId, scannerType) {
+    let station = null
+    if (scannerType === 'check-in') {
+      station = checkInStations.value.find((s) => {
+        return s.microlocationId === Number(stationId)
+      })
+    } else if (scannerType === 'checkout') {
+      station = checkOutStations.value.find((s) => {
+        return s.microlocationId === Number(stationId)
+      })
+    } else {
+      // find station object in case spoofing via url
+      station = actualEventStations.value.find((s) => {
+        return s.id === Number(stationId)
+      })
+    }
+
+    if (station === null) {
+      return false
+    }
+
+    return station.id
   }
 
   async function createStation(payload) {
@@ -96,7 +128,7 @@ export const useStationsStore = defineStore('stations', () => {
   })
 
   const checkInStations = computed(() => {
-    return eventStations.value
+    return actualEventStations.value
       .filter((station) => {
         return station.attributes['station-type'] === 'check in'
       })
@@ -110,7 +142,7 @@ export const useStationsStore = defineStore('stations', () => {
   })
 
   const checkOutStations = computed(() => {
-    return eventStations.value
+    return actualEventStations.value
       .filter((station) => {
         return station.attributes['station-type'] === 'check out'
       })
@@ -125,13 +157,14 @@ export const useStationsStore = defineStore('stations', () => {
 
   return {
     eventStations,
+    $reset,
     createStation,
     registrationStations,
     checkInDailyStations,
     checkInStations,
     checkOutStations,
     getStations,
-    getStationIdWithMicrolocation,
+    getActualStationId,
     stationTypes
   }
 })

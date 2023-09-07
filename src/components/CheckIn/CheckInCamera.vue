@@ -15,7 +15,10 @@ const scannerType = route.params.scannerType
 const microlocationId = route.params.stationId
 
 onBeforeMount(async () => {
-  await sessionsStore.getCurrentSession(microlocationId)
+  if (scannerType !== 'daily') {
+    await sessionsStore.getCurrentSession(microlocationId)
+  }
+  processCheckInStore.$reset()
   loadingStore.contentLoaded()
 })
 </script>
@@ -27,10 +30,10 @@ onBeforeMount(async () => {
     <QRCamera
       :qr-type="'checkIn'"
       :scan-type="scannerType"
-      :details="sessionsStore.formattedSessionDetails"
+      :details="scannerType !== 'daily' ? sessionsStore.formattedSessionDetails : null"
     />
     <p class="text-bold mt-5 text-center text-lg">
-      <span :class="processCheckInStore.response.classType"
+      <span :class="processCheckInStore.response.class"
         >{{ processCheckInStore.response.message }}
       </span>
     </p>
