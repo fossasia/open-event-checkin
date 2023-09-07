@@ -71,5 +71,12 @@ export const useSessionsStore = defineStore('sessions', () => {
     return str
   })
 
-  return { getSessions, currentSession, getCurrentSession, $reset, currentSessionName, formattedSessionDetails }
+  return {
+    getSessions,
+    currentSession,
+    getCurrentSession,
+    $reset,
+    currentSessionName,
+    formattedSessionDetails
+  }
 })

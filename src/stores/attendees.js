@@ -98,11 +98,11 @@ export const useAttendeesStore = defineStore('attendees', () => {
         const session = await sessions.getCurrentSession(stationId)
         const sessionId = session ? String(session.id) : null
         payload.data.relationships.session = {
-            data: {
-              type: 'session',
-              id: String(sessionId)
-            }
+          data: {
+            type: 'session',
+            id: String(sessionId)
           }
+        }
       }
       return await apiStore.post(true, 'user-check-in', payload)
     } catch (error) {

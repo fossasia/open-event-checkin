@@ -66,11 +66,10 @@ export const useCameraStore = defineStore('camera', () => {
 
   function logErrors(error) {
     console.error(error)
-    if (error.name === "NotAllowedError") {
-      console.error(
-        "You need to grant this page permission to access your camera and microphone.",
-      );
-  }}
+    if (error.name === 'NotAllowedError') {
+      console.error('You need to grant this page permission to access your camera and microphone.')
+    }
+  }
 
   return {
     selectedCameraId,

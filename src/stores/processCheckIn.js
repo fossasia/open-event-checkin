@@ -55,7 +55,11 @@ export const useProcessCheckInStore = defineStore('processCheckIn', () => {
     loadingStore.contentLoading()
 
     try {
-      const checkedIn = await attendeesStore.checkInAttendee(attendeeId, microlocationId, scannerType)
+      const checkedIn = await attendeesStore.checkInAttendee(
+        attendeeId,
+        microlocationId,
+        scannerType
+      )
       if (checkedIn) {
         message.value = 'Attendee ' + attendeeId + ' scan success.'
         showSuccessMsg()

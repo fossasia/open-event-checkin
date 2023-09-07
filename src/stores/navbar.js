@@ -21,16 +21,15 @@ export const useNavbarStore = defineStore('navbar', () => {
   // watch for router change and call fetchNavbarTitle
   watch(
     () => route.params,
-    async() => {
+    async () => {
       await fetchNavbarTitle()
     }
   )
-  
-  onBeforeMount(async() => {
+
+  onBeforeMount(async () => {
     await router.isReady()
     await fetchNavbarTitle()
   })
-
 
   const station = computed(() => {
     const sn = stationsStore.eventStations.find(
@@ -45,7 +44,7 @@ export const useNavbarStore = defineStore('navbar', () => {
     return sn
   })
 
-  async function fetchNavbarTitle(){
+  async function fetchNavbarTitle() {
     if (route.params.eventId && route.params.stationId) {
       // check if event name is empty
       if (!eventsStore.eventName) {
@@ -53,10 +52,9 @@ export const useNavbarStore = defineStore('navbar', () => {
         await eventsStore.getEventName(route.params.eventId)
       }
 
-      if (!station || !stationsStore.eventStations.length > 0) {
+      if (!station.value || !stationsStore.eventStations.length > 0) {
         await stationsStore.getStations(route.params.eventId)
       }
-
     }
   }
 

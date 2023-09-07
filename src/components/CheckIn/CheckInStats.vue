@@ -87,8 +87,6 @@ onBeforeMount(async () => {
         </dl>
       </div>
     </div>
-    <div v-else>
-      Work in progress
-    </div>
+    <div v-else>Work in progress</div>
   </div>
 </template>

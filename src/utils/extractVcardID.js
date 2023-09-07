@@ -9,6 +9,6 @@ export default function extractVcardID(vcard) {
   const index = vcardArray.findIndex((item) => item.includes('EVENTYAY:'))
   // get value from EVENTYAY key
   const id = vcardArray[index].split(':')[1]
- 
+
   return id ? id : false
 }

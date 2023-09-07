@@ -45,7 +45,6 @@ export const useStationsStore = defineStore('stations', () => {
         }
       })
       eventStations.value = data
-
     } catch (error) {
       return Promise.reject(error)
     }
@@ -66,12 +65,12 @@ export const useStationsStore = defineStore('stations', () => {
       station = actualEventStations.value.find((s) => {
         return s.id === Number(stationId)
       })
-    }  
+    }
 
     if (station === null) {
       return false
     }
-    
+
     return station.id
   }
 

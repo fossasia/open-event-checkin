@@ -30,10 +30,7 @@ export const useProcessRegistrationStore = defineStore('processRegistration', ()
         }
         // end
       } else {
-        notificationStore.addNotification(
-          ['Error', 'Already checked in'],
-          'error'
-        )
+        notificationStore.addNotification(['Error', 'Already checked in'], 'error')
       }
     } catch (error) {
       console.log(error)
@@ -43,10 +40,7 @@ export const useProcessRegistrationStore = defineStore('processRegistration', ()
 
   async function registerAttendeeScanner(stationId) {
     if (!isValidTicketQR(cameraStore.qrCodeValue)) {
-      notificationStore.addNotification(
-        ['Error', 'Invalid QR Code'],
-        'error'
-      )
+      notificationStore.addNotification(['Error', 'Invalid QR Code'], 'error')
       return
     }
 
@@ -61,10 +55,7 @@ export const useProcessRegistrationStore = defineStore('processRegistration', ()
     } catch (error) {
       console.log(error)
       loadingStore.contentLoaded()
-      notificationStore.addNotification(
-        ['Error', 'Unable to retrieve badge details'],
-        'error'
-      )
+      notificationStore.addNotification(['Error', 'Unable to retrieve badge details'], 'error')
     }
   }
 

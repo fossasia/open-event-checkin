@@ -14,11 +14,12 @@ const destroyed = ref(false)
 // get list of camera devices of device and side
 onBeforeMount(() => {
   if (navigator.mediaDevices.getUserMedia) {
-    navigator.mediaDevices.enumerateDevices()
-    .then((devices) => {
-      let environmentCameras = []
-      devices.forEach((device) => {
-          if(device.kind === 'videoinput') {
+    navigator.mediaDevices
+      .enumerateDevices()
+      .then((devices) => {
+        let environmentCameras = []
+        devices.forEach((device) => {
+          if (device.kind === 'videoinput') {
             const facingMode = device.getCapabilities().facingMode
             // const lbl = device.label
             const id = device.deviceId
@@ -31,20 +32,20 @@ onBeforeMount(() => {
               environmentCameras.push(obj)
             }
           }
-      });
+        })
 
-      // select last of environment cameras
-      if (environmentCameras.length > 0) {
-        cameraStore.selectedCameraId.deviceId = environmentCameras[environmentCameras.length - 1].id
-      } else {
-        cameraStore.selectedCameraId.deviceId = cameraStore.cameraDevices[0].id
-      }
-      
-    })
-    .catch(function(err) {
-      console.log(err.name + ": " + err.message);
-    });
-}
+        // select last of environment cameras
+        if (environmentCameras.length > 0) {
+          cameraStore.selectedCameraId.deviceId =
+            environmentCameras[environmentCameras.length - 1].id
+        } else {
+          cameraStore.selectedCameraId.deviceId = cameraStore.cameraDevices[0].id
+        }
+      })
+      .catch(function (err) {
+        console.log(err.name + ': ' + err.message)
+      })
+  }
 })
 
 async function detectedQR([result]) {
@@ -58,27 +59,25 @@ async function detectedQR([result]) {
   }
 }
 
-function switchCamera(){
+function switchCamera() {
   destroyed.value = true
   cameraStore.toggleCameraSide()
   nextTick(() => {
     destroyed.value = false
   })
 }
-
 </script>
 
-// stop cam from processing if 7
 <template>
   <qrcode-stream
+    v-if="!destroyed"
     class="!aspect-square !h-auto max-w-sm"
     :paused="cameraStore.paused"
     :track="cameraStore.selected.value"
     :constraints="cameraStore.selectedCameraId"
     @error="cameraStore.logErrors"
     @detect="detectedQR"
-
-    v-if="!destroyed" />
+  />
   <div class="space-x-3">
     <StandardButton
       :text="'Switch Camera'"

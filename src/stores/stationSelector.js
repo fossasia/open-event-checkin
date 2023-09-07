@@ -87,8 +87,10 @@ export const useStationSelectorStore = defineStore('selectStation', () => {
   })
 
   const isRegisterStations = computed(() => {
-    return (selectedType.value.id === 'registration-kiosk' ||
-    selectedType.value.id === 'registration-hybrid')
+    return (
+      selectedType.value.id === 'registration-kiosk' ||
+      selectedType.value.id === 'registration-hybrid'
+    )
   })
 
   const validation = computed(() => {

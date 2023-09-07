@@ -70,10 +70,7 @@ async function createStation() {
   } catch (error) {
     // show notification error
     loadingStore.contentLoaded()
-    notificationStore.addNotification(
-      ['Error', 'Error creating new station.'],
-      'error'
-    )
+    notificationStore.addNotification(['Error', 'Error creating new station.'], 'error')
   }
 }
 
@@ -145,7 +142,8 @@ async function submitForm() {
           @update-selected="(n) => stationSelectorStore.$patch({ selectedEvent: n })"
         ></ListboxSelector>
         <!-- select booth type -->
-        <ListboxSelector v-if="stationSelectorStore.selectedEvent.id"
+        <ListboxSelector
+          v-if="stationSelectorStore.selectedEvent.id"
           :select-text="'Select Type'"
           :label="'Type'"
           :data="stationsStore.stationTypes"
