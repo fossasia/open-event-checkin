@@ -1,14 +1,14 @@
 import AuthTemplate from '@/AuthTemplate.vue'
-import ScannedStats from '@/components/QRScanner/ScannedStats.vue'
-import QRScannerCamera from '@/components/QRScanner/ScannerCamera.vue'
-import RegistrationKiosk from '@/components/Registration/Kiosk/ScannerCamera.vue'
-import RegistrationStats from '@/components/Registration/Manual/RegistrationStats.vue'
-import RegistrationManual from '@/components/Registration/Manual/ScanSearch.vue'
+import CheckInCamera from '@/components/CheckIn/CheckInCamera.vue'
+import CheckInStats from '@/components/CheckIn/CheckInStats.vue'
+import RegistrationKiosk from '@/components/Registration/Kiosk/KioskOverview.vue'
+import RegistrationStats from '@/components/Registration/Station/RegistrationStats.vue'
+import RegistrationStation from '@/components/Registration/Station/StationOverview.vue'
 import { useLoadingStore } from '@/stores/loading'
+import CheckInView from '@/views/CheckInView.vue'
 import NotFound from '@/views/NotFound.vue'
-import RegistrationStation from '@/views/RegistrationStation.vue'
-import ScannerTemplate from '@/views/ScannerTemplate.vue'
-import StationSelector from '@/views/StationSelector.vue'
+import RegistrationView from '@/views/RegistrationView.vue'
+import SelectStation from '@/views/SelectStation.vue'
 import UserAuth from '@/views/UserAuth.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
@@ -26,15 +26,15 @@ const router = createRouter({
       component: AuthTemplate,
       children: [
         {
-          path: 'station-selector',
-          name: 'stationSelector',
-          component: StationSelector
+          path: 'select-station',
+          name: 'selectStation',
+          component: SelectStation
         },
         {
           path: ':eventId/registration/:registrationType/:stationId',
           name: 'registration',
           redirect: { name: 'registerKiosk' },
-          component: RegistrationStation,
+          component: RegistrationView,
           children: [
             {
               path: 'kiosk',
@@ -42,9 +42,9 @@ const router = createRouter({
               component: RegistrationKiosk
             },
             {
-              path: 'search',
-              name: 'registerHybrid',
-              component: RegistrationManual
+              path: 'station',
+              name: 'registerStation',
+              component: RegistrationStation
             },
             {
               path: 'stats',
@@ -55,20 +55,20 @@ const router = createRouter({
         },
         {
           // stationId = microlocation over here
-          path: ':eventId/:stationId/scanner/:scannerType',
-          name: 'scanner',
-          redirect: { name: 'scannerCamera' },
-          component: ScannerTemplate,
+          path: ':eventId/:stationId/:scannerType',
+          name: 'checkIn',
+          redirect: { name: 'checkInCamera' },
+          component: CheckInView,
           children: [
             {
-              path: 'camera',
-              name: 'scannerCamera',
-              component: QRScannerCamera
+              path: 'station',
+              name: 'checkInCamera',
+              component: CheckInCamera
             },
             {
               path: 'stats',
-              name: 'scannerStats',
-              component: ScannedStats
+              name: 'checkInStats',
+              component: CheckInStats
             }
           ]
         }

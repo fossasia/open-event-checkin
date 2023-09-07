@@ -1,39 +1,31 @@
 <script setup>
 import { ref, onBeforeMount, nextTick } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
 import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'
 import { useLoadingStore } from '@/stores/loading'
 import { useNavbarStore } from '@/stores/navbar'
 import { useUserStore } from '@/stores/user'
-import { useStationsStore } from '@/stores/stations'
 import PasswordModal from '@/components/Modals/PasswordModal.vue'
 
-const route = useRoute()
 const router = useRouter()
 const loadingStore = useLoadingStore()
 const navbarStore = useNavbarStore()
 const userStore = useUserStore()
-const stationsStore = useStationsStore()
-const userName = ref('')
 
 loadingStore.navbarLoading()
 
 onBeforeMount(async () => {
-  await userStore
-    .getUserId() // get user id
-    .then(async (res) => {
-      await userStore.getUserDetails(res).then(async (response) => {
-        // get name
-        userName.value = response.data.attributes['first-name']
-      })
-    })
-    .catch((err) => {
+  // this is for if loading the page directly
+  // check if user details is empty
+  if (!userStore.userDetails) {
+    await userStore.getUserDetails().catch((err) => {
       // if error, kick user to login page
       router.replace({
         name: 'userAuth'
       })
     })
+  }
   nextTick(() => {
     loadingStore.navbarLoaded()
   })
@@ -46,7 +38,7 @@ onBeforeMount(async () => {
       <div class="flex h-16 items-center justify-between space-x-5">
         <div>
           <div>Eventyay</div>
-          <div v-if="navbarStore.navbarTitle" class="w-60 sm:w-96">
+          <div v-if="navbarStore.navbarTitle" class="w-80 sm:w-96">
             <p class="truncate text-ellipsis text-lg">{{ navbarStore.navbarTitle }}</p>
           </div>
         </div>
@@ -73,7 +65,7 @@ onBeforeMount(async () => {
               {{ item.name }}
             </button>
           </template>
-          <span class="ml-2 text-sm">Logged in as: {{ userName }}</span>
+          <span class="ml-2 text-sm">Logged in as: {{ userStore.userName }}</span>
         </div>
       </div>
     </div>
@@ -81,7 +73,7 @@ onBeforeMount(async () => {
     <DisclosurePanel v-if="navbarStore.loadMenu" as="nav" class="lg:hidden" aria-label="Global">
       <div class="border-t border-secondary-light pb-3 pt-4">
         <div class="flex items-center px-5">
-          <div class="text-base font-medium">Logged in as: {{ userName }}</div>
+          <div class="text-base font-medium">Logged in as: {{ userStore.userName }}</div>
         </div>
         <div class="mt-3 space-y-1 px-2">
           <DisclosureButton

@@ -1,6 +1,6 @@
 <script setup>
 import QRCamera from '@/components/Common/QRCamera.vue'
-import SearchAttendee from '@/components/Registration/Manual/SearchAttendee.vue'
+import SearchAttendee from '@/components/Registration/Station/SearchAttendee.vue'
 import { useLoadingStore } from '@/stores/loading'
 import { usePrintModalStore } from '@/stores/printModal'
 

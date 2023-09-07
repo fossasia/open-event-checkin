@@ -3,11 +3,13 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useLoadingStore } from '@/stores/loading'
 import { useAuthStore } from '@/stores/auth'
+import { useUserStore } from '@/stores/user'
 import StandardButton from '@/components/Common/StandardButton.vue'
 
 // stores
 const loadingStore = useLoadingStore()
 const authStore = useAuthStore()
+const userStore = useUserStore()
 
 const email = ref('')
 const password = ref('')
@@ -28,8 +30,9 @@ async function submitLogin() {
   await authStore
     .login(payload)
     .then(async () => {
+      await userStore.getUserDetails()
       router.push({
-        name: 'stationSelector'
+        name: 'selectStation'
       })
     })
     .catch((err) => {
@@ -42,7 +45,7 @@ async function submitLogin() {
 onMounted(() => {
   if (authStore.isAuthenticated) {
     router.push({
-      name: 'stationSelector'
+      name: 'selectStation'
     })
   }
 

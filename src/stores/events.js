@@ -8,6 +8,12 @@ export const useEventsStore = defineStore('events', () => {
   const eventMicrolocations = ref([])
   const eventName = ref('')
 
+  function $reset() {
+    userEvents.value = []
+    eventMicrolocations.value = []
+    eventName.value = ''
+  }
+
   async function getEvents() {
     try {
       const res = await apiStore.get(true, 'users/user-details/get-user-id') // get user id
@@ -15,7 +21,7 @@ export const useEventsStore = defineStore('events', () => {
       userEvents.value = []
 
       // get user list of events
-      const r = await apiStore.get(true, `users/${res.user_id}/events`)
+      const r = await apiStore.get(true, `users/${res.user_id}/events?sort=name&page[size]=1000`)
 
       // remap data to new key
       r.data.forEach((event) => {
@@ -31,7 +37,7 @@ export const useEventsStore = defineStore('events', () => {
 
   async function getEventMicrolocations(eventId) {
     try {
-      const res = await apiStore.get(true, `events/${eventId}/microlocations`)
+      const res = await apiStore.get(true, `events/${eventId}/microlocations?page[size]=1000`)
 
       // clear eventMicrolocations
       eventMicrolocations.value = []
@@ -65,6 +71,7 @@ export const useEventsStore = defineStore('events', () => {
     eventName,
     userEvents,
     eventMicrolocations,
+    $reset,
     getEvents,
     getEventMicrolocations,
     getEventName
