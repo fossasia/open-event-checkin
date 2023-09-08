@@ -60,7 +60,7 @@ export const useSessionsStore = defineStore('sessions', () => {
   })
 
   const formattedSessionDetails = computed(() => {
-    if (currentSession.value === null) {
+    if (!currentSession.value) {
       return 'No Session'
     }
 
