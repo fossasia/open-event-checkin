@@ -28,6 +28,7 @@ export const useProcessRegistrationStore = defineStore('processRegistration', ()
             attendeesStore.attendees[attendeeIndex].checkedIn = true
           }
         }
+        notificationStore.addNotification(['Success', 'Checked In'], 'success')
         // end
       } else {
         notificationStore.addNotification(['Error', 'Already checked in'], 'error')
