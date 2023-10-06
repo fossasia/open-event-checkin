@@ -10,21 +10,21 @@
 
 Assuming that you already have this linked, the system flow is as such:
 
-1. Scan Ticket QR
-2. Popup appear with badge form
-3. User select fields to print on badge
-4. Press Confirm
-5. Print Preview pops up
-6. Press Print
-7. Badge gets printed out
+1.   Scan Ticket QR
+2.   Popup appear with badge form
+3.   User select fields to print on badge
+4.   Press Confirm
+5.   Print Preview pops up
+6.   Press Print
+7.   Badge gets printed out
 
 With the silent printing (TLDR; step 5 & 6 is not needed anymore)
 
-1. Scan Ticket QR
-2. Popup appear with badge form
-3. User select fields to print on badge
-4. Press Confirm
-5. Badge gets printed out
+1.   Scan Ticket QR
+2.   Popup appear with badge form
+3.   User select fields to print on badge
+4.   Press Confirm
+5.   Badge gets printed out
 
 ## Setup Guide for Kiosk Printing
 
