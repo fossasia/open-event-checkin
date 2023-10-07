@@ -62,6 +62,9 @@ npm run test:e2e:dev
 npm build
 ```
 
+### Setting up kiosk
+Please refer [here](https://github.com/fossasia/open-event-checkin/tree/development/setup-kiosk.md) for the instructions
+
 ## Deployments and Releases
 
 ### Deployments
