@@ -14,9 +14,22 @@ const userStore = useUserStore()
 const email = ref('')
 const password = ref('')
 const showError = ref(false)
+const passwordFieldType = ref("password")
+const toggleText = ref("Show")
 
 // router
 const router = useRouter()
+
+function togglePasswordVisibility(){
+  if (passwordFieldType.value==="password") {
+    passwordFieldType.value = "text";
+    toggleText.value = "Hide";
+  }
+  else {
+    passwordFieldType.value = "password";
+    toggleText.value = "Show";
+  }
+}
 
 async function submitLogin() {
   loadingStore.contentLoading()
@@ -75,16 +88,17 @@ onMounted(() => {
 
         <div>
           <label for="password">Password</label>
-          <div class="mt-2">
+          <div class="mt-2 relative">
             <input
               id="password"
               v-model="password"
               name="password"
-              type="password"
+              :type="passwordFieldType"
               autocomplete="current-password"
               required="true"
               class="block w-full"
             />
+            <p class="text-xs cursor-pointer mt-2.5 absolute inset-y-0 right-0 pr-3" @click="togglePasswordVisibility">{{toggleText}}</p>
           </div>
         </div>
 
@@ -92,7 +106,7 @@ onMounted(() => {
           <StandardButton
             :type="'submit'"
             :text="'Login'"
-            class="btn-primary mt-6 w-full justify-center"
+            class="btn-primary mt-4 w-full justify-center"
           />
         </div>
 
